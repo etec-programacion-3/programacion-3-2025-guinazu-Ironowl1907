@@ -1,2 +1,2 @@
-# programacion-3-2025-guinazu-Ironowl1907
-programacion-3-2025-guinazu-Ironowl1907 created by GitHub Classroom
+# Workout Tracker
+A simple offline centered applicaton for logging the workouts in the gym.

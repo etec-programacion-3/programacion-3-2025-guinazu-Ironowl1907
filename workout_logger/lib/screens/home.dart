@@ -11,6 +11,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
+  // Pages for each tab
+  final List<Widget> _pages = [
+    const Center(child: Text("Home Page")),
+    const Center(child: Text("Workout Page")),
+    const Center(child: Text("Profile Page")),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +54,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       appBar: AppBar(title: const Text("Home")),
+      body: _pages[_currentIndex],
     );
   }
 }

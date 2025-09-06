@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
               'assets/account.svg',
               width: 24,
               height: 24,
-              color: _currentIndex == 1 ? Colors.blue : Colors.grey,
+              color: _currentIndex == 2 ? Colors.blue : Colors.grey,
             ),
             label: "Profile",
           ),

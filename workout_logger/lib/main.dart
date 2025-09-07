@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workout_logger/screens/home.dart';
+import 'widgets/navigation_bar.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Poppins'),
-      home: HomePage(),
+      home: const AppNavigation(),
     );
   }
 }

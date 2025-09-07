@@ -3,7 +3,7 @@ import '../screens/home.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/profile.dart';
-import '../screens/settings.dart';
+import '../screens/workout.dart';
 
 class AppNavigation extends StatefulWidget {
   const AppNavigation({super.key});
@@ -15,12 +15,19 @@ class AppNavigation extends StatefulWidget {
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [HomePage(), ProfilePage(), SettingsPage()];
+  final List<Widget> _pages = const [HomePage(), WorkoutPage(), ProfilePage()];
+  final List<PreferredSizeWidget> _appBar = [
+    homeAppBar(),
+    workoutAppBar(),
+    profileAppBar(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
+      appBar: _appBar[_currentIndex],
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,

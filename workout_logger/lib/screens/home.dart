@@ -8,3 +8,7 @@ class HomePage extends StatelessWidget {
     return const Center(child: Text("Home Page"));
   }
 }
+
+PreferredSizeWidget homeAppBar() {
+  return AppBar(title: Text("Home"));
+}

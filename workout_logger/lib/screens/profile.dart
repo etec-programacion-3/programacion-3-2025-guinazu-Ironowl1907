@@ -8,3 +8,7 @@ class ProfilePage extends StatelessWidget {
     return const Center(child: Text("Profile Page"));
   }
 }
+
+PreferredSizeWidget profileAppBar() {
+  return AppBar(title: Text("Profile"));
+}

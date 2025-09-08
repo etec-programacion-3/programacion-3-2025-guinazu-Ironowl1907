@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../screens/home.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/profile.dart';
 import '../screens/workout.dart';
@@ -24,6 +23,8 @@ class _AppNavigationState extends State<AppNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: _pages[_currentIndex],
       appBar: _appBar[_currentIndex],
@@ -31,8 +32,8 @@ class _AppNavigationState extends State<AppNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue, // active color
-        unselectedItemColor: Colors.grey, // inactive color
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -45,7 +46,9 @@ class _AppNavigationState extends State<AppNavigation> {
               'assets/Exercise.svg',
               width: 24,
               height: 24,
-              color: _currentIndex == 1 ? Colors.blue : Colors.grey,
+              color: _currentIndex == 1
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
             ),
             label: "Workout",
           ),
@@ -54,7 +57,9 @@ class _AppNavigationState extends State<AppNavigation> {
               'assets/account.svg',
               width: 24,
               height: 24,
-              color: _currentIndex == 2 ? Colors.blue : Colors.grey,
+              color: _currentIndex == 2
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
             ),
             label: "Profile",
           ),

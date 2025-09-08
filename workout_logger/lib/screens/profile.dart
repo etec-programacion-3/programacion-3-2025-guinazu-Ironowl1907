@@ -5,14 +5,21 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
-      padding: const EdgeInsets.all(28.0), // less padding
+      padding: const EdgeInsets.all(18.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Dashboard",
-            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onBackground, // theme-aware text color
+            ),
           ),
           const SizedBox(height: 12),
 
@@ -20,8 +27,8 @@ class ProfilePage extends StatelessWidget {
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              mainAxisSpacing: 28,
-              crossAxisSpacing: 28,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
               childAspectRatio: 4.0,
               children: const [
                 _DashboardButton(label: "Muscle Groups"),
@@ -46,26 +53,34 @@ class _DashboardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 4),
-        textStyle: const TextStyle(fontSize: 22),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // smaller rounded corners
-        ),
+        elevation: 0,
+        backgroundColor: colorScheme.primaryContainer, // theme-aware background
+        foregroundColor: colorScheme.onPrimaryContainer, // text/icon color
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
+        textStyle: const TextStyle(fontSize: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: onPressed ?? () => print(label),
-      child: Text(label, style: TextStyle(fontWeight: FontWeight.w700)),
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
     );
   }
 }
 
 PreferredSizeWidget profileAppBar() {
   return AppBar(
-    title: Text("Profile"),
+    title: const Text("Profile"),
     bottom: PreferredSize(
       preferredSize: const Size.fromHeight(1.0),
-      child: Container(color: Colors.grey.shade300, height: 1.0),
+      child: Builder(
+        builder: (context) {
+          final dividerColor = Theme.of(context).dividerColor;
+          return Container(color: dividerColor, height: 1.0);
+        },
+      ),
     ),
   );
 }

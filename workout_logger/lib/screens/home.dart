@@ -10,5 +10,11 @@ class HomePage extends StatelessWidget {
 }
 
 PreferredSizeWidget homeAppBar() {
-  return AppBar(title: Text("Home"));
+  return AppBar(
+    title: Text("Home"),
+    bottom: PreferredSize(
+      preferredSize: const Size.fromHeight(1.0),
+      child: Container(color: Colors.grey.shade300, height: 1.0),
+    ),
+  );
 }

@@ -27,11 +27,25 @@ class _AppNavigationState extends State<AppNavigation> {
 
     return Scaffold(
       body: _pages[_currentIndex],
-      appBar: _appBar[_currentIndex],
+
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            appBarTheme: AppBarTheme(
+              backgroundColor: colorScheme.surface, // app bar bg
+              foregroundColor: colorScheme.onSurface, // title & icons
+              elevation: 0,
+            ),
+          ),
+          child: _appBar[_currentIndex],
+        ),
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
+        backgroundColor: colorScheme.surface, // 🔹 themed background
         selectedItemColor: colorScheme.primary,
         unselectedItemColor: colorScheme.onSurfaceVariant,
         onTap: (index) {

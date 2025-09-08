@@ -10,5 +10,11 @@ class WorkoutPage extends StatelessWidget {
 }
 
 PreferredSizeWidget workoutAppBar() {
-  return AppBar(title: Text("Workout"));
+  return AppBar(
+    title: Text("Workout"),
+    bottom: PreferredSize(
+      preferredSize: const Size.fromHeight(1.0),
+      child: Container(color: Colors.grey.shade300, height: 1.0),
+    ),
+  );
 }

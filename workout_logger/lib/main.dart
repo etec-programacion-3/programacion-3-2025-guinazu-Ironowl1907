@@ -6,13 +6,14 @@ import 'widgets/navigation_bar.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 🔹 Initialize sqflite for desktop
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  final dbService = DatabaseService.instance;
-  final db = await dbService.database;
   runApp(const MyApp());
+
+  // initialize DB after UI starts
+  final dbService = DatabaseService.instance;
+  await dbService.database;
 }
 
 class MyApp extends StatelessWidget {

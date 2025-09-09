@@ -25,6 +25,49 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
     });
   }
 
+  Future<void> _deleteMuscleGroup(MuscleGroup muscleGroup) async {
+    await DatabaseService.instance.deleteMuscleGroup(muscleGroup.id!);
+    _refreshMuscleGroups();
+  }
+
+  Future<void> _editMuscleGroupDialog(MuscleGroup muscleGroup) async {
+    final controller = TextEditingController(text: muscleGroup.name);
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Muscle Group"),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: "Enter new name"),
+        ),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          ElevatedButton(
+            child: const Text("Save"),
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) {
+                Navigator.of(context).pop(text);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+
+    if (result != null && result.isNotEmpty) {
+      final updatedGroup = muscleGroup;
+      updatedGroup.name = result;
+      await DatabaseService.instance.updateMuscleGroup(updatedGroup);
+      _refreshMuscleGroups();
+    }
+  }
+
   Future<void> _addMuscleGroupDialog() async {
     final controller = TextEditingController();
 
@@ -90,43 +133,7 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final group = muscleGroups[index];
-              return GestureDetector(
-                onTap: () {
-                  print("Taped $index");
-                },
-                child: Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  color: colorScheme.primaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          group.name,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                        SvgPicture.asset(
-                          'assets/edit.svg',
-                          width: 24,
-                          height: 24,
-                          color: colorScheme.onPrimaryFixed,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              return muscleCard(group, muscleGroups, index, colorScheme);
             },
           );
         },
@@ -134,6 +141,59 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _addMuscleGroupDialog,
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Dismissible muscleCard(
+    MuscleGroup group,
+    List<MuscleGroup> muscleGroups,
+    int index,
+    ColorScheme colorScheme,
+  ) {
+    return Dismissible(
+      key: ValueKey(group.id), // make sure MuscleGroup has a unique id
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        color: Colors.red,
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+      onDismissed: (_) {
+        _deleteMuscleGroup(muscleGroups[index]);
+      },
+      child: GestureDetector(
+        onTap: () => _editMuscleGroupDialog(group),
+        child: Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          color: colorScheme.primaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  group.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                SvgPicture.asset(
+                  'assets/edit.svg',
+                  width: 24,
+                  height: 24,
+                  color: colorScheme.onPrimaryFixed,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

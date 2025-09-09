@@ -30,7 +30,7 @@ class ProfilePage extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 20,
               crossAxisSpacing: 20,
-              childAspectRatio: 4.0,
+              childAspectRatio: 2.5,
               children: [
                 _DashboardButton(
                   label: "Muscle Groups",
@@ -65,17 +65,23 @@ class _DashboardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: colorScheme.primaryContainer, // theme-aware background
-        foregroundColor: colorScheme.onPrimaryContainer, // text/icon color
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
-        textStyle: const TextStyle(fontSize: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return SizedBox.expand(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: colorScheme.primaryContainer,
+          foregroundColor: colorScheme.onPrimaryContainer,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          textStyle: const TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        onPressed: onPressed ?? () => print(label),
+        child: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+          textAlign: TextAlign.center,
+        ),
       ),
-      onPressed: onPressed ?? () => print(label),
-      child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/screens/muscle_group.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -18,23 +20,31 @@ class ProfilePage extends StatelessWidget {
               fontSize: 16,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
-              color: colorScheme.onBackground, // theme-aware text color
+              color: colorScheme.onBackground,
             ),
           ),
           const SizedBox(height: 12),
 
-          // Dashboard Menu
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
               mainAxisSpacing: 20,
               crossAxisSpacing: 20,
-              childAspectRatio: 4.0,
-              children: const [
-                _DashboardButton(label: "Muscle Groups"),
-                _DashboardButton(label: "Exercises"),
-                _DashboardButton(label: "Routines"),
-                _DashboardButton(label: "Progress"),
+              childAspectRatio: 2.5,
+              children: [
+                _DashboardButton(
+                  label: "Muscle Groups",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MuscleGroupPage(),
+                      ),
+                    );
+                  },
+                ),
+                const _DashboardButton(label: "Exercises"),
+                const _DashboardButton(label: "Routines"),
+                const _DashboardButton(label: "Progress"),
               ],
             ),
           ),
@@ -55,17 +65,23 @@ class _DashboardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: colorScheme.primaryContainer, // theme-aware background
-        foregroundColor: colorScheme.onPrimaryContainer, // text/icon color
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
-        textStyle: const TextStyle(fontSize: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return SizedBox.expand(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 2,
+          backgroundColor: colorScheme.primaryContainer,
+          foregroundColor: colorScheme.onPrimaryContainer,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          textStyle: const TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        onPressed: onPressed ?? () => print(label),
+        child: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+          textAlign: TextAlign.center,
+        ),
       ),
-      onPressed: onPressed ?? () => print(label),
-      child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
     );
   }
 }

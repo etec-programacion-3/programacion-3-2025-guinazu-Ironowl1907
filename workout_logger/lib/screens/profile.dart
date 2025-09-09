@@ -68,7 +68,7 @@ class _DashboardButton extends StatelessWidget {
     return SizedBox.expand(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          elevation: 0,
+          elevation: 2,
           backgroundColor: colorScheme.primaryContainer,
           foregroundColor: colorScheme.onPrimaryContainer,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),

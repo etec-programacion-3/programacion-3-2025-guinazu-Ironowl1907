@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/screens/muscle_group.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -18,23 +20,31 @@ class ProfilePage extends StatelessWidget {
               fontSize: 16,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
-              color: colorScheme.onBackground, // theme-aware text color
+              color: colorScheme.onBackground,
             ),
           ),
           const SizedBox(height: 12),
 
-          // Dashboard Menu
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
               mainAxisSpacing: 20,
               crossAxisSpacing: 20,
               childAspectRatio: 4.0,
-              children: const [
-                _DashboardButton(label: "Muscle Groups"),
-                _DashboardButton(label: "Exercises"),
-                _DashboardButton(label: "Routines"),
-                _DashboardButton(label: "Progress"),
+              children: [
+                _DashboardButton(
+                  label: "Muscle Groups",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MuscleGroupPage(),
+                      ),
+                    );
+                  },
+                ),
+                const _DashboardButton(label: "Exercises"),
+                const _DashboardButton(label: "Routines"),
+                const _DashboardButton(label: "Progress"),
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MuscleGroupPage extends StatefulWidget {
   const MuscleGroupPage({super.key});
@@ -89,23 +90,39 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final group = muscleGroups[index];
-              return Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                color: colorScheme.primaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 20,
+              return GestureDetector(
+                onTap: () {
+                  print("Taped $index");
+                },
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    group.name,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onPrimaryContainer,
+                  color: colorScheme.primaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 20,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          group.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          'assets/edit.svg',
+                          width: 24,
+                          height: 24,
+                          color: colorScheme.onPrimaryFixed,
+                        ),
+                      ],
                     ),
                   ),
                 ),

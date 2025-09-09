@@ -40,7 +40,10 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(hintText: "Enter new name"),
+          decoration: const InputDecoration(
+            labelText: "Muscle Group Name",
+            hintText: "Enter muscle group name",
+          ),
         ),
         actions: [
           TextButton(
@@ -61,8 +64,7 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
     );
 
     if (result != null && result.isNotEmpty) {
-      final updatedGroup = muscleGroup;
-      updatedGroup.name = result;
+      final updatedGroup = MuscleGroup(id: muscleGroup.id, name: result);
       await DatabaseService.instance.updateMuscleGroup(updatedGroup);
       _refreshMuscleGroups();
     }
@@ -78,7 +80,10 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(hintText: "Enter name"),
+          decoration: const InputDecoration(
+            labelText: "Muscle Group Name",
+            hintText: "Enter muscle group name",
+          ),
         ),
         actions: [
           TextButton(
@@ -124,7 +129,24 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
           final muscleGroups = snapshot.data ?? [];
 
           if (muscleGroups.isEmpty) {
-            return const Center(child: Text("No muscle groups yet."));
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.accessibility_new, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    "No muscle groups yet.",
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Tap + to add your first muscle group",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
           }
 
           return ListView.separated(
@@ -133,7 +155,7 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final group = muscleGroups[index];
-              return muscleCard(group, muscleGroups, index, colorScheme);
+              return muscleGroupCard(group, muscleGroups, index, colorScheme);
             },
           );
         },
@@ -145,23 +167,37 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
     );
   }
 
-  Dismissible muscleCard(
+  Dismissible muscleGroupCard(
     MuscleGroup group,
     List<MuscleGroup> muscleGroups,
     int index,
     ColorScheme colorScheme,
   ) {
     return Dismissible(
-      key: ValueKey(group.id), // make sure MuscleGroup has a unique id
+      key: ValueKey(group.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        color: Colors.red,
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (_) {
-        _deleteMuscleGroup(muscleGroups[index]);
+        _deleteMuscleGroup(group);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${group.name} deleted'),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                // You could implement undo functionality here
+              },
+            ),
+          ),
+        );
       },
       child: GestureDetector(
         onTap: () => _editMuscleGroupDialog(group),
@@ -176,19 +212,21 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  group.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onPrimaryContainer,
+                Expanded(
+                  child: Text(
+                    group.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onPrimaryContainer,
+                    ),
                   ),
                 ),
                 SvgPicture.asset(
                   'assets/edit.svg',
                   width: 24,
                   height: 24,
-                  color: colorScheme.onPrimaryFixed,
+                  color: colorScheme.onPrimaryContainer,
                 ),
               ],
             ),

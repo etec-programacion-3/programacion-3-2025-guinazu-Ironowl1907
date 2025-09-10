@@ -25,6 +25,169 @@ class _RoutinePageState extends State<RoutinePage> {
     });
   }
 
+  // Add this method to the _RoutinePageState class in your RoutinePage
+
+  Future<void> _duplicateRoutine(Routine routine) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final originalRoutineExercises = await DatabaseService.instance
+          .getRoutineExercisesByRoutine(routine.id!);
+
+      final duplicatedRoutine = Routine(
+        name: "Copy of ${routine.name}",
+        description: routine.description,
+      );
+
+      final newRoutineId = await DatabaseService.instance.insertRoutine(
+        duplicatedRoutine,
+      );
+
+      for (final routineExercise in originalRoutineExercises) {
+        final newRoutineExercise = RoutineExercise(
+          routineId: newRoutineId,
+          exerciseId: routineExercise.exerciseId,
+          sets: routineExercise.sets,
+          reps: routineExercise.reps,
+          restSeconds: routineExercise.restSeconds,
+        );
+
+        await DatabaseService.instance.insertRoutineExercise(
+          newRoutineExercise,
+        );
+      }
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
+
+      _refreshRoutines();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Routine "${routine.name}" duplicated successfully'),
+            action: SnackBarAction(
+              label: 'Edit',
+              onPressed: () async {
+                // Navigate to edit the duplicated routine
+                final newRoutine = Routine(
+                  id: newRoutineId,
+                  name: duplicatedRoutine.name,
+                  description: duplicatedRoutine.description,
+                );
+
+                final result = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute<bool>(
+                    builder: (context) =>
+                        CreateRoutinePage(routine: newRoutine),
+                  ),
+                );
+
+                if (result == true) {
+                  _refreshRoutines();
+                }
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error duplicating routine: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showRoutineMenu(Routine routine) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.play_arrow),
+              title: const Text('Start Workout'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Navigate to workout session page
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('TODO: Start workout functionality'),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('Edit Routine'),
+              onTap: () async {
+                Navigator.pop(context);
+                final result = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute<bool>(
+                    builder: (context) => CreateRoutinePage(routine: routine),
+                  ),
+                );
+
+                if (result == true) {
+                  _refreshRoutines();
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.copy),
+              title: const Text('Duplicate Routine'),
+              onTap: () {
+                Navigator.pop(context);
+                _duplicateRoutine(routine); // Call the new duplicate method
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share Routine'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Implement share routine functionality
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('TODO: Share routine functionality'),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: const Text(
+                'Delete Routine',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _showDeleteConfirmation(routine);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<List<Exercise>> _getExercises(Routine routine) async {
     final result = await DatabaseService.instance.getAllExercisesFromRoutine(
       routine.id!,
@@ -102,87 +265,6 @@ class _RoutinePageState extends State<RoutinePage> {
             },
           );
         },
-      ),
-    );
-  }
-
-  void _showRoutineMenu(Routine routine) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.play_arrow),
-              title: const Text('Start Workout'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Navigate to workout session page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('TODO: Start workout functionality'),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Edit Routine'),
-              onTap: () async {
-                Navigator.pop(context);
-                final result = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute<bool>(
-                    builder: (context) => CreateRoutinePage(routine: routine),
-                  ),
-                );
-
-                if (result == true) {
-                  _refreshRoutines(); // Refresh list if a routine was updated
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.copy),
-              title: const Text('Duplicate Routine'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement duplicate routine functionality
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('TODO: Duplicate routine functionality'),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share Routine'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement share routine functionality
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('TODO: Share routine functionality'),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text(
-                'Delete Routine',
-                style: TextStyle(color: Colors.red),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _showDeleteConfirmation(routine);
-              },
-            ),
-          ],
-        ),
       ),
     );
   }

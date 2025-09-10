@@ -120,10 +120,9 @@ class _RoutinePageState extends State<RoutinePage> {
               title: const Text('Edit Routine'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Navigate to edit routine page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('TODO: Edit routine functionality'),
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => CreateRoutinePage(routine: routine),
                   ),
                 );
               },

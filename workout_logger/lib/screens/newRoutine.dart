@@ -501,113 +501,110 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  // Routine Details Section
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: "Routine Name",
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.fitness_center),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please enter a routine name';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _descriptionController,
-                          decoration: const InputDecoration(
-                            labelText: "Description (optional)",
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.description),
-                          ),
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  ),
+          : createForm(colorScheme),
+    );
+  }
 
-                  // Exercises Section Header
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Exercises (${_selectedExercises.length})",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: _addExerciseDialog,
-                          icon: const Icon(Icons.add),
-                          label: const Text("Add Exercise"),
-                        ),
-                      ],
-                    ),
+  Form createForm(ColorScheme colorScheme) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // Routine Details Section
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: "Routine Name",
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.fitness_center),
                   ),
-
-                  const SizedBox(height: 8),
-
-                  // Exercises List
-                  Expanded(
-                    child: _selectedExercises.isEmpty
-                        ? const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.fitness_center,
-                                  size: 64,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(height: 16),
-                                Text(
-                                  "No exercises added yet",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Tap 'Add Exercise' to get started",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          )
-                        : ReorderableListView.builder(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: _selectedExercises.length,
-                            onReorder: _reorderExercises,
-                            itemBuilder: (context, index) {
-                              final item = _selectedExercises[index];
-                              return _buildExerciseCard(
-                                item,
-                                index,
-                                colorScheme,
-                              );
-                            },
-                          ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter a routine name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: "Description (optional)",
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.description),
                   ),
-                ],
-              ),
+                  maxLines: 2,
+                ),
+              ],
             ),
+          ),
+
+          // Exercises Section Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Exercises (${_selectedExercises.length})",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _addExerciseDialog,
+                  icon: const Icon(Icons.add),
+                  label: const Text("Add Exercise"),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Exercises List
+          Expanded(
+            child: _selectedExercises.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.fitness_center,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "No exercises added yet",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "Tap 'Add Exercise' to get started",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                : ReorderableListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _selectedExercises.length,
+                    onReorder: _reorderExercises,
+                    itemBuilder: (context, index) {
+                      final item = _selectedExercises[index];
+                      return _buildExerciseCard(item, index, colorScheme);
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 

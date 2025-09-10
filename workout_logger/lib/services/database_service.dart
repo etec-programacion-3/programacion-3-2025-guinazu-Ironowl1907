@@ -185,6 +185,19 @@ class DatabaseService {
     return List.generate(maps.length, (i) => RoutineExercise.fromMap(maps[i]));
   }
 
+  Future<List<Exercise>> getAllExercisesFromRoutine(int routineId) async {
+    final db = await database;
+    final maps = await db.rawQuery(
+      '''
+    SELECT e.* FROM exercises e
+    JOIN routine_exercises re ON e.id = re.exercise_id
+    WHERE re.routine_id = ?
+  ''',
+      [routineId],
+    );
+    return List.generate(maps.length, (i) => Exercise.fromMap(maps[i]));
+  }
+
   Future<RoutineExercise?> getRoutineExerciseById(int id) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(

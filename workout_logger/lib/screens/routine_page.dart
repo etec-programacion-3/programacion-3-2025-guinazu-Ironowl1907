@@ -25,6 +25,14 @@ class _RoutinePageState extends State<RoutinePage> {
     });
   }
 
+  Future<List<Exercise>> _getExercises(Routine routine) async {
+    final result = await DatabaseService.instance.getAllExercisesFromRoutine(
+      routine.id!,
+    );
+
+    return result;
+  }
+
   Future<void> _deleteRoutine(Routine routine) async {
     await DatabaseService.instance.deleteRoutine(routine.id!);
     _refreshRoutines();
@@ -46,7 +54,7 @@ class _RoutinePageState extends State<RoutinePage> {
           );
 
           if (result == true) {
-            _refreshRoutines(); // Refresh list if a new routine was saved
+            _refreshRoutines();
           }
         },
       ),
@@ -208,117 +216,197 @@ class _RoutinePageState extends State<RoutinePage> {
     );
   }
 
-  Card routineCard(Routine routine, int index, ColorScheme colorScheme) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: colorScheme.primaryContainer,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          // TODO: Navigate to routine details page
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('TODO: Navigate to routine details')),
+  Widget routineCard(Routine routine, int index, ColorScheme colorScheme) {
+    return FutureBuilder<List<Exercise>>(
+      future: _getExercises(routine),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
           );
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        }
+
+        final exercises = snapshot.data ?? [];
+
+        return Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          color: colorScheme.primaryContainer,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('TODO: Navigate to routine details'),
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      routine.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  /// Routine name + menu
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          routine.name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.more_vert),
+                        onPressed: () => _showRoutineMenu(routine),
                         color: colorScheme.onPrimaryContainer,
                       ),
-                    ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () => _showRoutineMenu(routine),
-                    color: colorScheme.onPrimaryContainer,
-                  ),
-                ],
-              ),
-              if (routine.description != null &&
-                  routine.description!.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  routine.description!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: colorScheme.onPrimaryContainer.withOpacity(0.7),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 12),
-              // Exercise count and duration info
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.secondaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      // TODO: Get actual exercise count from routine.exercises.length
-                      "0 exercises", // Placeholder until we have access to exercises
+
+                  /// Routine description
+                  if (routine.description != null &&
+                      routine.description!.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      routine.description!,
                       style: TextStyle(
-                        fontSize: 12,
-                        color: colorScheme.onSecondaryContainer,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: colorScheme.onPrimaryContainer.withOpacity(0.7),
                       ),
                     ),
+                  ],
+
+                  const SizedBox(height: 12),
+
+                  /// Exercises count + placeholder duration
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "${exercises.length} exercises",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSecondaryContainer,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.tertiaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "~45 min", // TODO: calculate dynamically
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onTertiaryContainer,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
+
+                  const SizedBox(height: 12),
+
+                  /// Exercises preview
+                  Text(
+                    "Exercises:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onPrimaryContainer,
                     ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.tertiaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      // TODO: Calculate estimated duration based on exercises
-                      "~45 min", // Placeholder
+                  ),
+                  const SizedBox(height: 8),
+                  if (exercises.isEmpty)
+                    Text(
+                      "No exercises added yet",
                       style: TextStyle(
                         fontSize: 12,
-                        color: colorScheme.onTertiaryContainer,
-                        fontWeight: FontWeight.w500,
+                        color: colorScheme.onPrimaryContainer.withOpacity(0.5),
+                        fontStyle: FontStyle.italic,
                       ),
+                    )
+                  else
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...exercises
+                            .take(3)
+                            .map(
+                              (exercise) => Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.fitness_center,
+                                      size: 16,
+                                      color: colorScheme.onPrimaryContainer
+                                          .withOpacity(0.6),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      exercise.name, // <-- uses real data now
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: colorScheme.onPrimaryContainer
+                                            .withOpacity(0.8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        if (exercises.length > 3)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              "+${exercises.length - 3} more exercises",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: colorScheme.onPrimaryContainer
+                                    .withOpacity(0.6),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
                 ],
               ),
-              const SizedBox(height: 12),
-              // Exercise preview
-              Text(
-                "Exercises:",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onPrimaryContainer,
-                ),
-              ),
-              const SizedBox(height: 8),
-              // TODO: Replace with actual exercises from routine
-              _buildExercisePreview(colorScheme),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

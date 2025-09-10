@@ -149,13 +149,6 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
                             exercise.name,
                             style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
-                          Text(
-                            _getMuscleGroupName(exercise.muscleGroupId),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
                         ],
                       ),
                     );

@@ -357,50 +357,7 @@ class _RoutinePageState extends State<RoutinePage> {
                       ),
                     )
                   else
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ...exercises
-                            .take(3)
-                            .map(
-                              (exercise) => Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.fitness_center,
-                                      size: 16,
-                                      color: colorScheme.onPrimaryContainer
-                                          .withOpacity(0.6),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      exercise.name, // <-- uses real data now
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: colorScheme.onPrimaryContainer
-                                            .withOpacity(0.8),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        if (exercises.length > 3)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              "+${exercises.length - 3} more exercises",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.onPrimaryContainer
-                                    .withOpacity(0.6),
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                    listExercises(exercises, colorScheme),
                 ],
               ),
             ),
@@ -410,31 +367,11 @@ class _RoutinePageState extends State<RoutinePage> {
     );
   }
 
-  Widget _buildExercisePreview(ColorScheme colorScheme) {
-    // TODO: Get actual exercises from routine.exercises
-    // For now, showing placeholder exercises
-    final placeholderExercises = [
-      "Bench Press",
-      "Squats",
-      "Deadlifts",
-      "Pull-ups",
-    ];
-
-    if (placeholderExercises.isEmpty) {
-      return Text(
-        "No exercises added yet",
-        style: TextStyle(
-          fontSize: 12,
-          color: colorScheme.onPrimaryContainer.withOpacity(0.5),
-          fontStyle: FontStyle.italic,
-        ),
-      );
-    }
-
+  Column listExercises(List<Exercise> exercises, ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...placeholderExercises
+        ...exercises
             .take(3)
             .map(
               (exercise) => Padding(
@@ -448,7 +385,7 @@ class _RoutinePageState extends State<RoutinePage> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      exercise,
+                      exercise.name, // <-- uses real data now
                       style: TextStyle(
                         fontSize: 13,
                         color: colorScheme.onPrimaryContainer.withOpacity(0.8),
@@ -458,11 +395,11 @@ class _RoutinePageState extends State<RoutinePage> {
                 ),
               ),
             ),
-        if (placeholderExercises.length > 3)
+        if (exercises.length > 3)
           Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-              "+${placeholderExercises.length - 3} more exercises",
+              "+${exercises.length - 3} more exercises",
               style: TextStyle(
                 fontSize: 12,
                 color: colorScheme.onPrimaryContainer.withOpacity(0.6),

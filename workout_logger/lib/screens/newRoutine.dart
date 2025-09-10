@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 

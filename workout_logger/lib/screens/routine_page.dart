@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/screens/routine_details.dart';
 import 'newRoutine.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
@@ -326,9 +327,9 @@ class _RoutinePageState extends State<RoutinePage> {
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('TODO: Navigate to routine details'),
+              Navigator.of(context).push<bool>(
+                MaterialPageRoute<bool>(
+                  builder: (context) => RoutineDetailsPage(routine: routine),
                 ),
               );
             },

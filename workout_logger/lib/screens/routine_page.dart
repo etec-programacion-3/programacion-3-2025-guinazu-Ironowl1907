@@ -37,13 +37,17 @@ class _RoutinePageState extends State<RoutinePage> {
     return Scaffold(
       appBar: AppBar(title: Text("Routines")),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute<void>(
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          final result = await Navigator.of(context).push<bool>(
+            MaterialPageRoute<bool>(
               builder: (context) => const CreateRoutinePage(),
             ),
           );
+
+          if (result == true) {
+            _refreshRoutines(); // Refresh list if a new routine was saved
+          }
         },
       ),
 
@@ -118,13 +122,17 @@ class _RoutinePageState extends State<RoutinePage> {
             ListTile(
               leading: const Icon(Icons.edit),
               title: const Text('Edit Routine'),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
+                final result = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute<bool>(
                     builder: (context) => CreateRoutinePage(routine: routine),
                   ),
                 );
+
+                if (result == true) {
+                  _refreshRoutines(); // Refresh list if a routine was updated
+                }
               },
             ),
             ListTile(

@@ -461,7 +461,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
             ),
           ),
         );
-        Navigator.of(context).pop(true); // Return true to indicate success
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

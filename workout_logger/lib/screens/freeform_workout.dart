@@ -79,8 +79,79 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
   Future<void> _endWorkout() async {
     if (_currentWorkout == null) return;
 
+    final controller = TextEditingController();
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text("Finish workout"),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: "Session Name",
+            hintText: "Enter session name",
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(
+                context,
+              ).colorScheme.error, // uses theme error color
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text(
+              "Discard",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ElevatedButton(
+            child: const Text("Save"),
+            onPressed: () {
+              final title = controller.text.trim();
+              if (title.isEmpty) {
+                _showErrorSnackBar("Empty title");
+              } else {
+                Navigator.of(context).pop(null); // trigger save
+              }
+            },
+          ),
+        ],
+      ),
+    );
+
+    // Handle discard
+    if (result == true) {
+      setState(() {
+        _isWorkoutActive = false;
+        _currentWorkout = null;
+        _exerciseLogs.clear();
+        _totalSets = 0;
+        _totalVolume = 0.0;
+      });
+      _showSuccessSnackBar('Workout discarded!');
+      return;
+    }
+
+    // Save workout
+    final title = controller.text.trim();
+
     try {
+      // Update workout with title and end time
+      _currentWorkout!.title = title;
+      _currentWorkout!.endedAt = DateTime.now();
       await _dbService.endWorkout(_currentWorkout!.id!);
+
+      // Save all exercise logs
+      for (final log in _exerciseLogs) {
+        await log.saveToDatabase(_currentWorkout!.id!, _dbService);
+      }
 
       setState(() {
         _isWorkoutActive = false;

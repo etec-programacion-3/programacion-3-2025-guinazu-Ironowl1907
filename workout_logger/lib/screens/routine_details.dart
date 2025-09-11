@@ -105,6 +105,7 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
     int totalTime = 0;
     for (final exercise in _exercises) {
       // Estimate time per set (45 seconds) + rest time
+      // TODO : Hack implementation
       final timePerSet = 45 + exercise.restSeconds;
       totalTime += exercise.sets * timePerSet;
     }
@@ -116,34 +117,10 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
   }
 
   Future<void> _startWorkout() async {
-    try {
-      final workoutId = await DatabaseService.instance.startWorkout(
-        widget.routine.id!,
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Workout started! TODO: Navigate to workout session'),
-          ),
-        );
-
-        // TODO: Navigate to workout session page
-
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => WorkoutSessionPage(workoutId: workoutId),
-        //   ),
-        // );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error starting workout: $e')));
-      }
-    }
+    // TODO: Implement start workout
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('TODO: Start workout functionality')),
+    );
   }
 
   Future<void> _editRoutine() async {
@@ -209,53 +186,58 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
               borderRadius: BorderRadius.circular(12),
             ),
             color: colorScheme.primaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.routine.name,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onPrimaryContainer,
-                    ),
-                  ),
-                  if (widget.routine.description != null &&
-                      widget.routine.description!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      widget.routine.description!,
+                      widget.routine.name,
                       style: TextStyle(
-                        fontSize: 16,
-                        color: colorScheme.onPrimaryContainer.withOpacity(0.7),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onPrimaryContainer,
                       ),
                     ),
-                  ],
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      _buildStatChip(
-                        "${_exercises.length} exercises",
-                        Icons.fitness_center,
-                        colorScheme,
-                      ),
-                      const SizedBox(width: 8),
-                      _buildStatChip(
-                        "~${_calculateEstimatedDuration()} min",
-                        Icons.timer,
-                        colorScheme,
-                      ),
-                      const SizedBox(width: 8),
-                      _buildStatChip(
-                        "${_workoutHistory.length} workouts",
-                        Icons.history,
-                        colorScheme,
+                    if (widget.routine.description != null &&
+                        widget.routine.description!.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.routine.description!,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colorScheme.onPrimaryContainer.withOpacity(
+                            0.7,
+                          ),
+                        ),
                       ),
                     ],
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _buildStatChip(
+                          "${_exercises.length} exercises",
+                          Icons.fitness_center,
+                          colorScheme,
+                        ),
+                        _buildStatChip(
+                          "~${_calculateEstimatedDuration()} min",
+                          Icons.timer,
+                          colorScheme,
+                        ),
+                        _buildStatChip(
+                          "${_workoutHistory.length} workouts",
+                          Icons.history,
+                          colorScheme,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -397,9 +379,10 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
 
           const SizedBox(height: 24),
 
-          // Progress Chart Placeholder
           Card(
             child: Container(
+              width: double.infinity,
+
               height: 200,
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -520,33 +503,36 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
 
           if (_workoutHistory.isEmpty)
             Card(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.history,
-                      size: 48,
-                      color: colorScheme.onSurface.withOpacity(0.5),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "No workout history yet",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: colorScheme.onSurface.withOpacity(0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Start your first workout to see history here",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
+              child: SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.history,
+                        size: 48,
                         color: colorScheme.onSurface.withOpacity(0.5),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(
+                        "No workout history yet",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Start your first workout to see history here",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )
@@ -629,20 +615,20 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
               ],
             ),
             const SizedBox(height: 12),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 _buildInfoChip(
                   "${exercise.sets} sets",
                   Icons.repeat,
                   colorScheme,
                 ),
-                const SizedBox(width: 8),
                 _buildInfoChip(
                   "${exercise.reps} reps",
                   Icons.fitness_center,
                   colorScheme,
                 ),
-                const SizedBox(width: 8),
                 _buildInfoChip(
                   "${exercise.restSeconds}s rest",
                   Icons.timer,

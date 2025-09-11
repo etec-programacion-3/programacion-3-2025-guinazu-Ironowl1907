@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/screens/freeform_workout.dart';
 
 class WorkoutPage extends StatelessWidget {
   const WorkoutPage({super.key});
@@ -26,7 +27,13 @@ class WorkoutPage extends StatelessWidget {
             MenuButton(
               label: "Free Form",
               icon: Icon(Icons.add, size: 28),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FreeFormWorkoutPage(),
+                  ),
+                );
+              },
             ),
           ],
         ),

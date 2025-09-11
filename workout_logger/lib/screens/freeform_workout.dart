@@ -37,15 +37,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
   }
 
   void _startTimer() {
-    // Update workout duration every second
-    Future.delayed(const Duration(seconds: 1), () {
-      if (_isWorkoutActive && mounted) {
-        setState(() {
-          _workoutDuration = DateTime.now().difference(_workoutStartTime!);
-        });
-        _startTimer();
-      }
-    });
+    //TODO:  Update workout duration every second
   }
 
   Future<void> _loadData() async {
@@ -201,7 +193,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
 
   Widget _buildWorkoutStatsHeader() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
@@ -217,21 +209,14 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatCard(
-            'Time',
+            'Duration',
             _isWorkoutActive ? _formatDuration(_workoutDuration) : '00:00:00',
-            Icons.timer,
             Colors.blue,
           ),
-          _buildStatCard(
-            'Sets',
-            _totalSets.toString(),
-            Icons.fitness_center,
-            Colors.orange,
-          ),
+          _buildStatCard('Sets', _totalSets.toString(), Colors.orange),
           _buildStatCard(
             'Volume',
             '${_totalVolume.toStringAsFixed(1)} kg',
-            Icons.trending_up,
             Colors.green,
           ),
         ],
@@ -239,46 +224,44 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
     );
   }
 
-  Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildStatCard(String label, String value, Color color) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         Text(
           value,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
   }
 
   Widget _buildStartWorkoutView() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.fitness_center, size: 100, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            'Ready to start your workout?',
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Tap the button below to begin',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: Colors.grey[500]),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.fitness_center, size: 100, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              textAlign: TextAlign.center,
+              'Ready to start your workout?',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap the button below to begin',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[500]),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -531,17 +514,3 @@ class WorkoutSet {
     );
   }
 }
-
-// TODO: List:
-// 1. Implement rest timer between sets
-// 2. Add exercise search/filter functionality in the add exercise dialog
-// 3. Implement exercise history display (previous weights/reps for each exercise)
-// 4. Add workout templates functionality
-// 5. Implement data persistence during workout (save progress in case app is closed)
-// 6. Add workout notes functionality
-// 7. Implement exercise reordering (drag and drop)
-// 8. Add superset support
-// 9. Implement workout analytics and progress tracking
-// 10. Add export workout data functionality
-// 11. Implement muscle group filtering for exercises
-// 12. Add custom exercise creation from within the workout

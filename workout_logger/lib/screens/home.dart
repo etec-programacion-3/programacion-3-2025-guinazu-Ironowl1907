@@ -28,15 +28,32 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return _workoutList.isEmpty
-        ? const Center(child: CircularProgressIndicator())
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.history, size: 64, color: Colors.grey),
+                SizedBox(height: 16),
+                Text(
+                  "No logged workouts yet.",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "Create a free form workout",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+          )
         : ListView.builder(
             itemCount: _workoutList.length,
             itemBuilder: (context, index) {
               final workout = _workoutList[index];
               return ListTile(
                 leading: const Icon(Icons.fitness_center),
-                title: Text("Workout name"), // adjust property name
-                subtitle: Text("ID: ${workout.id}"), // just an example
+                title: Text(workout.title ?? "<Untitled>"),
+                subtitle: Text("ID: ${workout.id}"),
                 onTap: () {
                   ScaffoldMessenger.of(
                     context,

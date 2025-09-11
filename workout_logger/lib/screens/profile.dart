@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/screens/exercises.dart';
 import 'package:workout_logger/screens/muscle_group.dart';
+import 'package:workout_logger/screens/newRoutine.dart';
+import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -21,7 +22,7 @@ class ProfilePage extends StatelessWidget {
               fontSize: 16,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
@@ -53,7 +54,14 @@ class ProfilePage extends StatelessWidget {
                     );
                   },
                 ),
-                const _DashboardButton(label: "Routines"),
+                _DashboardButton(
+                  label: "Routines",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RoutinePage()),
+                    );
+                  },
+                ),
                 const _DashboardButton(label: "Progress"),
               ],
             ),

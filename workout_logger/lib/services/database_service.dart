@@ -192,6 +192,7 @@ class DatabaseService {
     SELECT e.* FROM exercises e
     JOIN routine_exercises re ON e.id = re.exercise_id
     WHERE re.routine_id = ?
+    ORDER BY re.`order` ASC;
   ''',
       [routineId],
     );

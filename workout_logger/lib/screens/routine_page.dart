@@ -53,6 +53,7 @@ class _RoutinePageState extends State<RoutinePage> {
           routineId: newRoutineId,
           exerciseId: routineExercise.exerciseId,
           sets: routineExercise.sets,
+          order: routineExercise.order,
           reps: routineExercise.reps,
           restSeconds: routineExercise.restSeconds,
         );

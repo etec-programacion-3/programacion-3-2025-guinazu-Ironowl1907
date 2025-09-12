@@ -184,6 +184,16 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
     });
   }
 
+  void _reorderExerciseLogs(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final log = _exerciseLogs.removeAt(oldIndex);
+      _exerciseLogs.insert(newIndex, log);
+    });
+  }
+
   void _updateStatistics() {
     int sets = 0;
     double volume = 0.0;
@@ -365,9 +375,10 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
       );
     }
 
-    return ListView.builder(
+    return ReorderableListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _exerciseLogs.length,
+      onReorder: _reorderExerciseLogs,
       itemBuilder: (context, index) {
         return _buildExerciseLogCard(_exerciseLogs[index], index);
       },
@@ -376,6 +387,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
 
   Widget _buildExerciseLogCard(WorkoutExerciseLog log, int index) {
     return Card(
+      key: ValueKey(log.exercise.id),
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -384,6 +396,27 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
           children: [
             Row(
               children: [
+                Icon(Icons.drag_handle, color: Colors.grey[600]),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     log.exercise.name,

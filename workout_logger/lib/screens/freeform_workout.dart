@@ -128,6 +128,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
 
     // Handle discard
     if (result == true) {
+      _dbService.deleteWorkout(_currentWorkout!.id!);
       setState(() {
         _isWorkoutActive = false;
         _currentWorkout = null;

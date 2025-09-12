@@ -146,6 +146,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
       // Update workout with title and end time
       _currentWorkout!.title = title;
       _currentWorkout!.endedAt = DateTime.now();
+      await _dbService.updateWorkout(_currentWorkout!);
       await _dbService.endWorkout(_currentWorkout!.id!);
 
       // Save all exercise logs

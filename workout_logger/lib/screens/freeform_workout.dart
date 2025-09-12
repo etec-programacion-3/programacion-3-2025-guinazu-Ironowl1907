@@ -376,7 +376,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
     }
 
     return ReorderableListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(top: 16),
       itemCount: _exerciseLogs.length,
       onReorder: _reorderExerciseLogs,
       itemBuilder: (context, index) {
@@ -394,6 +394,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // --- Exercise header row (unchanged) ---
             Row(
               children: [
                 Icon(Icons.drag_handle, color: Colors.grey[600]),
@@ -433,85 +434,119 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
-            // Sets List
-            ...log.sets.asMap().entries.map((entry) {
-              int setIndex = entry.key;
-              WorkoutSet set = entry.value;
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
+            Table(
+              columnWidths: const {
+                0: FixedColumnWidth(30),
+                1: FlexColumnWidth(),
+                2: FlexColumnWidth(),
+                3: IntrinsicColumnWidth(),
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              border: TableBorder.all(width: 0),
+              children: [
+                TableRow(
                   children: [
-                    SizedBox(width: 40, child: Text('${setIndex + 1}:')),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: set.weight?.toString() ?? '',
-                              decoration: const InputDecoration(
-                                labelText: 'Weight (kg)',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                              ),
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                final weight = double.tryParse(value);
-                                log.updateSet(setIndex, weight: weight);
-                                _updateStatistics();
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: set.reps?.toString() ?? '',
-                              decoration: const InputDecoration(
-                                labelText: 'Reps',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                              ),
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                final reps = int.tryParse(value);
-                                log.updateSet(setIndex, reps: reps);
-                                _updateStatistics();
-                              },
-                            ),
-                          ),
-                        ],
+                    const Text(
+                      "#",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Text(
+                        "Weight",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        log.removeSet(setIndex);
-                        _updateStatistics();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.remove_circle),
-                      color: Colors.red,
+                    const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Text(
+                        "Reps",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    const SizedBox.shrink(),
                   ],
                 ),
-              );
-            }),
 
-            // Add Set Button
-            TextButton.icon(
-              onPressed: () {
-                log.addSet();
-                setState(() {});
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Set'),
+                // Data rows
+                ...log.sets.asMap().entries.map((entry) {
+                  final setIndex = entry.key;
+                  final set = entry.value;
+
+                  return TableRow(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text('${setIndex + 1}'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: TextFormField(
+                          initialValue: set.weight?.toString() ?? '',
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            final weight = double.tryParse(value);
+                            log.updateSet(setIndex, weight: weight);
+                            _updateStatistics();
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: TextFormField(
+                          initialValue: set.reps?.toString() ?? '',
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            final reps = int.tryParse(value);
+                            log.updateSet(setIndex, reps: reps);
+                            _updateStatistics();
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          log.removeSet(setIndex);
+                          _updateStatistics();
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.remove_circle),
+                        color: Colors.red,
+                      ),
+                    ],
+                  );
+                }),
+              ],
+            ),
+
+            // --- Add Set Button ---
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () {
+                  log.addSet();
+                  setState(() {});
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Add Set'),
+              ),
             ),
           ],
         ),

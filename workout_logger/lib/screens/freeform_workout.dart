@@ -444,7 +444,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
                 3: IntrinsicColumnWidth(),
               },
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              border: TableBorder.all(width: 0),
+              border: TableBorder.all(color: Colors.transparent),
               children: [
                 TableRow(
                   children: [

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blueGrey,
-          brightness: Brightness.dark,
+          brightness: Brightness.light,
         ),
       ),
       home: const AppNavigation(),

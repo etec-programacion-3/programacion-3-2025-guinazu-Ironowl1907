@@ -151,6 +151,7 @@ class RoutineExercise {
   int? id;
   int routineId;
   int exerciseId;
+  int order;
   int? sets;
   int? reps;
   int? restSeconds;
@@ -159,6 +160,7 @@ class RoutineExercise {
     this.id,
     required this.routineId,
     required this.exerciseId,
+    required this.order,
     this.sets,
     this.reps,
     this.restSeconds,
@@ -168,6 +170,7 @@ class RoutineExercise {
   int? get getId => id;
   int get getRoutineId => routineId;
   int get getExerciseId => exerciseId;
+  int? get getOrder => order;
   int? get getSets => sets;
   int? get getReps => reps;
   int? get getRestSeconds => restSeconds;
@@ -177,6 +180,7 @@ class RoutineExercise {
   set setRoutineId(int routineId) => this.routineId = routineId;
   set setExerciseId(int exerciseId) => this.exerciseId = exerciseId;
   set setSets(int? sets) => this.sets = sets;
+  set setOrder(int order) => this.order = order;
   set setReps(int? reps) => this.reps = reps;
   set setRestSeconds(int? restSeconds) => this.restSeconds = restSeconds;
 
@@ -186,6 +190,7 @@ class RoutineExercise {
       'id': id,
       'routine_id': routineId,
       'exercise_id': exerciseId,
+      'order': order,
       'sets': sets,
       'reps': reps,
       'rest_seconds': restSeconds,
@@ -198,6 +203,7 @@ class RoutineExercise {
       id: map['id'],
       routineId: map['routine_id'],
       exerciseId: map['exercise_id'],
+      order: map['order'],
       sets: map['sets'],
       reps: map['reps'],
       restSeconds: map['rest_seconds'],
@@ -211,6 +217,7 @@ class RoutineExercise {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         routine_id INTEGER NOT NULL,
         exercise_id INTEGER NOT NULL,
+        `order` INTEGER,
         sets INTEGER,
         reps INTEGER,
         rest_seconds INTEGER,
@@ -224,20 +231,23 @@ class RoutineExercise {
 // Workout class
 class Workout {
   int? id;
+  String? title;
   int? routineId;
   DateTime? startedAt;
   DateTime? endedAt;
 
-  Workout({this.id, this.routineId, this.startedAt, this.endedAt});
+  Workout({this.id, this.title, this.routineId, this.startedAt, this.endedAt});
 
   // Getters
   int? get getId => id;
+  String? get getTitle => title;
   int? get getRoutineId => routineId;
   DateTime? get getStartedAt => startedAt;
   DateTime? get getEndedAt => endedAt;
 
   // Setters
   set setId(int? id) => this.id = id;
+  set setTitle(String? title) => this.title = title;
   set setRoutineId(int? routineId) => this.routineId = routineId;
   set setStartedAt(DateTime? startedAt) => this.startedAt = startedAt;
   set setEndedAt(DateTime? endedAt) => this.endedAt = endedAt;
@@ -246,6 +256,7 @@ class Workout {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'title': title,
       'routine_id': routineId,
       'started_at': startedAt?.toIso8601String(),
       'ended_at': endedAt?.toIso8601String(),
@@ -256,6 +267,7 @@ class Workout {
   factory Workout.fromMap(Map<String, dynamic> map) {
     return Workout(
       id: map['id'],
+      title: map['title'],
       routineId: map['routine_id'],
       startedAt: map['started_at'] != null
           ? DateTime.parse(map['started_at'])
@@ -269,6 +281,7 @@ class Workout {
     return '''
       CREATE TABLE workouts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
         routine_id INTEGER,
         started_at TIMESTAMP,
         ended_at TIMESTAMP,

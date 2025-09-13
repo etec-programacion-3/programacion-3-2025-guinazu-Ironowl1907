@@ -74,6 +74,8 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
 
     final List<RoutineExerciseItem> items = [];
 
+    routineExercises.sort((a, b) => (a.order).compareTo(b.order));
+
     for (final routineExercise in routineExercises) {
       final exercise = _availableExercises.firstWhere(
         (e) => e.id == routineExercise.exerciseId,
@@ -86,6 +88,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
           sets: routineExercise.sets ?? 3,
           reps: routineExercise.reps ?? 10,
           restSeconds: routineExercise.restSeconds ?? 60,
+          order: routineExercise.order ?? 0,
         ),
       );
     }
@@ -228,6 +231,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
                     sets: int.parse(setsController.text),
                     reps: int.parse(repsController.text),
                     restSeconds: int.parse(restController.text),
+                    order: _selectedExercises.length, // Assign next order
                     notes: notesController.text.trim().isEmpty
                         ? null
                         : notesController.text.trim(),
@@ -344,6 +348,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
                   sets: int.parse(setsController.text),
                   reps: int.parse(repsController.text),
                   restSeconds: int.parse(restController.text),
+                  order: item.order, // Keep the same order
                   notes: notesController.text.trim().isEmpty
                       ? null
                       : notesController.text.trim(),
@@ -368,6 +373,8 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
   void _removeExercise(int index) {
     setState(() {
       _selectedExercises.removeAt(index);
+      // Update order for remaining exercises
+      _updateExerciseOrder();
     });
   }
 
@@ -378,7 +385,22 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
       }
       final item = _selectedExercises.removeAt(oldIndex);
       _selectedExercises.insert(newIndex, item);
+      // Update order after reordering
+      _updateExerciseOrder();
     });
+  }
+
+  void _updateExerciseOrder() {
+    for (int i = 0; i < _selectedExercises.length; i++) {
+      _selectedExercises[i] = RoutineExerciseItem(
+        exercise: _selectedExercises[i].exercise,
+        sets: _selectedExercises[i].sets,
+        reps: _selectedExercises[i].reps,
+        restSeconds: _selectedExercises[i].restSeconds,
+        order: i, // Update order based on current position
+        notes: _selectedExercises[i].notes,
+      );
+    }
   }
 
   Future<void> _saveRoutine() async {
@@ -429,13 +451,14 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
         routineId = await DatabaseService.instance.insertRoutine(routine);
       }
 
-      // Insert routine exercises
+      // Insert routine exercises with proper order
       for (int i = 0; i < _selectedExercises.length; i++) {
         final item = _selectedExercises[i];
         final routineExercise = RoutineExercise(
           routineId: routineId,
           exerciseId: item.exercise.id!,
           sets: item.sets,
+          order: i, // Use index as order
           reps: item.reps,
           restSeconds: item.restSeconds,
         );
@@ -623,6 +646,25 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
                   color: colorScheme.onPrimaryContainer.withOpacity(0.5),
                 ),
                 const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSecondary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -733,6 +775,7 @@ class RoutineExerciseItem {
   final Exercise exercise;
   final int sets;
   final int reps;
+  final int order;
   final int restSeconds;
   final String? notes;
 
@@ -740,6 +783,7 @@ class RoutineExerciseItem {
     required this.exercise,
     required this.sets,
     required this.reps,
+    required this.order,
     required this.restSeconds,
     this.notes,
   });

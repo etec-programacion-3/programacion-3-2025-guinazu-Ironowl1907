@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/utils/workout_utils.dart';
 
 class FreeFormWorkoutPage extends StatefulWidget {
-  const FreeFormWorkoutPage({super.key});
+  final ActiveWorkoutData? activeWorkoutData;
+
+  const FreeFormWorkoutPage({super.key, this.activeWorkoutData});
 
   @override
   State<FreeFormWorkoutPage> createState() => _FreeFormWorkoutPageState();
@@ -16,36 +19,26 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
   @override
   void initState() {
     super.initState();
-    _restoreWorkout();
+    _initializeWorkout();
+  }
+
+  void _initializeWorkout() {
+    if (widget.activeWorkoutData != null) {
+      // Use provided active workout data
+      setState(() {
+        _runningWorkout = widget.activeWorkoutData!.workout;
+        _logs = widget.activeWorkoutData!.logs;
+      });
+    }
+    // If no active workout data provided, we start fresh (no workout running)
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Log Workout")),
-      body: _runningWorkout == null ? _freeFormWorkout() : _routineWorkout(),
+      body: _freeFormWorkout(),
     );
-  }
-
-  Widget _routineWorkout() {
-    return Placeholder();
-  }
-
-  Future<void> _restoreWorkout() async {
-    final db = DatabaseService.instance;
-    final workouts = await db.getAllWorkouts();
-    final active = workouts.firstWhere(
-      (w) => w.endedAt == null,
-      orElse: () => null as Workout,
-    );
-
-    if (active != null) {
-      final logs = await db.getWorkoutLogsByWorkout(active.id!);
-      setState(() {
-        _runningWorkout = active;
-        _logs = logs;
-      });
-    }
   }
 
   Future<void> _startWorkout() async {
@@ -61,8 +54,8 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
 
   Future<void> _endWorkout() async {
     if (_runningWorkout == null) return;
-    final db = DatabaseService.instance;
-    await db.endWorkout(_runningWorkout!.id!);
+
+    await WorkoutUtils.endWorkout(_runningWorkout!.id!);
 
     setState(() {
       _runningWorkout = null;
@@ -91,25 +84,32 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
   }
 
   Widget _freeFormWorkout() {
-    return Column(
-      children: [
-        workoutStatus(),
-        const SizedBox(height: 20),
-        if (_runningWorkout == null)
-          ElevatedButton(
-            onPressed: _startWorkout,
-            child: const Text("Start Workout"),
-          )
-        else
+    if (_runningWorkout != null) {
+      return Column(
+        children: [
+          workoutStatus(),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () => _addSet(1, 10, 50.0), // dummy exercise example
             child: const Text("Add Set"),
           ),
-        if (_runningWorkout != null)
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: _endWorkout,
             child: const Text("End Workout"),
           ),
+        ],
+      );
+    }
+
+    return Column(
+      children: [
+        workoutStatus(),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _startWorkout,
+          child: const Text("Start Workout"),
+        ),
       ],
     );
   }

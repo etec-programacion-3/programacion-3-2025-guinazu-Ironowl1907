@@ -53,7 +53,11 @@ class _HomePageState extends State<HomePage> {
               return ListTile(
                 leading: const Icon(Icons.fitness_center),
                 title: Text(workout.title ?? "<Untitled>"),
-                subtitle: Text("ID: ${workout.id}"),
+                subtitle: Text(
+                  workout.endedAt == null
+                      ? "Unfinished"
+                      : workout.endedAt.toString(),
+                ),
                 onTap: () {
                   ScaffoldMessenger.of(
                     context,

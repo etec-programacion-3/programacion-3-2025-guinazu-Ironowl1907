@@ -37,18 +37,16 @@ class WorkoutPage extends StatelessWidget {
 
   Future<void> _handleFreeFormStart(BuildContext context) async {
     try {
-      // Check for active workout
       final activeWorkoutData = await WorkoutUtils.getActiveWorkout();
 
       if (activeWorkoutData != null) {
-        // Show dialog if active workout exists
         final action = await WorkoutUtils.showActiveWorkoutDialog(
           context,
           activeWorkoutData.workout,
           activeWorkoutData.logs,
         );
 
-        if (action == null) return; // User cancelled dialog
+        if (action == null) return;
 
         switch (action) {
           case WorkoutAction.continue_:
@@ -60,7 +58,6 @@ class WorkoutPage extends StatelessWidget {
             break;
           case WorkoutAction.discard:
             await WorkoutUtils.endWorkout(activeWorkoutData.workout.id!);
-            _navigateToFreeForm(context, null);
             break;
         }
       } else {

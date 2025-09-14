@@ -30,7 +30,7 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
         _logs = widget.activeWorkoutData!.logs;
       });
     }
-    // If no active workout data provided, we start fresh (no workout running)
+    _startWorkout();
   }
 
   @override
@@ -84,31 +84,18 @@ class _FreeFormWorkoutPageState extends State<FreeFormWorkoutPage> {
   }
 
   Widget _freeFormWorkout() {
-    if (_runningWorkout != null) {
-      return Column(
-        children: [
-          workoutStatus(),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () => _addSet(1, 10, 50.0), // dummy exercise example
-            child: const Text("Add Set"),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: _endWorkout,
-            child: const Text("End Workout"),
-          ),
-        ],
-      );
-    }
-
     return Column(
       children: [
         workoutStatus(),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: _startWorkout,
-          child: const Text("Start Workout"),
+          onPressed: () => _addSet(1, 10, 50.0), // dummy exercise example
+          child: const Text("Add Set"),
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: _endWorkout,
+          child: const Text("End Workout"),
         ),
       ],
     );

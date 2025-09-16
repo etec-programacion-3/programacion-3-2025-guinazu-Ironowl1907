@@ -285,7 +285,6 @@ class Workout {
         started_at TIMESTAMP,
         ended_at TIMESTAMP,
         status TEXT DEFAULT 'in_progress' CHECK(status IN ('in_progress', 'completed', 'cancelled')),
-        last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(routine_id) REFERENCES routines(id)
       );
     ''';

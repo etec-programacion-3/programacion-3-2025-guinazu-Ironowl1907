@@ -228,7 +228,6 @@ class RoutineExercise {
   }
 }
 
-// Workout class
 class Workout {
   int? id;
   String? title;
@@ -285,89 +284,178 @@ class Workout {
         routine_id INTEGER,
         started_at TIMESTAMP,
         ended_at TIMESTAMP,
+        status TEXT DEFAULT 'in_progress' CHECK(status IN ('in_progress', 'completed', 'cancelled')),
+        last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(routine_id) REFERENCES routines(id)
       );
     ''';
   }
 }
 
-// WorkoutLog class
-class WorkoutLog {
+class WorkoutExercise {
   int? id;
   int workoutId;
   int exerciseId;
-  int? setNumber;
-  int? reps;
-  double? weightKg;
-  int? restSeconds;
+  int orderIndex;
+  DateTime? completedAt;
 
-  WorkoutLog({
+  WorkoutExercise({
     this.id,
     required this.workoutId,
     required this.exerciseId,
-    this.setNumber,
-    this.reps,
-    this.weightKg,
-    this.restSeconds,
+    required this.orderIndex,
+    this.completedAt,
   });
 
-  // Getters
   int? get getId => id;
   int get getWorkoutId => workoutId;
   int get getExerciseId => exerciseId;
-  int? get getSetNumber => setNumber;
-  int? get getReps => reps;
-  double? get getWeightKg => weightKg;
-  int? get getRestSeconds => restSeconds;
+  int get getOrderIndex => orderIndex;
+  DateTime? get getCompletedAt => completedAt;
 
-  // Setters
   set setId(int? id) => this.id = id;
   set setWorkoutId(int workoutId) => this.workoutId = workoutId;
   set setExerciseId(int exerciseId) => this.exerciseId = exerciseId;
-  set setSetNumber(int? setNumber) => this.setNumber = setNumber;
-  set setReps(int? reps) => this.reps = reps;
-  set setWeightKg(double? weightKg) => this.weightKg = weightKg;
-  set setRestSeconds(int? restSeconds) => this.restSeconds = restSeconds;
+  set setOrderIndex(int orderIndex) => this.orderIndex = orderIndex;
+  set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
 
-  // Convert to Map for database operations
+  bool get isCompleted => completedAt != null;
+  void markCompleted() => completedAt = DateTime.now();
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'workout_id': workoutId,
       'exercise_id': exerciseId,
+      'order_index': orderIndex,
+      'completed_at': completedAt?.toIso8601String(),
+    };
+  }
+
+  factory WorkoutExercise.fromMap(Map<String, dynamic> map) {
+    return WorkoutExercise(
+      id: map['id'],
+      workoutId: map['workout_id'],
+      exerciseId: map['exercise_id'],
+      orderIndex: map['order_index'],
+      completedAt: map['completed_at'] != null
+          ? DateTime.parse(map['completed_at'])
+          : null,
+    );
+  }
+
+  static String createTableQuery() {
+    return '''
+      CREATE TABLE workout_exercises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        workout_id INTEGER NOT NULL,
+        exercise_id INTEGER NOT NULL,
+        order_index INTEGER NOT NULL,
+        completed_at TIMESTAMP,
+        FOREIGN KEY(workout_id) REFERENCES workouts(id),
+        FOREIGN KEY(exercise_id) REFERENCES exercises(id)
+      );
+    ''';
+  }
+}
+
+class WorkoutSet {
+  int? id;
+  int workoutExerciseId;
+  int setNumber;
+  int? reps;
+  double? weightKg;
+  int? durationSeconds;
+  int? restSeconds;
+  String? notes;
+  DateTime? completedAt;
+
+  WorkoutSet({
+    this.id,
+    required this.workoutExerciseId,
+    required this.setNumber,
+    this.reps,
+    this.weightKg,
+    this.durationSeconds,
+    this.restSeconds,
+    this.notes,
+    this.completedAt,
+  });
+
+  // Getters
+  int? get getId => id;
+  int get getWorkoutExerciseId => workoutExerciseId;
+  int get getSetNumber => setNumber;
+  int? get getReps => reps;
+  double? get getWeightKg => weightKg;
+  int? get getDurationSeconds => durationSeconds;
+  int? get getRestSeconds => restSeconds;
+  String? get getNotes => notes;
+  DateTime? get getCompletedAt => completedAt;
+
+  // Setters
+  set setId(int? id) => this.id = id;
+  set setWorkoutExerciseId(int workoutExerciseId) =>
+      this.workoutExerciseId = workoutExerciseId;
+  set setSetNumber(int setNumber) => this.setNumber = setNumber;
+  set setReps(int? reps) => this.reps = reps;
+  set setWeightKg(double? weightKg) => this.weightKg = weightKg;
+  set setDurationSeconds(int? durationSeconds) =>
+      this.durationSeconds = durationSeconds;
+  set setRestSeconds(int? restSeconds) => this.restSeconds = restSeconds;
+  set setNotes(String? notes) => this.notes = notes;
+  set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
+
+  // Helper methods
+  bool get isCompleted => completedAt != null;
+  void markCompleted() => completedAt = DateTime.now();
+
+  // Convert to Map for database operations
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'workout_exercise_id': workoutExerciseId,
       'set_number': setNumber,
       'reps': reps,
       'weight_kg': weightKg,
+      'duration_seconds': durationSeconds,
       'rest_seconds': restSeconds,
+      'notes': notes,
+      'completed_at': completedAt?.toIso8601String(),
     };
   }
 
   // Create from Map
-  factory WorkoutLog.fromMap(Map<String, dynamic> map) {
-    return WorkoutLog(
+  factory WorkoutSet.fromMap(Map<String, dynamic> map) {
+    return WorkoutSet(
       id: map['id'],
-      workoutId: map['workout_id'],
-      exerciseId: map['exercise_id'],
+      workoutExerciseId: map['workout_exercise_id'],
       setNumber: map['set_number'],
       reps: map['reps'],
       weightKg: map['weight_kg']?.toDouble(),
+      durationSeconds: map['duration_seconds'],
       restSeconds: map['rest_seconds'],
+      notes: map['notes'],
+      completedAt: map['completed_at'] != null
+          ? DateTime.parse(map['completed_at'])
+          : null,
     );
   }
 
   // SQL creation query
   static String createTableQuery() {
     return '''
-      CREATE TABLE workout_logs (
+      CREATE TABLE workout_sets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        workout_id INTEGER NOT NULL,
-        exercise_id INTEGER NOT NULL,
-        set_number INTEGER,
+        workout_exercise_id INTEGER NOT NULL,
+        set_number INTEGER NOT NULL,
         reps INTEGER,
-        weight_kg DECIMAL,
+        weight_kg REAL,
+        duration_seconds INTEGER,
         rest_seconds INTEGER,
-        FOREIGN KEY(workout_id) REFERENCES workouts(id),
-        FOREIGN KEY(exercise_id) REFERENCES exercises(id)
+        notes TEXT,
+        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(workout_exercise_id) REFERENCES workout_exercises(id)
       );
     ''';
   }
@@ -382,7 +470,8 @@ class DatabaseSchema {
       Routine.createTableQuery(),
       RoutineExercise.createTableQuery(),
       Workout.createTableQuery(),
-      WorkoutLog.createTableQuery(),
+      WorkoutExercise.createTableQuery(),
+      WorkoutSet.createTableQuery(),
     ];
   }
 }

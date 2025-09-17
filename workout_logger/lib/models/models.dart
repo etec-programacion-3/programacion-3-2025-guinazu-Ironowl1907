@@ -460,6 +460,13 @@ class WorkoutSet {
   }
 }
 
+class DetailedRoutineExercise {
+  Exercise exercise;
+  RoutineExercise routineExercise;
+
+  DetailedRoutineExercise(this.exercise, this.routineExercise);
+}
+
 // Helper class to get all table creation queries
 class DatabaseSchema {
   static List<String> getAllCreateTableQueries() {

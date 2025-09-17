@@ -105,7 +105,7 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
 
     if (result != null && result.isNotEmpty) {
       final muscleGroup = MuscleGroup(name: result);
-      await DatabaseService.instance.insertMuscleGroup(muscleGroup);
+      await DatabaseService.instance.createMuscleGroup(muscleGroup);
       _refreshMuscleGroups();
     }
   }

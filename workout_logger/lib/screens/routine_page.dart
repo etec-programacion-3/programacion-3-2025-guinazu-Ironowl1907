@@ -44,7 +44,7 @@ class _RoutinePageState extends State<RoutinePage> {
         description: routine.description,
       );
 
-      final newRoutineId = await DatabaseService.instance.insertRoutine(
+      final newRoutineId = await DatabaseService.instance.createRoutine(
         duplicatedRoutine,
       );
 
@@ -58,7 +58,7 @@ class _RoutinePageState extends State<RoutinePage> {
           restSeconds: routineExercise.restSeconds,
         );
 
-        await DatabaseService.instance.insertRoutineExercise(
+        await DatabaseService.instance.createRoutineExercise(
           newRoutineExercise,
         );
       }
@@ -190,19 +190,6 @@ class _RoutinePageState extends State<RoutinePage> {
     );
   }
 
-  Future<List<Exercise>> _getExercises(Routine routine) async {
-    final result = await DatabaseService.instance.getAllExercisesFromRoutine(
-      routine.id!,
-    );
-
-    return result;
-  }
-
-  Future<void> _deleteRoutine(Routine routine) async {
-    await DatabaseService.instance.deleteRoutine(routine.id!);
-    _refreshRoutines();
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -287,7 +274,7 @@ class _RoutinePageState extends State<RoutinePage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              _deleteRoutine(routine);
+              DatabaseService.instance.deleteRoutine(routine.id!);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('${routine.name} deleted')),
               );
@@ -301,8 +288,10 @@ class _RoutinePageState extends State<RoutinePage> {
   }
 
   Widget routineCard(Routine routine, int index, ColorScheme colorScheme) {
-    return FutureBuilder<List<Exercise>>(
-      future: _getExercises(routine),
+    return FutureBuilder<List<DetailedRoutineExercise>>(
+      future: DatabaseService.instance.getDetailedRoutineExercisesByRoutine(
+        routine.id!,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Card(
@@ -451,7 +440,10 @@ class _RoutinePageState extends State<RoutinePage> {
     );
   }
 
-  Column listExercises(List<Exercise> exercises, ColorScheme colorScheme) {
+  Column listExercises(
+    List<DetailedRoutineExercise> exercises,
+    ColorScheme colorScheme,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -469,7 +461,7 @@ class _RoutinePageState extends State<RoutinePage> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      exercise.name, // <-- uses real data now
+                      exercise.exercise.name,
                       style: TextStyle(
                         fontSize: 13,
                         color: colorScheme.onPrimaryContainer.withOpacity(0.8),

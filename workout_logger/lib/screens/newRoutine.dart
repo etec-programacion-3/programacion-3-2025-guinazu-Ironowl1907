@@ -448,7 +448,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
               : _descriptionController.text.trim(),
         );
 
-        routineId = await DatabaseService.instance.insertRoutine(routine);
+        routineId = await DatabaseService.instance.createRoutine(routine);
       }
 
       // Insert routine exercises with proper order
@@ -463,7 +463,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
           restSeconds: item.restSeconds,
         );
 
-        await DatabaseService.instance.insertRoutineExercise(routineExercise);
+        await DatabaseService.instance.createRoutineExercise(routineExercise);
       }
 
       if (mounted) {

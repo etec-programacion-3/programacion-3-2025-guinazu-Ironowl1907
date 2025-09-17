@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/screens/freeform_workout.dart';
-import 'package:workout_logger/utils/workout_utils.dart';
 
 class WorkoutPage extends StatelessWidget {
   const WorkoutPage({super.key});
@@ -27,62 +26,12 @@ class WorkoutPage extends StatelessWidget {
             MenuButton(
               label: "Free Form",
               icon: Icon(Icons.add, size: 28),
-              onPressed: () => _handleFreeFormStart(context),
+              onPressed: () {
+                print("Free Form page button");
+              },
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Future<void> _handleFreeFormStart(BuildContext context) async {
-    try {
-      final activeWorkoutData = await WorkoutUtils.getActiveWorkout();
-
-      if (activeWorkoutData != null) {
-        final action = await WorkoutUtils.showActiveWorkoutDialog(
-          context,
-          activeWorkoutData.workout,
-          activeWorkoutData.logs,
-        );
-
-        if (action == null) return;
-
-        switch (action) {
-          case WorkoutAction.continue_:
-            _navigateToFreeForm(context, activeWorkoutData);
-            break;
-          case WorkoutAction.startNew:
-            await WorkoutUtils.endWorkout(activeWorkoutData.workout.id!);
-            _navigateToFreeForm(context, null);
-            break;
-          case WorkoutAction.discard:
-            await WorkoutUtils.endWorkout(activeWorkoutData.workout.id!);
-            break;
-        }
-      } else {
-        // No active workout, start fresh
-        _navigateToFreeForm(context, null);
-      }
-    } catch (e) {
-      // Handle any errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error checking for active workout: $e'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    }
-  }
-
-  void _navigateToFreeForm(
-    BuildContext context,
-    ActiveWorkoutData? activeData,
-  ) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) =>
-            FreeFormWorkoutPage(activeWorkoutData: activeData),
       ),
     );
   }

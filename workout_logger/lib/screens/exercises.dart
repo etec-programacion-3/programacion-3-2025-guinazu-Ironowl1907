@@ -228,7 +228,7 @@ class _ExercisePageState extends State<ExercisePage> {
         description: result['description'],
         muscleGroupId: result['muscleGroupId'],
       );
-      await DatabaseService.instance.insertExercise(exercise);
+      await DatabaseService.instance.createExercise(exercise);
       _refreshExercises();
     }
   }

@@ -17,7 +17,7 @@ class DatabaseService {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "master.db");
     print("Searching for Db on: $databasePath");
-    return await openDatabase(databasePath, version: 1, onCreate: _onCreate);
+    return await openDatabase(databasePath, version: 2, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -165,6 +165,90 @@ class DatabaseService {
   Future<int> createRoutineExercise(RoutineExercise routineExercise) async {
     final db = await database;
     return await db.insert("routine_exercises", routineExercise.toMap());
+  }
+
+  Future<DetailedRoutineExercise?> getDetailedRoutineExercise(int id) async {
+    final db = await database;
+
+    // Get the routine exercise first
+    final routineExerciseResult = await db.query(
+      "routine_exercises",
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    if (routineExerciseResult.isEmpty) {
+      return null;
+    }
+
+    final routineExercise = RoutineExercise.fromMap(
+      routineExerciseResult.first,
+    );
+
+    // Get the associated exercise
+    final exerciseResult = await db.query(
+      "exercises",
+      where: "id = ?",
+      whereArgs: [routineExercise.exerciseId],
+    );
+
+    if (exerciseResult.isEmpty) {
+      return null;
+    }
+
+    final exercise = Exercise.fromMap(exerciseResult.first);
+
+    return DetailedRoutineExercise(exercise, routineExercise);
+  }
+
+  // Get all detailed routine exercises for a specific routine
+  Future<List<DetailedRoutineExercise>> getDetailedRoutineExercisesByRoutine(
+    int routineId,
+  ) async {
+    final db = await database;
+
+    final result = await db.rawQuery(
+      '''
+    SELECT 
+      re.id as re_id,
+      re.routine_id,
+      re.exercise_id,
+      re.`order`,
+      re.sets,
+      re.reps,
+      re.rest_seconds,
+      e.id as e_id,
+      e.name as e_name,
+      e.description as e_description,
+      e.muscle_group_id
+    FROM routine_exercises re
+    JOIN exercises e ON re.exercise_id = e.id
+    WHERE re.routine_id = ?
+    ORDER BY re.`order` ASC
+  ''',
+      [routineId],
+    );
+
+    return result.map((row) {
+      final exercise = Exercise(
+        id: row['e_id'] as int?,
+        name: row['e_name'] as String,
+        description: row['e_description'] as String?,
+        muscleGroupId: row['muscle_group_id'] as int?,
+      );
+
+      final routineExercise = RoutineExercise(
+        id: row['re_id'] as int?,
+        routineId: row['routine_id'] as int,
+        exerciseId: row['exercise_id'] as int,
+        order: row['order'] as int,
+        sets: row['sets'] as int?,
+        reps: row['reps'] as int?,
+        restSeconds: row['rest_seconds'] as int?,
+      );
+
+      return DetailedRoutineExercise(exercise, routineExercise);
+    }).toList();
   }
 
   Future<RoutineExercise?> getRoutineExercise(int id) async {

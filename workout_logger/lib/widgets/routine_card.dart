@@ -1,202 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
-import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/screens/routine_details.dart';
+import 'package:workout_logger/services/database_service.dart';
 
-class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({super.key});
-
-  @override
-  State<WorkoutPage> createState() => _WorkoutPageState();
-}
-
-class _WorkoutPageState extends State<WorkoutPage> {
-  late Future<List<Routine>> _routinesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _routinesFuture = DatabaseService.instance.getAllRoutines();
-  }
-
-  // Method to refresh routines
-  void _refreshRoutines() {
-    setState(() {
-      _routinesFuture = DatabaseService.instance.getAllRoutines();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Quick Start",
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 12),
-            MenuButton(
-              label: "Free Form",
-              icon: const Icon(Icons.add, size: 28),
-              onPressed: () {
-                print("Free Form page button");
-              },
-            ),
-            const SizedBox(height: 24),
-            Text(
-              "From Routine",
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // FutureBuilder for routines
-            FutureBuilder<List<Routine>>(
-              future: _routinesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: colorScheme.error,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Error loading routines",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: colorScheme.error,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          snapshot.error.toString(),
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colorScheme.onSurfaceVariant.withOpacity(
-                              0.7,
-                            ),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: _refreshRoutines,
-                          icon: const Icon(Icons.refresh),
-                          label: const Text("Retry"),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final routines = snapshot.data ?? [];
-
-                if (routines.isEmpty) {
-                  return Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.fitness_center_outlined,
-                          size: 48,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "No routines found",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Create your first workout routine to get started",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colorScheme.onSurfaceVariant.withOpacity(
-                              0.7,
-                            ),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                // Display detailed routine cards
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: routines.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final routine = routines[index];
-                    return routineCard(
-                      routine,
-                      index,
-                      colorScheme,
-                      _refreshRoutines,
-                      onRoutineSelected: () => _onRoutineSelected(routine),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _onRoutineSelected(Routine routine) {
-    print("Selected routine: ${routine.name}");
-    // Navigate to workout session with selected routine
-  }
-}
-
-// Detailed routine card from the second document, modified for workout context
 Widget routineCard(
   Routine routine,
-  int index,
   ColorScheme colorScheme,
-  Function() refreshRoutines, {
-  VoidCallback? onRoutineSelected,
-}) {
+  Function() refreshRoutines,
+) {
   return FutureBuilder<List<DetailedRoutineExercise>>(
     future: DatabaseService.instance.getDetailedRoutineExercisesByRoutine(
       routine.id!,
@@ -223,15 +35,13 @@ Widget routineCard(
         color: colorScheme.primaryContainer,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap:
-              onRoutineSelected ??
-              () {
-                Navigator.of(context).push<bool>(
-                  MaterialPageRoute<bool>(
-                    builder: (context) => RoutineDetailsPage(routine: routine),
-                  ),
-                );
-              },
+          onTap: () {
+            Navigator.of(context).push<bool>(
+              MaterialPageRoute<bool>(
+                builder: (context) => RoutineDetailsPage(routine: routine),
+              ),
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             child: Column(
@@ -443,7 +253,11 @@ void _showRoutineMenu(
             title: const Text('Duplicate Routine'),
             onTap: () {
               Navigator.pop(context);
-              duplicateRoutine(routine, context, refreshRoutines);
+              duplicateRoutine(
+                routine,
+                context,
+                refreshRoutines,
+              ); // Call the new duplicate method
             },
           ),
           ListTile(
@@ -527,6 +341,7 @@ Future<void> duplicateRoutine(
           action: SnackBarAction(
             label: 'Edit',
             onPressed: () async {
+              // Navigate to edit the duplicated routine
               final newRoutine = Routine(
                 id: newRoutineId,
                 name: duplicatedRoutine.name,
@@ -588,55 +403,6 @@ void showDeleteConfirmation(Routine routine, BuildContext context) {
           child: const Text('Delete'),
         ),
       ],
-    ),
-  );
-}
-
-class MenuButton extends StatelessWidget {
-  final String label;
-  final Widget icon;
-  final VoidCallback? onPressed;
-
-  const MenuButton({
-    super.key,
-    required this.label,
-    required this.icon,
-    this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          elevation: 2,
-          backgroundColor: colorScheme.primaryContainer,
-          foregroundColor: colorScheme.onPrimaryContainer,
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-          textStyle: const TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        onPressed: onPressed ?? () => print(label),
-        icon: icon,
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-      ),
-    );
-  }
-}
-
-PreferredSizeWidget workoutAppBar() {
-  return AppBar(
-    title: const Text("Workout"),
-    bottom: PreferredSize(
-      preferredSize: const Size.fromHeight(1.0),
-      child: Builder(
-        builder: (context) {
-          final dividerColor = Theme.of(context).dividerColor;
-          return Container(color: dividerColor, height: 1.0);
-        },
-      ),
     ),
   );
 }

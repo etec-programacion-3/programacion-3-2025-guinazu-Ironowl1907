@@ -4,6 +4,7 @@ import 'package:workout_logger/screens/routine_page.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/screens/routine_details.dart';
+import 'package:workout_logger/widgets/routine_card.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage({super.key});
@@ -166,13 +167,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final routine = routines[index];
-                    return routineCard(
-                      routine,
-                      index,
-                      colorScheme,
-                      _refreshRoutines,
-                      onRoutineSelected: () => _onRoutineSelected(routine),
-                    );
+                    return routineCard(routine, colorScheme, _refreshRoutines);
                   },
                 );
               },
@@ -193,165 +188,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
 }
 
 // Detailed routine card from the second document, modified for workout context
-Widget routineCard(
-  Routine routine,
-  int index,
-  ColorScheme colorScheme,
-  Function() refreshRoutines, {
-  VoidCallback? onRoutineSelected,
-}) {
-  return FutureBuilder<List<DetailedRoutineExercise>>(
-    future: DatabaseService.instance.getDetailedRoutineExercisesByRoutine(
-      routine.id!,
-    ),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(16),
-            child: Center(child: CircularProgressIndicator()),
-          ),
-        );
-      }
-
-      final exercises = snapshot.data ?? [];
-
-      return Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: colorScheme.primaryContainer,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap:
-              onRoutineSelected ??
-              () {
-                Navigator.of(context).push<bool>(
-                  MaterialPageRoute<bool>(
-                    builder: (context) => RoutineDetailsPage(routine: routine),
-                  ),
-                );
-              },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Routine name + menu
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        routine.name,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () =>
-                          _showRoutineMenu(routine, context, refreshRoutines),
-                      color: colorScheme.onPrimaryContainer,
-                    ),
-                  ],
-                ),
-
-                /// Routine description
-                if (routine.description != null &&
-                    routine.description!.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    routine.description!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colorScheme.onPrimaryContainer.withOpacity(0.7),
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 12),
-
-                /// Exercises count + placeholder duration
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        "${exercises.length} exercises",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSecondaryContainer,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.tertiaryContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        "~45 min", // TODO: calculate dynamically
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onTertiaryContainer,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                /// Exercises preview
-                Text(
-                  "Exercises:",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                if (exercises.isEmpty)
-                  Text(
-                    "No exercises added yet",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colorScheme.onPrimaryContainer.withOpacity(0.5),
-                      fontStyle: FontStyle.italic,
-                    ),
-                  )
-                else
-                  listExercises(exercises, colorScheme),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
 
 Column listExercises(
   List<DetailedRoutineExercise> exercises,

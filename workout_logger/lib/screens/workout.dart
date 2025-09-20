@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/screens/routine_page.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/screens/routine_details.dart';
@@ -157,7 +158,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   );
                 }
 
-                // Display detailed routine cards
                 return ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -184,8 +184,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void _onRoutineSelected(Routine routine) {
-    print("Selected routine: ${routine.name}");
-    // Navigate to workout session with selected routine
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RoutineDetailsPage(routine: routine),
+      ),
+    );
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/screens/logging_page.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'newRoutine.dart';
 
@@ -116,10 +117,11 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
     return (totalTime / 60).round(); // Convert to minutes
   }
 
-  Future<void> _startWorkout() async {
-    // TODO: Implement start workout
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('TODO: Start workout functionality')),
+  Future<void> _startWorkout(Routine routine) async {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => LoggingPage(routine: routine),
+      ),
     );
   }
 
@@ -166,7 +168,7 @@ class _RoutineDetailsPageState extends State<RoutineDetailsPage>
               ],
             ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _startWorkout,
+        onPressed: () => _startWorkout(widget.routine),
         icon: const Icon(Icons.play_arrow),
         label: const Text('Start Workout'),
       ),

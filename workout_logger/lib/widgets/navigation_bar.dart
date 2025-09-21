@@ -26,7 +26,17 @@ class _AppNavigationState extends State<AppNavigation> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: _pages[_currentIndex],
+      body: Stack(
+        children: [
+          // Main body content with bottom padding
+          Padding(
+            padding: EdgeInsets.only(bottom: 100), // Space for floating widget
+            child: _pages[_currentIndex],
+          ),
+
+          resumeWorkoutPopup(context, colorScheme),
+        ],
+      ),
 
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -78,6 +88,37 @@ class _AppNavigationState extends State<AppNavigation> {
             label: "Profile",
           ),
         ],
+      ),
+    );
+  }
+
+  Positioned resumeWorkoutPopup(BuildContext context, ColorScheme colorScheme) {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: colorScheme.primaryContainer,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            'Floating Space',
+            style: TextStyle(color: colorScheme.onPrimaryContainer),
+          ),
+        ),
       ),
     );
   }

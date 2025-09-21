@@ -25,12 +25,11 @@ class _AppNavigationState extends State<AppNavigation> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 100),
-            child: _pages[_currentIndex],
-          ),
+          // Main content area
+          Expanded(child: _pages[_currentIndex]),
+          // Fixed popup at bottom - always visible above bottom nav
           resumeWorkoutPopup(context, colorScheme),
         ],
       ),
@@ -80,7 +79,6 @@ class _AppNavigationState extends State<AppNavigation> {
               width: 24,
               height: 24,
               colorFilter: ColorFilter.mode(
-                // Fixed: use colorFilter instead of color
                 _currentIndex == 2
                     ? colorScheme.primary
                     : colorScheme.onSurfaceVariant,
@@ -94,34 +92,28 @@ class _AppNavigationState extends State<AppNavigation> {
     );
   }
 
-  Positioned resumeWorkoutPopup(BuildContext context, ColorScheme colorScheme) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: colorScheme.primaryContainer,
-          borderRadius: const BorderRadius.only(
-            // Added const
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
-          ),
-          boxShadow: const [
-            // Added const
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
+  Widget resumeWorkoutPopup(BuildContext context, ColorScheme colorScheme) {
+    return Container(
+      height: 80,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
         ),
-        child: Center(
-          child: Text(
-            'Floating Space',
-            style: TextStyle(color: colorScheme.onPrimaryContainer),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 8,
+            offset: Offset(0, -2), // Shadow going upward
           ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          'Floating Space',
+          style: TextStyle(color: colorScheme.onSecondaryContainer),
         ),
       ),
     );

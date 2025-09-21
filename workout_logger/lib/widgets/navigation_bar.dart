@@ -13,7 +13,6 @@ class AppNavigation extends StatefulWidget {
 
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
-
   final List<Widget> _pages = const [HomePage(), WorkoutPage(), ProfilePage()];
   final List<PreferredSizeWidget> _appBar = [
     homeAppBar(),
@@ -28,34 +27,30 @@ class _AppNavigationState extends State<AppNavigation> {
     return Scaffold(
       body: Stack(
         children: [
-          // Main body content with bottom padding
           Padding(
-            padding: EdgeInsets.only(bottom: 100), // Space for floating widget
+            padding: const EdgeInsets.only(bottom: 100),
             child: _pages[_currentIndex],
           ),
-
           resumeWorkoutPopup(context, colorScheme),
         ],
       ),
-
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Theme(
           data: Theme.of(context).copyWith(
             appBarTheme: AppBarTheme(
-              backgroundColor: colorScheme.surface, // app bar bg
-              foregroundColor: colorScheme.onSurface, // title & icons
+              backgroundColor: colorScheme.surface,
+              foregroundColor: colorScheme.onSurface,
               elevation: 0,
             ),
           ),
           child: _appBar[_currentIndex],
         ),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: colorScheme.surface, // 🔹 themed background
+        backgroundColor: colorScheme.surface,
         selectedItemColor: colorScheme.primary,
         unselectedItemColor: colorScheme.onSurfaceVariant,
         onTap: (index) {
@@ -70,9 +65,12 @@ class _AppNavigationState extends State<AppNavigation> {
               'assets/Exercise.svg',
               width: 24,
               height: 24,
-              color: _currentIndex == 1
-                  ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant,
+              colorFilter: ColorFilter.mode(
+                _currentIndex == 1
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+                BlendMode.srcIn,
+              ),
             ),
             label: "Workout",
           ),
@@ -81,9 +79,13 @@ class _AppNavigationState extends State<AppNavigation> {
               'assets/account.svg',
               width: 24,
               height: 24,
-              color: _currentIndex == 2
-                  ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant,
+              colorFilter: ColorFilter.mode(
+                // Fixed: use colorFilter instead of color
+                _currentIndex == 2
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+                BlendMode.srcIn,
+              ),
             ),
             label: "Profile",
           ),
@@ -101,11 +103,13 @@ class _AppNavigationState extends State<AppNavigation> {
         height: 80,
         decoration: BoxDecoration(
           color: colorScheme.primaryContainer,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
+            // Added const
             topLeft: Radius.circular(12),
             topRight: Radius.circular(12),
           ),
-          boxShadow: [
+          boxShadow: const [
+            // Added const
             BoxShadow(
               color: Colors.black26,
               blurRadius: 8,

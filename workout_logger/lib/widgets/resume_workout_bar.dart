@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
-Widget resumeWorkoutPopup(BuildContext context, ColorScheme colorScheme) {
+Widget resumeWorkoutPopup(BuildContext context, ThemeData themeData) {
   return Container(
-    height: 80,
     width: double.infinity,
     decoration: BoxDecoration(
-      color: colorScheme.secondaryContainer,
+      color: themeData.colorScheme.secondaryContainer,
       borderRadius: const BorderRadius.only(
         topLeft: Radius.circular(12),
         topRight: Radius.circular(12),
@@ -18,10 +17,22 @@ Widget resumeWorkoutPopup(BuildContext context, ColorScheme colorScheme) {
         ),
       ],
     ),
-    child: Center(
-      child: Text(
-        'Floating Space',
-        style: TextStyle(color: colorScheme.onSecondaryContainer),
+    child: Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          Text(
+            'Workout in Progress',
+            style: TextStyle(color: themeData.colorScheme.onSecondaryContainer),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(child: Text("Resume"), onPressed: () {}),
+              TextButton(child: Text("Discard"), onPressed: () {}),
+            ],
+          ),
+        ],
       ),
     ),
   );

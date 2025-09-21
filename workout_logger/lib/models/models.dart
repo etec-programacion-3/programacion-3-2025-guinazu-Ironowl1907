@@ -284,7 +284,6 @@ class Workout {
         routine_id INTEGER,
         started_at TIMESTAMP,
         ended_at TIMESTAMP,
-        status TEXT DEFAULT 'in_progress' CHECK(status IN ('in_progress', 'completed', 'cancelled')),
         FOREIGN KEY(routine_id) REFERENCES routines(id)
       );
     ''';

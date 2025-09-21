@@ -415,14 +415,18 @@ class DatabaseService {
     );
   }
 
-  Future<Workout> getUnfinishedWorkout() async {
+  Future<Workout?> getUnfinishedWorkout() async {
     final db = await database;
     var result = await db.query(
       "workouts",
-      where: "ended_at == NULL",
+      where: "ended_at IS NULL",
+      orderBy: "started_at DESC", // Get most recent
       limit: 1,
     );
-    return Workout.fromMap(result[0]);
+    if (result.isEmpty) return null;
+
+    final workout = Workout.fromMap(result[0]);
+    return workout;
   }
 
   // WORKOUT SET CRUD

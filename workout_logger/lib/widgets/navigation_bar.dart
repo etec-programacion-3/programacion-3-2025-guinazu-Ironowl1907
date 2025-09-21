@@ -3,6 +3,8 @@ import '../screens/home.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/profile.dart';
 import '../screens/workout.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/services/database_service.dart';
 
 class AppNavigation extends StatefulWidget {
   const AppNavigation({super.key});
@@ -13,6 +15,13 @@ class AppNavigation extends StatefulWidget {
 
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
+
+  late Future<Workout?> _activeWorkout;
+
+  Future<Workout?> loadActiveWorkout() {
+    return DatabaseService.instance.getUnfinishedWorkout();
+  }
+
   final List<Widget> _pages = const [HomePage(), WorkoutPage(), ProfilePage()];
   final List<PreferredSizeWidget> _appBar = [
     homeAppBar(),
@@ -21,16 +30,30 @@ class _AppNavigationState extends State<AppNavigation> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _activeWorkout = loadActiveWorkout();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: Column(
         children: [
-          // Main content area
           Expanded(child: _pages[_currentIndex]),
-          // Fixed popup at bottom - always visible above bottom nav
-          resumeWorkoutPopup(context, colorScheme),
+          FutureBuilder<Workout?>(
+            future: _activeWorkout,
+            builder: (BuildContext context, AsyncSnapshot<Workout?> snapshot) {
+              Workout? currentWorkout = snapshot.data;
+              if (snapshot.connectionState == ConnectionState.done &&
+                  currentWorkout != null) {
+                return resumeWorkoutPopup(context, colorScheme);
+              }
+              return Container();
+            },
+          ),
         ],
       ),
       appBar: PreferredSize(

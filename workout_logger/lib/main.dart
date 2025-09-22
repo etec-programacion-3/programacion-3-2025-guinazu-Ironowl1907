@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueGrey,
-          brightness: Brightness.light,
+          seedColor: Colors.blueAccent,
+          brightness: Brightness.dark,
         ),
       ),
       home: const AppNavigation(),

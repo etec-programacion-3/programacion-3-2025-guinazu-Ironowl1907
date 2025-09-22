@@ -38,7 +38,7 @@ class _AppNavigationState extends State<AppNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final themeData = Theme.of(context);
 
     return Scaffold(
       body: Column(
@@ -50,7 +50,7 @@ class _AppNavigationState extends State<AppNavigation> {
               Workout? currentWorkout = snapshot.data;
               if (snapshot.connectionState == ConnectionState.done &&
                   currentWorkout != null) {
-                return resumeWorkoutPopup(context, colorScheme);
+                return resumeWorkoutPopup(context, themeData);
               }
               return Container();
             },
@@ -62,8 +62,8 @@ class _AppNavigationState extends State<AppNavigation> {
         child: Theme(
           data: Theme.of(context).copyWith(
             appBarTheme: AppBarTheme(
-              backgroundColor: colorScheme.surface,
-              foregroundColor: colorScheme.onSurface,
+              backgroundColor: themeData.colorScheme.surface,
+              foregroundColor: themeData.colorScheme.onSurface,
               elevation: 0,
             ),
           ),
@@ -73,9 +73,9 @@ class _AppNavigationState extends State<AppNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: colorScheme.surface,
-        selectedItemColor: colorScheme.primary,
-        unselectedItemColor: colorScheme.onSurfaceVariant,
+        backgroundColor: themeData.colorScheme.surface,
+        selectedItemColor: themeData.colorScheme.primary,
+        unselectedItemColor: themeData.colorScheme.onSurfaceVariant,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -90,8 +90,8 @@ class _AppNavigationState extends State<AppNavigation> {
               height: 24,
               colorFilter: ColorFilter.mode(
                 _currentIndex == 1
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant,
+                    ? themeData.colorScheme.primary
+                    : themeData.colorScheme.onSurfaceVariant,
                 BlendMode.srcIn,
               ),
             ),
@@ -104,8 +104,8 @@ class _AppNavigationState extends State<AppNavigation> {
               height: 24,
               colorFilter: ColorFilter.mode(
                 _currentIndex == 2
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant,
+                    ? themeData.colorScheme.primary
+                    : themeData.colorScheme.onSurfaceVariant,
                 BlendMode.srcIn,
               ),
             ),

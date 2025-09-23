@@ -5,9 +5,7 @@ import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/widgets/routine_card.dart';
 
 class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({super.key, required this.updateCallback});
-
-  final Function updateCallback;
+  const WorkoutPage({super.key});
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -26,7 +24,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     setState(() {
       _routinesFuture = DatabaseService.instance.getAllRoutines();
     });
-    print("Here");
   }
 
   @override
@@ -167,7 +164,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final routine = routines[index];
-                    return routineCard(routine, colorScheme, _refreshRoutines);
+                    return routineCard(routine, colorScheme);
                   },
                 );
               },
@@ -179,11 +176,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 }
 
-Future<void> duplicateRoutine(
-  Routine routine,
-  BuildContext context,
-  Function() refreshRoutines,
-) async {
+Future<void> duplicateRoutine(Routine routine, BuildContext context) async {
   try {
     showDialog(
       context: context,
@@ -220,8 +213,6 @@ Future<void> duplicateRoutine(
       Navigator.pop(context);
     }
 
-    refreshRoutines();
-
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -235,15 +226,11 @@ Future<void> duplicateRoutine(
                 description: duplicatedRoutine.description,
               );
 
-              final result = await Navigator.of(context).push<bool>(
+              Navigator.of(context).push<bool>(
                 MaterialPageRoute<bool>(
                   builder: (context) => CreateRoutinePage(routine: newRoutine),
                 ),
               );
-
-              if (result == true) {
-                refreshRoutines();
-              }
             },
           ),
         ),

@@ -4,11 +4,7 @@ import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/screens/routine_details.dart';
 import 'package:workout_logger/services/database_service.dart';
 
-Widget routineCard(
-  Routine routine,
-  ColorScheme colorScheme,
-  Function() refreshRoutines,
-) {
+Widget routineCard(Routine routine, ColorScheme colorScheme) {
   return FutureBuilder<List<DetailedRoutineExercise>>(
     future: DatabaseService.instance.getDetailedRoutineExercisesByRoutine(
       routine.id!,
@@ -41,7 +37,6 @@ Widget routineCard(
                 builder: (context) => RoutineDetailsPage(routine: routine),
               ),
             );
-            refreshRoutines();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -64,8 +59,7 @@ Widget routineCard(
                     ),
                     IconButton(
                       icon: const Icon(Icons.more_vert),
-                      onPressed: () =>
-                          _showRoutineMenu(routine, context, refreshRoutines),
+                      onPressed: () => _showRoutineMenu(routine, context),
                       color: colorScheme.onPrimaryContainer,
                     ),
                   ],
@@ -208,11 +202,7 @@ Column listExercises(
   );
 }
 
-void _showRoutineMenu(
-  Routine routine,
-  BuildContext context,
-  Function() refreshRoutines,
-) {
+void _showRoutineMenu(Routine routine, BuildContext context) {
   showModalBottomSheet(
     context: context,
     builder: (context) => Container(
@@ -236,17 +226,13 @@ void _showRoutineMenu(
           ListTile(
             leading: const Icon(Icons.edit),
             title: const Text('Edit Routine'),
-            onTap: () async {
+            onTap: () {
               Navigator.pop(context);
-              final result = await Navigator.of(context).push<bool>(
+              Navigator.of(context).push<bool>(
                 MaterialPageRoute<bool>(
                   builder: (context) => CreateRoutinePage(routine: routine),
                 ),
               );
-
-              if (result == true) {
-                refreshRoutines();
-              }
             },
           ),
           ListTile(
@@ -257,7 +243,6 @@ void _showRoutineMenu(
               duplicateRoutine(
                 routine,
                 context,
-                refreshRoutines,
               ); // Call the new duplicate method
             },
           ),
@@ -292,11 +277,7 @@ void _showRoutineMenu(
   );
 }
 
-Future<void> duplicateRoutine(
-  Routine routine,
-  BuildContext context,
-  Function() refreshRoutines,
-) async {
+Future<void> duplicateRoutine(Routine routine, BuildContext context) async {
   try {
     showDialog(
       context: context,
@@ -333,8 +314,6 @@ Future<void> duplicateRoutine(
       Navigator.pop(context);
     }
 
-    refreshRoutines();
-
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -349,15 +328,11 @@ Future<void> duplicateRoutine(
                 description: duplicatedRoutine.description,
               );
 
-              final result = await Navigator.of(context).push<bool>(
+              Navigator.of(context).push<bool>(
                 MaterialPageRoute<bool>(
                   builder: (context) => CreateRoutinePage(routine: newRoutine),
                 ),
               );
-
-              if (result == true) {
-                refreshRoutines();
-              }
             },
           ),
         ),

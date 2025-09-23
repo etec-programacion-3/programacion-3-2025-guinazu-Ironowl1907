@@ -34,11 +34,7 @@ class _AppNavigationState extends State<AppNavigation> {
   }
 
   void _initializePages() {
-    _pages = [
-      HomePage(updateCallback: reloadActiveWorkout),
-      WorkoutPage(updateCallback: reloadActiveWorkout),
-      ProfilePage(updateCallback: reloadActiveWorkout),
-    ];
+    _pages = [HomePage(), WorkoutPage(), ProfilePage()];
   }
 
   Future<void> _loadActiveWorkout() async {

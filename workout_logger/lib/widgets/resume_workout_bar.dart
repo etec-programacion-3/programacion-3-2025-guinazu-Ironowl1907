@@ -116,7 +116,6 @@ Widget resumeWorkoutPopup(
                   showDeleteConfirmation(
                     currentWorkout,
                     context,
-                    onStateChange,
                   ); // Pass the callback
                 },
                 style: TextButton.styleFrom(
@@ -141,11 +140,7 @@ Widget resumeWorkoutPopup(
   );
 }
 
-void showDeleteConfirmation(
-  Workout workout,
-  BuildContext context,
-  Function() refreshWorkouts,
-) {
+void showDeleteConfirmation(Workout workout, BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -164,8 +159,6 @@ void showDeleteConfirmation(
 
             try {
               await DatabaseService.instance.deleteWorkout(workout.id!);
-
-              refreshWorkouts();
 
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(

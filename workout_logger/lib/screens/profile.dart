@@ -4,9 +4,7 @@ import 'package:workout_logger/screens/muscle_group.dart';
 import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key, required this.updateCallback});
-
-  final Function updateCallback;
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

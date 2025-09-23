@@ -3,9 +3,7 @@ import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/models/models.dart'; // assuming Workout is defined here
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.updateCallback});
-
-  final Function updateCallback;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();

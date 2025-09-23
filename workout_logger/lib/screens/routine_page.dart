@@ -89,7 +89,7 @@ class _RoutinePageState extends State<RoutinePage> {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final routine = routines[index];
-              return routineCard(routine, colorScheme, _refreshRoutines);
+              return routineCard(routine, colorScheme);
             },
           );
         },

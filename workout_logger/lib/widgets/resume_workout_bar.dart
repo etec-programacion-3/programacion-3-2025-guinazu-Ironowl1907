@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/services/database_service.dart';
 
-Widget resumeWorkoutPopup(BuildContext context, ThemeData themeData) {
+Widget resumeWorkoutPopup(
+  BuildContext context,
+  ThemeData themeData,
+  Workout currentWorkout,
+) {
   return Container(
     width: double.infinity,
     decoration: BoxDecoration(
@@ -42,7 +48,7 @@ Widget resumeWorkoutPopup(BuildContext context, ThemeData themeData) {
               ),
               TextButton(
                 onPressed: () {
-                  // Discard logic here
+                  DatabaseService.instance.deleteWorkout(currentWorkout.id!);
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: themeData.colorScheme.error,

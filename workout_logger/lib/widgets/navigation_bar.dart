@@ -50,7 +50,7 @@ class _AppNavigationState extends State<AppNavigation> {
               Workout? currentWorkout = snapshot.data;
               if (snapshot.connectionState == ConnectionState.done &&
                   currentWorkout != null) {
-                return resumeWorkoutPopup(context, themeData);
+                return resumeWorkoutPopup(context, themeData, currentWorkout);
               }
               return Container();
             },

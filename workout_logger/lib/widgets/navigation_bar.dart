@@ -16,14 +16,10 @@ class AppNavigation extends StatefulWidget {
 
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
+  Workout? _currentWorkout;
+  bool _isLoadingWorkout = true;
 
-  late Future<Workout?> _activeWorkout;
-
-  Future<Workout?> loadActiveWorkout() {
-    return DatabaseService.instance.getUnfinishedWorkout();
-  }
-
-  final List<Widget> _pages = const [HomePage(), WorkoutPage(), ProfilePage()];
+  late List<Widget> _pages;
   final List<PreferredSizeWidget> _appBar = [
     homeAppBar(),
     workoutAppBar(),
@@ -33,7 +29,45 @@ class _AppNavigationState extends State<AppNavigation> {
   @override
   void initState() {
     super.initState();
-    _activeWorkout = loadActiveWorkout();
+    _loadActiveWorkout();
+    _initializePages();
+  }
+
+  void _initializePages() {
+    _pages = [
+      HomePage(updateCallback: reloadActiveWorkout),
+      WorkoutPage(updateCallback: reloadActiveWorkout),
+      ProfilePage(updateCallback: reloadActiveWorkout),
+    ];
+  }
+
+  Future<void> _loadActiveWorkout() async {
+    if (mounted) {
+      setState(() {
+        _isLoadingWorkout = true;
+      });
+    }
+
+    try {
+      final workout = await DatabaseService.instance.getUnfinishedWorkout();
+      if (mounted) {
+        setState(() {
+          _currentWorkout = workout;
+          _isLoadingWorkout = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentWorkout = null;
+          _isLoadingWorkout = false;
+        });
+      }
+    }
+  }
+
+  void reloadActiveWorkout() {
+    _loadActiveWorkout();
   }
 
   @override
@@ -44,17 +78,14 @@ class _AppNavigationState extends State<AppNavigation> {
       body: Column(
         children: [
           Expanded(child: _pages[_currentIndex]),
-          FutureBuilder<Workout?>(
-            future: _activeWorkout,
-            builder: (BuildContext context, AsyncSnapshot<Workout?> snapshot) {
-              Workout? currentWorkout = snapshot.data;
-              if (snapshot.connectionState == ConnectionState.done &&
-                  currentWorkout != null) {
-                return resumeWorkoutPopup(context, themeData, currentWorkout);
-              }
-              return Container();
-            },
-          ),
+          // Show workout bar if we have an active workout
+          if (!_isLoadingWorkout && _currentWorkout != null)
+            resumeWorkoutPopup(
+              context,
+              themeData,
+              _currentWorkout!,
+              reloadActiveWorkout, // Pass the callback
+            ),
         ],
       ),
       appBar: PreferredSize(

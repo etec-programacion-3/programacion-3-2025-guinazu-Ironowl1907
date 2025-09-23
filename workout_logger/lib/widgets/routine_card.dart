@@ -35,12 +35,13 @@ Widget routineCard(
         color: colorScheme.primaryContainer,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {
-            Navigator.of(context).push<bool>(
+          onTap: () async {
+            await Navigator.of(context).push<bool>(
               MaterialPageRoute<bool>(
                 builder: (context) => RoutineDetailsPage(routine: routine),
               ),
             );
+            refreshRoutines();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

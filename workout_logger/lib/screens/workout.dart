@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/screens/newRoutine.dart';
-import 'package:workout_logger/screens/routine_details.dart';
 import 'package:workout_logger/widgets/routine_card.dart';
 
 class WorkoutPage extends StatefulWidget {
-  const WorkoutPage({super.key});
+  const WorkoutPage({super.key, required this.updateCallback});
+
+  final Function updateCallback;
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -21,11 +22,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _routinesFuture = DatabaseService.instance.getAllRoutines();
   }
 
-  // Method to refresh routines
   void _refreshRoutines() {
     setState(() {
       _routinesFuture = DatabaseService.instance.getAllRoutines();
     });
+    print("Here");
   }
 
   @override
@@ -176,143 +177,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       ),
     );
   }
-
-  void _onRoutineSelected(Routine routine) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => RoutineDetailsPage(routine: routine),
-      ),
-    );
-  }
-}
-
-// Detailed routine card from the second document, modified for workout context
-
-Column listExercises(
-  List<DetailedRoutineExercise> exercises,
-  ColorScheme colorScheme,
-) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      ...exercises
-          .take(3)
-          .map(
-            (exercise) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.fitness_center,
-                    size: 16,
-                    color: colorScheme.onPrimaryContainer.withOpacity(0.6),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    exercise.exercise.name,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: colorScheme.onPrimaryContainer.withOpacity(0.8),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      if (exercises.length > 3)
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            "+${exercises.length - 3} more exercises",
-            style: TextStyle(
-              fontSize: 12,
-              color: colorScheme.onPrimaryContainer.withOpacity(0.6),
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
-    ],
-  );
-}
-
-void _showRoutineMenu(
-  Routine routine,
-  BuildContext context,
-  Function() refreshRoutines,
-) {
-  showModalBottomSheet(
-    context: context,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.play_arrow),
-            title: const Text('Start Workout'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Navigate to workout session page
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('TODO: Start workout functionality'),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Edit Routine'),
-            onTap: () async {
-              Navigator.pop(context);
-              final result = await Navigator.of(context).push<bool>(
-                MaterialPageRoute<bool>(
-                  builder: (context) => CreateRoutinePage(routine: routine),
-                ),
-              );
-
-              if (result == true) {
-                refreshRoutines();
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.copy),
-            title: const Text('Duplicate Routine'),
-            onTap: () {
-              Navigator.pop(context);
-              duplicateRoutine(routine, context, refreshRoutines);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.share),
-            title: const Text('Share Routine'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Implement share routine functionality
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('TODO: Share routine functionality'),
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text(
-              'Delete Routine',
-              style: TextStyle(color: Colors.red),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              showDeleteConfirmation(routine, context);
-            },
-          ),
-        ],
-      ),
-    ),
-  );
 }
 
 Future<void> duplicateRoutine(

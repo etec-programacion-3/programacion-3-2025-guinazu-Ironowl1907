@@ -3,32 +3,38 @@ import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/models/models.dart'; // assuming Workout is defined here
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.updateCallback});
+
+  final Function updateCallback;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Workout> _workoutList = []; // mutable, not final
+  late Future<List<Workout>> _workoutList;
 
   @override
   void initState() {
     super.initState();
-    _loadWorkouts();
+    _workoutList = _loadWorkouts();
   }
 
-  Future<void> _loadWorkouts() async {
-    final workouts = await DatabaseService.instance.getAllWorkouts();
-    setState(() {
-      _workoutList = workouts;
-    });
+  Future<List<Workout>> _loadWorkouts() {
+    return DatabaseService.instance.getAllWorkouts();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _workoutList.isEmpty
-        ? Center(
+    return FutureBuilder<List<Workout>>(
+      future: _workoutList,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -45,15 +51,21 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          )
-        : ListView.builder(
-            itemCount: _workoutList.length,
+          );
+        } else {
+          final workoutListData = snapshot.data!;
+          return ListView.builder(
+            itemCount: workoutListData.length,
             itemBuilder: (context, index) {
-              final workout = _workoutList[index];
+              final workout = workoutListData[index];
               return ListTile(
                 leading: const Icon(Icons.fitness_center),
                 title: Text(workout.title ?? "<Untitled>"),
-                subtitle: Text("ID: ${workout.id}"),
+                subtitle: Text(
+                  workout.endedAt == null
+                      ? "Unfinished"
+                      : workout.endedAt.toString(),
+                ),
                 onTap: () {
                   ScaffoldMessenger.of(
                     context,
@@ -62,6 +74,9 @@ class _HomePageState extends State<HomePage> {
               );
             },
           );
+        }
+      },
+    );
   }
 }
 

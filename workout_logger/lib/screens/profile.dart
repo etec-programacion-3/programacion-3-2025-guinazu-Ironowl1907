@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/screens/exercises.dart';
 import 'package:workout_logger/screens/muscle_group.dart';
-import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({super.key, required this.updateCallback});
+
+  final Function updateCallback;
 
   @override
   Widget build(BuildContext context) {

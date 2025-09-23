@@ -17,12 +17,11 @@ class DatabaseService {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "master.db");
     print("Searching for Db on: $databasePath");
-    return await openDatabase(databasePath, version: 1, onCreate: _onCreate);
+    return await openDatabase(databasePath, version: 2, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
     print("Creating database tables...");
-    // Execute each table creation query
     for (String query in DatabaseSchema.getAllCreateTableQueries()) {
       await db.execute(query);
       print("Executed: ${query.split('(')[0].trim()}"); // Log table creation
@@ -45,189 +44,248 @@ class DatabaseService {
     _db = null;
   }
 
-  // ==================== MUSCLE GROUP CRUD ====================
-
-  Future<int> insertMuscleGroup(MuscleGroup muscleGroup) async {
+  // MUSCLE GROUP CRUD
+  Future<int> createMuscleGroup(MuscleGroup muscleGroup) async {
     final db = await database;
-    return await db.insert('muscle_groups', muscleGroup.toMap());
+    return await db.insert("muscle_groups", muscleGroup.toMap());
+  }
+
+  Future<MuscleGroup?> getMuscleGroup(int id) async {
+    final db = await database;
+    final result = await db.query(
+      "muscle_groups",
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? MuscleGroup.fromMap(result.first) : null;
   }
 
   Future<List<MuscleGroup>> getAllMuscleGroups() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('muscle_groups');
-    return List.generate(maps.length, (i) => MuscleGroup.fromMap(maps[i]));
-  }
-
-  Future<MuscleGroup?> getMuscleGroupById(int id) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'muscle_groups',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (maps.isEmpty) return null;
-    return MuscleGroup.fromMap(maps.first);
+    final result = await db.query("muscle_groups");
+    return result.map((map) => MuscleGroup.fromMap(map)).toList();
   }
 
   Future<int> updateMuscleGroup(MuscleGroup muscleGroup) async {
     final db = await database;
     return await db.update(
-      'muscle_groups',
+      "muscle_groups",
       muscleGroup.toMap(),
-      where: 'id = ?',
+      where: "id = ?",
       whereArgs: [muscleGroup.id],
     );
   }
 
   Future<int> deleteMuscleGroup(int id) async {
     final db = await database;
-    return await db.delete('muscle_groups', where: 'id = ?', whereArgs: [id]);
+    return await db.delete("muscle_groups", where: "id = ?", whereArgs: [id]);
   }
 
-  // ==================== EXERCISE CRUD ====================
-
-  Future<int> insertExercise(Exercise exercise) async {
+  // EXERCISE CRUD
+  Future<int> createExercise(Exercise exercise) async {
     final db = await database;
-    return await db.insert('exercises', exercise.toMap());
+    return await db.insert("exercises", exercise.toMap());
+  }
+
+  Future<Exercise?> getExercise(int id) async {
+    final db = await database;
+    final result = await db.query(
+      "exercises",
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
   }
 
   Future<List<Exercise>> getAllExercises() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('exercises');
-    return List.generate(maps.length, (i) => Exercise.fromMap(maps[i]));
-  }
-
-  Future<Exercise?> getExerciseById(int id) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'exercises',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (maps.isEmpty) return null;
-    return Exercise.fromMap(maps.first);
+    final result = await db.query("exercises");
+    return result.map((map) => Exercise.fromMap(map)).toList();
   }
 
   Future<List<Exercise>> getExercisesByMuscleGroup(int muscleGroupId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'exercises',
-      where: 'muscle_group_id = ?',
+    final result = await db.query(
+      "exercises",
+      where: "muscle_group_id = ?",
       whereArgs: [muscleGroupId],
     );
-    return List.generate(maps.length, (i) => Exercise.fromMap(maps[i]));
+    return result.map((map) => Exercise.fromMap(map)).toList();
   }
 
   Future<int> updateExercise(Exercise exercise) async {
     final db = await database;
     return await db.update(
-      'exercises',
+      "exercises",
       exercise.toMap(),
-      where: 'id = ?',
+      where: "id = ?",
       whereArgs: [exercise.id],
     );
   }
 
   Future<int> deleteExercise(int id) async {
     final db = await database;
-    return await db.delete('exercises', where: 'id = ?', whereArgs: [id]);
+    return await db.delete("exercises", where: "id = ?", whereArgs: [id]);
   }
 
-  // ==================== ROUTINE CRUD ====================
-
-  Future<int> insertRoutine(Routine routine) async {
+  // ROUTINE CRUD
+  Future<int> createRoutine(Routine routine) async {
     final db = await database;
-    return await db.insert('routines', routine.toMap());
+    return await db.insert("routines", routine.toMap());
+  }
+
+  Future<Routine?> getRoutine(int id) async {
+    final db = await database;
+    final result = await db.query("routines", where: "id = ?", whereArgs: [id]);
+    return result.isNotEmpty ? Routine.fromMap(result.first) : null;
   }
 
   Future<List<Routine>> getAllRoutines() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('routines');
-    return List.generate(maps.length, (i) => Routine.fromMap(maps[i]));
-  }
-
-  Future<Routine?> getRoutineById(int id) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'routines',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (maps.isEmpty) return null;
-    return Routine.fromMap(maps.first);
+    final result = await db.query("routines");
+    return result.map((map) => Routine.fromMap(map)).toList();
   }
 
   Future<int> updateRoutine(Routine routine) async {
     final db = await database;
     return await db.update(
-      'routines',
+      "routines",
       routine.toMap(),
-      where: 'id = ?',
+      where: "id = ?",
       whereArgs: [routine.id],
     );
   }
 
   Future<int> deleteRoutine(int id) async {
     final db = await database;
-    return await db.delete('routines', where: 'id = ?', whereArgs: [id]);
+    return await db.delete("routines", where: "id = ?", whereArgs: [id]);
   }
 
-  // ==================== ROUTINE EXERCISE CRUD ====================
-
-  Future<int> insertRoutineExercise(RoutineExercise routineExercise) async {
+  // ROUTINE EXERCISE CRUD
+  Future<int> createRoutineExercise(RoutineExercise routineExercise) async {
     final db = await database;
-    return await db.insert('routine_exercises', routineExercise.toMap());
+    return await db.insert("routine_exercises", routineExercise.toMap());
   }
 
-  Future<List<RoutineExercise>> getAllRoutineExercises() async {
+  Future<DetailedRoutineExercise?> getDetailedRoutineExercise(int id) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('routine_exercises');
-    return List.generate(maps.length, (i) => RoutineExercise.fromMap(maps[i]));
+
+    // Get the routine exercise first
+    final routineExerciseResult = await db.query(
+      "routine_exercises",
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    if (routineExerciseResult.isEmpty) {
+      return null;
+    }
+
+    final routineExercise = RoutineExercise.fromMap(
+      routineExerciseResult.first,
+    );
+
+    // Get the associated exercise
+    final exerciseResult = await db.query(
+      "exercises",
+      where: "id = ?",
+      whereArgs: [routineExercise.exerciseId],
+    );
+
+    if (exerciseResult.isEmpty) {
+      return null;
+    }
+
+    final exercise = Exercise.fromMap(exerciseResult.first);
+
+    return DetailedRoutineExercise(exercise, routineExercise);
   }
 
-  Future<List<Exercise>> getAllExercisesFromRoutine(int routineId) async {
+  // Get all detailed routine exercises for a specific routine
+  Future<List<DetailedRoutineExercise>> getDetailedRoutineExercisesByRoutine(
+    int routineId,
+  ) async {
     final db = await database;
-    final maps = await db.rawQuery(
+
+    final result = await db.rawQuery(
       '''
-    SELECT e.* FROM exercises e
-    JOIN routine_exercises re ON e.id = re.exercise_id
+    SELECT 
+      re.id as re_id,
+      re.routine_id,
+      re.exercise_id,
+      re.`order`,
+      re.sets,
+      re.reps,
+      re.rest_seconds,
+      e.id as e_id,
+      e.name as e_name,
+      e.description as e_description,
+      e.muscle_group_id
+    FROM routine_exercises re
+    JOIN exercises e ON re.exercise_id = e.id
     WHERE re.routine_id = ?
-    ORDER BY re.`order` ASC;
+    ORDER BY re.`order` ASC
   ''',
       [routineId],
     );
-    return List.generate(maps.length, (i) => Exercise.fromMap(maps[i]));
+
+    return result.map((row) {
+      final exercise = Exercise(
+        id: row['e_id'] as int?,
+        name: row['e_name'] as String,
+        description: row['e_description'] as String?,
+        muscleGroupId: row['muscle_group_id'] as int?,
+      );
+
+      final routineExercise = RoutineExercise(
+        id: row['re_id'] as int?,
+        routineId: row['routine_id'] as int,
+        exerciseId: row['exercise_id'] as int,
+        order: row['order'] as int,
+        sets: row['sets'] as int?,
+        reps: row['reps'] as int?,
+        restSeconds: row['rest_seconds'] as int?,
+      );
+
+      return DetailedRoutineExercise(exercise, routineExercise);
+    }).toList();
   }
 
-  Future<RoutineExercise?> getRoutineExerciseById(int id) async {
+  Future<RoutineExercise?> getRoutineExercise(int id) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'routine_exercises',
-      where: 'id = ?',
+    final result = await db.query(
+      "routine_exercises",
+      where: "id = ?",
       whereArgs: [id],
     );
-    if (maps.isEmpty) return null;
-    return RoutineExercise.fromMap(maps.first);
+    return result.isNotEmpty ? RoutineExercise.fromMap(result.first) : null;
   }
 
   Future<List<RoutineExercise>> getRoutineExercisesByRoutine(
     int routineId,
   ) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'routine_exercises',
-      where: 'routine_id = ?',
+    final result = await db.query(
+      "routine_exercises",
+      where: "routine_id = ?",
       whereArgs: [routineId],
+      orderBy: "`order` ASC",
     );
-    return List.generate(maps.length, (i) => RoutineExercise.fromMap(maps[i]));
+    return result.map((map) => RoutineExercise.fromMap(map)).toList();
+  }
+
+  Future<List<RoutineExercise>> getAllRoutineExercises() async {
+    final db = await database;
+    final result = await db.query("routine_exercises");
+    return result.map((map) => RoutineExercise.fromMap(map)).toList();
   }
 
   Future<int> updateRoutineExercise(RoutineExercise routineExercise) async {
     final db = await database;
     return await db.update(
-      'routine_exercises',
+      "routine_exercises",
       routineExercise.toMap(),
-      where: 'id = ?',
+      where: "id = ?",
       whereArgs: [routineExercise.id],
     );
   }
@@ -235,8 +293,8 @@ class DatabaseService {
   Future<int> deleteRoutineExercise(int id) async {
     final db = await database;
     return await db.delete(
-      'routine_exercises',
-      where: 'id = ?',
+      "routine_exercises",
+      where: "id = ?",
       whereArgs: [id],
     );
   }
@@ -244,242 +302,189 @@ class DatabaseService {
   Future<int> deleteRoutineExercisesByRoutine(int routineId) async {
     final db = await database;
     return await db.delete(
-      'routine_exercises',
-      where: 'routine_id = ?',
+      "routine_exercises",
+      where: "routine_id = ?",
       whereArgs: [routineId],
     );
   }
 
-  // ==================== WORKOUT CRUD ====================
-
-  Future<int> insertWorkout(Workout workout) async {
+  // WORKOUT CRUD
+  Future<int> createWorkout(Workout workout) async {
     final db = await database;
-    return await db.insert('workouts', workout.toMap());
+    return await db.insert("workouts", workout.toMap());
+  }
+
+  Future<Workout?> getWorkout(int id) async {
+    final db = await database;
+    final result = await db.query("workouts", where: "id = ?", whereArgs: [id]);
+    return result.isNotEmpty ? Workout.fromMap(result.first) : null;
   }
 
   Future<List<Workout>> getAllWorkouts() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('workouts');
-    return List.generate(maps.length, (i) => Workout.fromMap(maps[i]));
-  }
-
-  Future<Workout?> getWorkoutById(int id) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workouts',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (maps.isEmpty) return null;
-    return Workout.fromMap(maps.first);
+    final result = await db.query("workouts", orderBy: "started_at DESC");
+    return result.map((map) => Workout.fromMap(map)).toList();
   }
 
   Future<List<Workout>> getWorkoutsByRoutine(int routineId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workouts',
-      where: 'routine_id = ?',
+    final result = await db.query(
+      "workouts",
+      where: "routine_id = ?",
       whereArgs: [routineId],
+      orderBy: "started_at DESC",
     );
-    return List.generate(maps.length, (i) => Workout.fromMap(maps[i]));
-  }
-
-  Future<List<Workout>> getWorkoutsByDateRange(
-    DateTime start,
-    DateTime end,
-  ) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workouts',
-      where: 'started_at >= ? AND started_at <= ?',
-      whereArgs: [start.toIso8601String(), end.toIso8601String()],
-      orderBy: 'started_at DESC',
-    );
-    return List.generate(maps.length, (i) => Workout.fromMap(maps[i]));
+    return result.map((map) => Workout.fromMap(map)).toList();
   }
 
   Future<int> updateWorkout(Workout workout) async {
     final db = await database;
     return await db.update(
-      'workouts',
+      "workouts",
       workout.toMap(),
-      where: 'id = ?',
+      where: "id = ?",
       whereArgs: [workout.id],
     );
   }
 
   Future<int> deleteWorkout(int id) async {
     final db = await database;
-    return await db.delete('workouts', where: 'id = ?', whereArgs: [id]);
+    return await db.delete("workouts", where: "id = ?", whereArgs: [id]);
   }
 
-  // ==================== WORKOUT LOG CRUD ====================
-
-  Future<int> insertWorkoutLog(WorkoutLog workoutLog) async {
+  // WORKOUT EXERCISE CRUD
+  Future<int> createWorkoutExercise(WorkoutExercise workoutExercise) async {
     final db = await database;
-    return await db.insert('workout_logs', workoutLog.toMap());
+    return await db.insert("workout_exercises", workoutExercise.toMap());
   }
 
-  Future<List<WorkoutLog>> getAllWorkoutLogs() async {
+  Future<WorkoutExercise?> getWorkoutExercise(int id) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('workout_logs');
-    return List.generate(maps.length, (i) => WorkoutLog.fromMap(maps[i]));
-  }
-
-  Future<WorkoutLog?> getWorkoutLogById(int id) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workout_logs',
-      where: 'id = ?',
+    final result = await db.query(
+      "workout_exercises",
+      where: "id = ?",
       whereArgs: [id],
     );
-    if (maps.isEmpty) return null;
-    return WorkoutLog.fromMap(maps.first);
+    return result.isNotEmpty ? WorkoutExercise.fromMap(result.first) : null;
   }
 
-  Future<List<WorkoutLog>> getWorkoutLogsByWorkout(int workoutId) async {
+  Future<List<WorkoutExercise>> getWorkoutExercisesByWorkout(
+    int workoutId,
+  ) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workout_logs',
-      where: 'workout_id = ?',
+    final result = await db.query(
+      "workout_exercises",
+      where: "workout_id = ?",
       whereArgs: [workoutId],
-      orderBy: 'set_number ASC',
+      orderBy: "order_index ASC",
     );
-    return List.generate(maps.length, (i) => WorkoutLog.fromMap(maps[i]));
+    return result.map((map) => WorkoutExercise.fromMap(map)).toList();
   }
 
-  Future<List<WorkoutLog>> getWorkoutLogsByExercise(int exerciseId) async {
+  Future<List<WorkoutExercise>> getAllWorkoutExercises() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workout_logs',
-      where: 'exercise_id = ?',
-      whereArgs: [exerciseId],
-    );
-    return List.generate(maps.length, (i) => WorkoutLog.fromMap(maps[i]));
+    final result = await db.query("workout_exercises");
+    return result.map((map) => WorkoutExercise.fromMap(map)).toList();
   }
 
-  Future<int> updateWorkoutLog(WorkoutLog workoutLog) async {
+  Future<int> updateWorkoutExercise(WorkoutExercise workoutExercise) async {
     final db = await database;
     return await db.update(
-      'workout_logs',
-      workoutLog.toMap(),
-      where: 'id = ?',
-      whereArgs: [workoutLog.id],
+      "workout_exercises",
+      workoutExercise.toMap(),
+      where: "id = ?",
+      whereArgs: [workoutExercise.id],
     );
   }
 
-  Future<int> deleteWorkoutLog(int id) async {
-    final db = await database;
-    return await db.delete('workout_logs', where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<int> deleteWorkoutLogsByWorkout(int workoutId) async {
+  Future<int> deleteWorkoutExercise(int id) async {
     final db = await database;
     return await db.delete(
-      'workout_logs',
-      where: 'workout_id = ?',
+      "workout_exercises",
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> deleteWorkoutExercisesByWorkout(int workoutId) async {
+    final db = await database;
+    return await db.delete(
+      "workout_exercises",
+      where: "workout_id = ?",
       whereArgs: [workoutId],
     );
   }
 
-  // ==================== UTILITY METHODS ====================
-
-  /// Get complete routine with exercises
-  Future<Map<String, dynamic>?> getRoutineWithExercises(int routineId) async {
-    final routine = await getRoutineById(routineId);
-    if (routine == null) return null;
-
-    final routineExercises = await getRoutineExercisesByRoutine(routineId);
-    final List<Map<String, dynamic>> exerciseDetails = [];
-
-    for (final routineExercise in routineExercises) {
-      final exercise = await getExerciseById(routineExercise.exerciseId);
-      if (exercise != null) {
-        exerciseDetails.add({
-          'routine_exercise': routineExercise,
-          'exercise': exercise,
-        });
-      }
-    }
-
-    return {'routine': routine, 'exercises': exerciseDetails};
-  }
-
-  /// Get workout with all logs
-  Future<Map<String, dynamic>?> getWorkoutWithLogs(int workoutId) async {
-    final workout = await getWorkoutById(workoutId);
-    if (workout == null) return null;
-
-    final logs = await getWorkoutLogsByWorkout(workoutId);
-
-    return {'workout': workout, 'logs': logs};
-  }
-
-  /// Get exercise progress (all workout logs for an exercise)
-  Future<List<WorkoutLog>> getExerciseProgress(int exerciseId) async {
+  Future<Workout?> getUnfinishedWorkout() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.rawQuery(
-      '''
-      SELECT wl.* FROM workout_logs wl
-      JOIN workouts w ON wl.workout_id = w.id
-      WHERE wl.exercise_id = ?
-      ORDER BY w.started_at DESC, wl.set_number ASC
-    ''',
-      [exerciseId],
+    var result = await db.query(
+      "workouts",
+      where: "ended_at IS NULL",
+      orderBy: "started_at DESC", // Get most recent
+      limit: 1,
     );
+    if (result.isEmpty) return null;
 
-    return List.generate(maps.length, (i) => WorkoutLog.fromMap(maps[i]));
+    final workout = Workout.fromMap(result[0]);
+    return workout;
   }
 
-  /// Get recent workouts (last N workouts)
-  Future<List<Workout>> getRecentWorkouts(int limit) async {
+  // WORKOUT SET CRUD
+  Future<int> createWorkoutSet(WorkoutSet workoutSet) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'workouts',
-      orderBy: 'started_at DESC',
-      limit: limit,
+    return await db.insert("workout_sets", workoutSet.toMap());
+  }
+
+  Future<WorkoutSet?> getWorkoutSet(int id) async {
+    final db = await database;
+    final result = await db.query(
+      "workout_sets",
+      where: "id = ?",
+      whereArgs: [id],
     );
-    return List.generate(maps.length, (i) => Workout.fromMap(maps[i]));
+    return result.isNotEmpty ? WorkoutSet.fromMap(result.first) : null;
   }
 
-  /// Start a new workout
-  Future<int> startWorkout(int routineId) async {
-    final workout = Workout(routineId: routineId, startedAt: DateTime.now());
-    return await insertWorkout(workout);
-  }
-
-  /// End a workout
-  Future<int> endWorkout(int workoutId) async {
-    final workout = await getWorkoutById(workoutId);
-    if (workout == null) return 0;
-
-    workout.endedAt = DateTime.now();
-    return await updateWorkout(workout);
-  }
-
-  /// Batch insert workout logs for a set
-  Future<List<int>> insertWorkoutSet(
-    int workoutId,
-    int exerciseId,
-    List<Map<String, dynamic>> sets,
+  Future<List<WorkoutSet>> getWorkoutSetsByExercise(
+    int workoutExerciseId,
   ) async {
-    final List<int> insertedIds = [];
+    final db = await database;
+    final result = await db.query(
+      "workout_sets",
+      where: "workout_exercise_id = ?",
+      whereArgs: [workoutExerciseId],
+      orderBy: "set_number ASC",
+    );
+    return result.map((map) => WorkoutSet.fromMap(map)).toList();
+  }
 
-    for (int i = 0; i < sets.length; i++) {
-      final set = sets[i];
-      final workoutLog = WorkoutLog(
-        workoutId: workoutId,
-        exerciseId: exerciseId,
-        setNumber: i + 1,
-        reps: set['reps'],
-        weightKg: set['weight']?.toDouble(),
-        restSeconds: set['rest'],
-      );
+  Future<List<WorkoutSet>> getAllWorkoutSets() async {
+    final db = await database;
+    final result = await db.query("workout_sets");
+    return result.map((map) => WorkoutSet.fromMap(map)).toList();
+  }
 
-      final id = await insertWorkoutLog(workoutLog);
-      insertedIds.add(id);
-    }
+  Future<int> updateWorkoutSet(WorkoutSet workoutSet) async {
+    final db = await database;
+    return await db.update(
+      "workout_sets",
+      workoutSet.toMap(),
+      where: "id = ?",
+      whereArgs: [workoutSet.id],
+    );
+  }
 
-    return insertedIds;
+  Future<int> deleteWorkoutSet(int id) async {
+    final db = await database;
+    return await db.delete("workout_sets", where: "id = ?", whereArgs: [id]);
+  }
+
+  Future<int> deleteWorkoutSetsByExercise(int workoutExerciseId) async {
+    final db = await database;
+    return await db.delete(
+      "workout_sets",
+      where: "workout_exercise_id = ?",
+      whereArgs: [workoutExerciseId],
+    );
   }
 }

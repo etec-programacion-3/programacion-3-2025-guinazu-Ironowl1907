@@ -1,9 +1,9 @@
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
-class ExerciseRepository {
+class WorkoutExerciseRepository {
   final DatabaseService dbService;
-  ExerciseRepository(this.dbService);
+  WorkoutExerciseRepository(this.dbService);
 
   Future<int> create(Exercise exercise) async {
     final db = await dbService.database;

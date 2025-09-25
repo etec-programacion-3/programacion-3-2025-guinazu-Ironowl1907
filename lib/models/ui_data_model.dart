@@ -2,10 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/services/workout_repository.dart';
-import 'package:workout_logger/services/workout_set_repository.dart';
 
 class AppNotifier extends ChangeNotifier {
-  late WorkoutSetRepository workoutSetRepo;
   late WorkoutRepository workoutRepo;
 
   late DatabaseService dbService;
@@ -14,7 +12,6 @@ class AppNotifier extends ChangeNotifier {
     dbService = DatabaseService();
     dbService.initDB();
 
-    workoutSetRepo = WorkoutSetRepository(dbService);
     workoutRepo = WorkoutRepository(dbService);
   }
 

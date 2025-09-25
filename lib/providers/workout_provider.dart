@@ -1,0 +1,18 @@
+import 'package:flutter/foundation.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/services/muscle_group_repository.dart';
+import 'package:workout_logger/services/workout_repository.dart';
+
+class WorkoutProvider extends ChangeNotifier {
+  late WorkoutRepository workoutRepo;
+  late DatabaseService dbService;
+
+  List<Workout> _workouts = [];
+
+  List<Workout> get workouts => _workouts;
+
+  WorkoutProvider({required this.dbService}) {
+    workoutRepo = WorkoutRepository(dbService);
+  }
+}

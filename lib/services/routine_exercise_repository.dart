@@ -1,3 +1,4 @@
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
@@ -6,12 +7,12 @@ class RoutineExerciseRepository {
   RoutineExerciseRepository(this.dbService);
 
   Future<int> create(Exercise exercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return db.insert("exercises", exercise.toMap());
   }
 
   Future<Exercise?> get(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "exercises",
       where: "id = ?",
@@ -22,14 +23,13 @@ class RoutineExerciseRepository {
 
   // ROUTINE EXERCISE CRUD
   Future<int> createRoutineExercise(RoutineExercise routineExercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.insert("routine_exercises", routineExercise.toMap());
   }
 
   Future<DetailedRoutineExercise?> getDetailedRoutineExercise(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
 
-    // Get the routine exercise first
     final routineExerciseResult = await db.query(
       "routine_exercises",
       where: "id = ?",
@@ -64,7 +64,7 @@ class RoutineExerciseRepository {
   Future<List<DetailedRoutineExercise>> getDetailedRoutineExercisesByRoutine(
     int routineId,
   ) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
 
     final result = await db.rawQuery(
       '''
@@ -111,7 +111,7 @@ class RoutineExerciseRepository {
   }
 
   Future<RoutineExercise?> getRoutineExercise(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "routine_exercises",
       where: "id = ?",
@@ -123,7 +123,7 @@ class RoutineExerciseRepository {
   Future<List<RoutineExercise>> getRoutineExercisesByRoutine(
     int routineId,
   ) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "routine_exercises",
       where: "routine_id = ?",
@@ -134,13 +134,13 @@ class RoutineExerciseRepository {
   }
 
   Future<List<RoutineExercise>> getAllRoutineExercises() async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query("routine_exercises");
     return result.map((map) => RoutineExercise.fromMap(map)).toList();
   }
 
   Future<int> updateRoutineExercise(RoutineExercise routineExercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.update(
       "routine_exercises",
       routineExercise.toMap(),
@@ -150,7 +150,7 @@ class RoutineExerciseRepository {
   }
 
   Future<int> deleteRoutineExercise(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete(
       "routine_exercises",
       where: "id = ?",
@@ -159,7 +159,7 @@ class RoutineExerciseRepository {
   }
 
   Future<int> deleteRoutineExercisesByRoutine(int routineId) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete(
       "routine_exercises",
       where: "routine_id = ?",

@@ -83,18 +83,4 @@ class WorkoutExerciseRepository {
       whereArgs: [workoutId],
     );
   }
-
-  Future<Workout?> getUnfinishedWorkout() async {
-    final Database db = dbService.db!;
-    var result = await db.query(
-      "workouts",
-      where: "ended_at IS NULL",
-      orderBy: "started_at DESC", // Get most recent
-      limit: 1,
-    );
-    if (result.isEmpty) return null;
-
-    final workout = Workout.fromMap(result[0]);
-    return workout;
-  }
 }

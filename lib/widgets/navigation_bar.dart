@@ -1,48 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_logger/providers/app_state_provider.dart';
-import 'package:workout_logger/providers/workout_provider.dart';
+import 'package:workout_logger/screens/home.dart';
+import 'package:workout_logger/screens/profile.dart';
+import 'package:workout_logger/screens/workout.dart';
 
-import '../screens/home.dart';
-import '../screens/profile.dart';
-import '../screens/workout.dart';
-import 'resume_workout_bar.dart';
+class NavigationProvider extends ChangeNotifier {
+  int _currentIndex = 0;
 
-class AppNavigation extends StatefulWidget {
-  const AppNavigation({super.key});
+  int get currentIndex => _currentIndex;
 
-  @override
-  State<AppNavigation> createState() => _AppNavigationState();
+  void setCurrentIndex(int index) {
+    _currentIndex = index;
+    notifyListeners();
+  }
 }
 
-class _AppNavigationState extends State<AppNavigation> {
-  late Future<void> _loadWorkoutFuture;
+class AppNavigation extends StatelessWidget {
+  AppNavigation({super.key});
 
-  @override
-  void initState() {
-    super.initState();
-    _loadWorkoutFuture = _loadActiveWorkout();
-  }
-
-  Future<void> _loadActiveWorkout() async {
-    final appState = context.read<AppStateProvider>();
-    appState.setIsLoadingWorkout(true);
-
-    try {
-      final workout = await context
-          .read<WorkoutProvider>()
-          .getUnfinishedWorkout();
-      appState.setCurrentWorkout(workout);
-    } catch (_) {
-      appState.setCurrentWorkout(null);
-    } finally {
-      appState.setIsLoadingWorkout(false);
-    }
-  }
-
-  List<Widget> _buildPages() => [HomePage(), WorkoutPage(), ProfilePage()];
-  List<PreferredSizeWidget> _buildAppBars() => [
+  final List<Widget> _bodyWidgets = [HomePage(), WorkoutPage(), ProfilePage()];
+  final List<PreferredSizeWidget> _topBars = [
     homeAppBar(),
     workoutAppBar(),
     profileAppBar(),
@@ -50,42 +28,16 @@ class _AppNavigationState extends State<AppNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppStateProvider>();
     final themeData = Theme.of(context);
-    final pages = _buildPages();
-    final appBars = _buildAppBars();
 
-    return FutureBuilder(
-      future: _loadWorkoutFuture,
-      builder: (context, snapshot) {
+    return Consumer<NavigationProvider>(
+      builder: (context, navigationProvider, child) {
         return Scaffold(
-          body: Column(
-            children: [
-              Expanded(child: pages[appState.navBarIndex]),
-              // if (!appState.isLoadingWorkout && appState.currentWorkout != null)
-              //   resumeWorkoutPopup(...)
-            ],
-          ),
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: Theme(
-              data: themeData.copyWith(
-                appBarTheme: AppBarTheme(
-                  backgroundColor: themeData.colorScheme.surface,
-                  foregroundColor: themeData.colorScheme.onSurface,
-                  elevation: 0,
-                ),
-              ),
-              child: appBars[appState.navBarIndex],
-            ),
-          ),
+          appBar: _topBars[navigationProvider._currentIndex],
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: appState.navBarIndex,
-            onTap: (index) => appState.setCurrentIndex(index),
+            currentIndex: navigationProvider.currentIndex,
+            onTap: (index) => navigationProvider.setCurrentIndex(index),
             type: BottomNavigationBarType.fixed,
-            backgroundColor: themeData.colorScheme.surface,
-            selectedItemColor: themeData.colorScheme.primary,
-            unselectedItemColor: themeData.colorScheme.onSurfaceVariant,
             items: [
               const BottomNavigationBarItem(
                 icon: Icon(Icons.home),
@@ -97,7 +49,7 @@ class _AppNavigationState extends State<AppNavigation> {
                   width: 24,
                   height: 24,
                   colorFilter: ColorFilter.mode(
-                    appState.navBarIndex == 1
+                    navigationProvider.currentIndex == 1
                         ? themeData.colorScheme.primary
                         : themeData.colorScheme.onSurfaceVariant,
                     BlendMode.srcIn,
@@ -111,7 +63,7 @@ class _AppNavigationState extends State<AppNavigation> {
                   width: 24,
                   height: 24,
                   colorFilter: ColorFilter.mode(
-                    appState.navBarIndex == 2
+                    navigationProvider.currentIndex == 2
                         ? themeData.colorScheme.primary
                         : themeData.colorScheme.onSurfaceVariant,
                     BlendMode.srcIn,
@@ -121,6 +73,8 @@ class _AppNavigationState extends State<AppNavigation> {
               ),
             ],
           ),
+          // You'll need to add body content here
+          body: _bodyWidgets[navigationProvider.currentIndex],
         );
       },
     );

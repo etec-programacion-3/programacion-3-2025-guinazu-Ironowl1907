@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
@@ -6,12 +7,12 @@ class WorkoutExerciseRepository {
   WorkoutExerciseRepository(this.dbService);
 
   Future<int> create(Exercise exercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return db.insert("exercises", exercise.toMap());
   }
 
   Future<Exercise?> get(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "exercises",
       where: "id = ?",
@@ -22,12 +23,12 @@ class WorkoutExerciseRepository {
 
   // WORKOUT EXERCISE CRUD
   Future<int> createWorkoutExercise(WorkoutExercise workoutExercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.insert("workout_exercises", workoutExercise.toMap());
   }
 
   Future<WorkoutExercise?> getWorkoutExercise(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "workout_exercises",
       where: "id = ?",
@@ -39,7 +40,7 @@ class WorkoutExerciseRepository {
   Future<List<WorkoutExercise>> getWorkoutExercisesByWorkout(
     int workoutId,
   ) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "workout_exercises",
       where: "workout_id = ?",
@@ -50,13 +51,13 @@ class WorkoutExerciseRepository {
   }
 
   Future<List<WorkoutExercise>> getAllWorkoutExercises() async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query("workout_exercises");
     return result.map((map) => WorkoutExercise.fromMap(map)).toList();
   }
 
   Future<int> updateWorkoutExercise(WorkoutExercise workoutExercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.update(
       "workout_exercises",
       workoutExercise.toMap(),
@@ -66,7 +67,7 @@ class WorkoutExerciseRepository {
   }
 
   Future<int> deleteWorkoutExercise(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete(
       "workout_exercises",
       where: "id = ?",
@@ -75,7 +76,7 @@ class WorkoutExerciseRepository {
   }
 
   Future<int> deleteWorkoutExercisesByWorkout(int workoutId) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete(
       "workout_exercises",
       where: "workout_id = ?",
@@ -84,7 +85,7 @@ class WorkoutExerciseRepository {
   }
 
   Future<Workout?> getUnfinishedWorkout() async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     var result = await db.query(
       "workouts",
       where: "ended_at IS NULL",

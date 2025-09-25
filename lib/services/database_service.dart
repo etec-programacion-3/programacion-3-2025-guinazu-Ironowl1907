@@ -3,19 +3,13 @@ import 'package:path/path.dart';
 import 'package:workout_logger/models/models.dart';
 
 class DatabaseService {
-  Database? _db;
+  Database? db;
 
-  Future<Database> get database async {
-    if (_db != null) return _db!;
-    _db = await _initDB();
-    return _db!;
-  }
-
-  Future<Database> _initDB() async {
+  Future<void> initDB() async {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "master.db");
     print("Searching for Db on: $databasePath");
-    return await openDatabase(databasePath, version: 2, onCreate: _onCreate);
+    db = await openDatabase(databasePath, version: 2, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -28,10 +22,9 @@ class DatabaseService {
   }
 
   Future<void> closeDatabase() async {
-    final db = _db;
     if (db != null) {
-      await db.close();
-      _db = null;
+      await db!.close();
+      db = null;
     }
   }
 
@@ -39,6 +32,6 @@ class DatabaseService {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "master.db");
     await deleteDatabase(databasePath);
-    _db = null;
+    db = null;
   }
 }

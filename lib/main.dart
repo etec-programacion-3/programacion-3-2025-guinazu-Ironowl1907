@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/models/ui_data_model.dart';
 import 'widgets/navigation_bar.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +14,6 @@ Future<void> main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  final dbService = DatabaseService.instance;
-  await dbService.database;
-
   runApp(const MyApp());
 }
 
@@ -24,17 +22,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Poppins',
-        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueAccent,
-          brightness: Brightness.dark,
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => AppNotifier())],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Poppins',
+          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blueAccent,
+            brightness: Brightness.dark,
+          ),
         ),
+        home: const AppNavigation(),
       ),
-      home: const AppNavigation(),
     );
   }
 }

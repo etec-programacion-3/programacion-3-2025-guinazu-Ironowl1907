@@ -6,12 +6,12 @@ class MuscleGroupRepository {
   MuscleGroupRepository(this.dbService);
 
   Future<int> create(MuscleGroup muscleGroup) async {
-    final db = await dbService.database;
-    return db.insert("muscle_groups", muscleGroup.toMap());
+    final db = dbService.db;
+    return db!.insert("muscle_groups", muscleGroup.toMap());
   }
 
   Future<MuscleGroup?> get(int id) async {
-    final db = await dbService.database;
+    final db = dbService.db;
     final result = await db.query(
       "muscle_groups",
       where: "id = ?",
@@ -21,14 +21,14 @@ class MuscleGroupRepository {
   }
 
   Future<List<MuscleGroup>> getAll() async {
-    final db = await dbService.database;
+    final db = dbService.db;
     final result = await db.query("muscle_groups");
     return result.map((map) => MuscleGroup.fromMap(map)).toList();
   }
 
   Future<int> update(MuscleGroup muscleGroup) async {
-    final db = await dbService.database;
-    return db.update(
+    final db = dbService.db;
+    return db!.update(
       "muscle_groups",
       muscleGroup.toMap(),
       where: "id = ?",
@@ -37,7 +37,7 @@ class MuscleGroupRepository {
   }
 
   Future<int> delete(int id) async {
-    final db = await dbService.database;
+    final db = dbService.db;
     return db.delete("muscle_groups", where: "id = ?", whereArgs: [id]);
   }
 }

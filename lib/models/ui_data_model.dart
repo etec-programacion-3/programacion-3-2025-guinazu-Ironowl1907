@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
-import 'package:workout_logger/services/muscle_group_repository.dart';
 import 'package:workout_logger/services/routine_repository.dart';
 import 'package:workout_logger/services/routine_exercise_repository.dart';
 import 'package:workout_logger/services/exercise_repository.dart';
@@ -10,7 +9,6 @@ import 'package:workout_logger/services/workout_repository.dart';
 import 'package:workout_logger/services/workout_set_repository.dart';
 
 class AppNotifier extends ChangeNotifier {
-  late MuscleGroupRepository muscleGroupsRepo;
   late ExerciseRepository exercisesRepo;
   late RoutineRepository routinesRepo;
   late RoutineExerciseRepository routinesExerciseRepo;
@@ -24,7 +22,6 @@ class AppNotifier extends ChangeNotifier {
     dbService = DatabaseService();
     dbService.initDB();
 
-    muscleGroupsRepo = MuscleGroupRepository(dbService);
     exercisesRepo = ExerciseRepository(dbService);
     routinesRepo = RoutineRepository(dbService);
     routinesExerciseRepo = RoutineExerciseRepository(dbService);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
+import 'package:workout_logger/providers/routine_provider.dart';
 import 'widgets/navigation_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => MuscleGroupProvider()),
         ChangeNotifierProvider(create: (context) => ExerciseProvider()),
+        ChangeNotifierProvider(create: (context) => RoutineProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
@@ -7,24 +8,24 @@ class RoutineRepository {
 
   // ROUTINE CRUD
   Future<int> create(Routine routine) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.insert("routines", routine.toMap());
   }
 
   Future<Routine?> get(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query("routines", where: "id = ?", whereArgs: [id]);
     return result.isNotEmpty ? Routine.fromMap(result.first) : null;
   }
 
   Future<List<Routine>> getAll() async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query("routines");
     return result.map((map) => Routine.fromMap(map)).toList();
   }
 
   Future<int> update(Routine routine) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.update(
       "routines",
       routine.toMap(),
@@ -34,7 +35,7 @@ class RoutineRepository {
   }
 
   Future<int> delete(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete("routines", where: "id = ?", whereArgs: [id]);
   }
 }

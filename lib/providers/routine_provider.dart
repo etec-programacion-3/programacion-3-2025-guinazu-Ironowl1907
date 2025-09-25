@@ -11,10 +11,7 @@ class RoutineProvider extends ChangeNotifier {
 
   List<Routine> get workouts => _routines;
 
-  RoutineProvider() {
-    dbService = DatabaseService();
-    dbService.initDB();
-
+  RoutineProvider({required this.dbService}) {
     routineRepo = RoutineRepository(dbService);
   }
 

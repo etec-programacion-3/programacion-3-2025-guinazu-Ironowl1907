@@ -11,10 +11,7 @@ class ExerciseProvider extends ChangeNotifier {
 
   List<Exercise> get exercises => _exercises;
 
-  ExerciseProvider() {
-    dbService = DatabaseService();
-    dbService.initDB();
-
+  ExerciseProvider({required this.dbService}) {
     exerciseRepo = ExerciseRepository(dbService);
   }
 

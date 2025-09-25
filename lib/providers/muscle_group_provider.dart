@@ -11,10 +11,7 @@ class MuscleGroupProvider extends ChangeNotifier {
 
   List<MuscleGroup> get workouts => _muscleGroup;
 
-  MuscleGroupProvider() {
-    dbService = DatabaseService();
-    dbService.initDB();
-
+  MuscleGroupProvider({required this.dbService}) {
     muscleGroupsRepo = MuscleGroupRepository(dbService);
   }
 

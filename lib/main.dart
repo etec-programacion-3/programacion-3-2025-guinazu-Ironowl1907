@@ -4,6 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/services/database_service.dart';
 import 'widgets/navigation_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -15,19 +16,30 @@ Future<void> main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  runApp(const MyApp());
+  DatabaseService dbService = DatabaseService();
+  dbService.initDB();
+
+  runApp(MyApp(dbService: dbService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.dbService});
+
+  final DatabaseService dbService;
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => MuscleGroupProvider()),
-        ChangeNotifierProvider(create: (context) => ExerciseProvider()),
-        ChangeNotifierProvider(create: (context) => RoutineProvider()),
+        ChangeNotifierProvider(
+          create: (context) => MuscleGroupProvider(dbService: dbService),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ExerciseProvider(dbService: dbService),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => RoutineProvider(dbService: dbService),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -9,7 +9,6 @@ import 'package:workout_logger/services/workout_repository.dart';
 import 'package:workout_logger/services/workout_set_repository.dart';
 
 class AppNotifier extends ChangeNotifier {
-  late ExerciseRepository exercisesRepo;
   late RoutineRepository routinesRepo;
   late RoutineExerciseRepository routinesExerciseRepo;
   late WorkoutExerciseRepository workoutExerciseRepo;
@@ -22,7 +21,6 @@ class AppNotifier extends ChangeNotifier {
     dbService = DatabaseService();
     dbService.initDB();
 
-    exercisesRepo = ExerciseRepository(dbService);
     routinesRepo = RoutineRepository(dbService);
     routinesExerciseRepo = RoutineExerciseRepository(dbService);
     workoutExerciseRepo = WorkoutExerciseRepository(dbService);
@@ -31,11 +29,9 @@ class AppNotifier extends ChangeNotifier {
   }
 
   List<Workout> _workouts = [];
-  List<Exercise> _exercises = [];
   List<Routine> _routines = [];
 
   List<Workout> get workouts => _workouts;
-  List<Exercise> get exercises => _exercises;
   List<Routine> get routines => _routines;
 
   // ===== WORKOUTS =====
@@ -57,27 +53,5 @@ class AppNotifier extends ChangeNotifier {
   Future<void> deleteWorkout(int id) async {
     await workoutRepo.deleteWorkout(id);
     await loadWorkouts();
-  }
-
-  // ===== EXERCISES =====
-  Future<void> loadExercises() async {
-    _exercises = await exercisesRepo.getAll();
-    notifyListeners();
-  }
-
-  Future<void> addExercise(Exercise exercise) async {
-    await exercisesRepo.create(exercise);
-    await loadExercises();
-  }
-
-  // ===== ROUTINES =====
-  Future<void> loadRoutines() async {
-    _routines = await routinesRepo.getAll();
-    notifyListeners();
-  }
-
-  Future<void> addRoutine(Routine routine) async {
-    await routinesRepo.create(routine);
-    await loadRoutines();
   }
 }

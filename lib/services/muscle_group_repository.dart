@@ -7,8 +7,8 @@ class MuscleGroupRepository {
   MuscleGroupRepository(this.dbService);
 
   Future<int> create(MuscleGroup muscleGroup) async {
-    final db = dbService.db;
-    return db!.insert("muscle_groups", muscleGroup.toMap());
+    final Database db = dbService.db!;
+    return db.insert("muscle_groups", muscleGroup.toMap());
   }
 
   Future<MuscleGroup?> get(int id) async {

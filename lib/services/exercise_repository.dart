@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
@@ -6,12 +7,12 @@ class ExerciseRepository {
   ExerciseRepository(this.dbService);
 
   Future<int> create(Exercise exercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return db.insert("exercises", exercise.toMap());
   }
 
   Future<Exercise?> get(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "exercises",
       where: "id = ?",
@@ -21,13 +22,13 @@ class ExerciseRepository {
   }
 
   Future<List<Exercise>> getAll() async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query("exercises");
     return result.map((map) => Exercise.fromMap(map)).toList();
   }
 
   Future<List<Exercise>> getByMuscleGroup(int muscleGroupId) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "exercises",
       where: "muscle_group_id = ?",
@@ -37,7 +38,7 @@ class ExerciseRepository {
   }
 
   Future<int> update(Exercise exercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return db.update(
       "exercises",
       exercise.toMap(),
@@ -47,7 +48,7 @@ class ExerciseRepository {
   }
 
   Future<int> delete(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return db.delete("exercises", where: "id = ?", whereArgs: [id]);
   }
 }

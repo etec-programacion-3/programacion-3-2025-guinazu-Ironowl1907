@@ -1,105 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:workout_logger/screens/exercises.dart';
-import 'package:workout_logger/screens/muscle_group.dart';
-import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.all(18.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Dashboard",
-            style: TextStyle(
-              fontSize: 16,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              childAspectRatio: 2.5,
-              children: [
-                _DashboardButton(
-                  label: "Muscle Groups",
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MuscleGroupPage(),
-                      ),
-                    );
-                  },
-                ),
-                _DashboardButton(
-                  label: "Exercises",
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ExercisePage(),
-                      ),
-                    );
-                  },
-                ),
-                _DashboardButton(
-                  label: "Routines",
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => RoutinePage()),
-                    );
-                  },
-                ),
-                const _DashboardButton(label: "Progress"),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Custom Dashboard Button
-class _DashboardButton extends StatelessWidget {
-  final String label;
-  final VoidCallback? onPressed;
-
-  const _DashboardButton({required this.label, this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return SizedBox.expand(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 2,
-          backgroundColor: colorScheme.primaryContainer,
-          foregroundColor: colorScheme.onPrimaryContainer,
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-          textStyle: const TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        onPressed: onPressed ?? () => print(label),
-        child: Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+    return const Placeholder();
   }
 }
 

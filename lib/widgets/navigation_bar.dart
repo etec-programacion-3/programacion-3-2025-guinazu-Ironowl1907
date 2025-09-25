@@ -9,20 +9,24 @@ import '../screens/profile.dart';
 import '../screens/workout.dart';
 import 'resume_workout_bar.dart';
 
-class AppNavigation extends StatelessWidget {
+class AppNavigation extends StatefulWidget {
   const AppNavigation({super.key});
 
-  List<Widget> _buildPages() => [HomePage(), WorkoutPage(), ProfilePage()];
+  @override
+  State<AppNavigation> createState() => _AppNavigationState();
+}
 
-  List<PreferredSizeWidget> _buildAppBars() => [
-    homeAppBar(),
-    workoutAppBar(),
-    profileAppBar(),
-  ];
+class _AppNavigationState extends State<AppNavigation> {
+  late Future<void> _loadWorkoutFuture;
 
-  Future<void> _loadActiveWorkout(BuildContext context) async {
+  @override
+  void initState() {
+    super.initState();
+    _loadWorkoutFuture = _loadActiveWorkout();
+  }
+
+  Future<void> _loadActiveWorkout() async {
     final appState = context.read<AppStateProvider>();
-
     appState.setIsLoadingWorkout(true);
 
     try {
@@ -37,6 +41,13 @@ class AppNavigation extends StatelessWidget {
     }
   }
 
+  List<Widget> _buildPages() => [HomePage(), WorkoutPage(), ProfilePage()];
+  List<PreferredSizeWidget> _buildAppBars() => [
+    homeAppBar(),
+    workoutAppBar(),
+    profileAppBar(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppStateProvider>();
@@ -45,25 +56,20 @@ class AppNavigation extends StatelessWidget {
     final appBars = _buildAppBars();
 
     return FutureBuilder(
-      future: _loadActiveWorkout(context),
+      future: _loadWorkoutFuture,
       builder: (context, snapshot) {
         return Scaffold(
           body: Column(
             children: [
               Expanded(child: pages[appState.navBarIndex]),
-              if (!appState.isLoadingWorkout && appState.currentWorkout != null)
-                resumeWorkoutPopup(
-                  context,
-                  themeData,
-                  appState.currentWorkout!,
-                  () => _loadActiveWorkout(context), // reload callback
-                ),
+              // if (!appState.isLoadingWorkout && appState.currentWorkout != null)
+              //   resumeWorkoutPopup(...)
             ],
           ),
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Theme(
-              data: Theme.of(context).copyWith(
+              data: themeData.copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: themeData.colorScheme.surface,
                   foregroundColor: themeData.colorScheme.onSurface,
@@ -75,11 +81,11 @@ class AppNavigation extends StatelessWidget {
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: appState.navBarIndex,
+            onTap: (index) => appState.setCurrentIndex(index),
             type: BottomNavigationBarType.fixed,
             backgroundColor: themeData.colorScheme.surface,
             selectedItemColor: themeData.colorScheme.primary,
             unselectedItemColor: themeData.colorScheme.onSurfaceVariant,
-            onTap: (index) => appState.setCurrentIndex(index),
             items: [
               const BottomNavigationBarItem(
                 icon: Icon(Icons.home),

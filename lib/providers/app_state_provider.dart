@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:workout_logger/models/models.dart';
-import 'package:workout_logger/services/database_service.dart';
 
 class AppStateProvider extends ChangeNotifier {
   int _currentIndex = 0;
@@ -26,7 +25,7 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Workout?> getCurrentWorkout() {
-    // TODO
-  }
+  // Future<Workout?> getCurrentWorkout() {
+  //   // TODO
+  // }
 }

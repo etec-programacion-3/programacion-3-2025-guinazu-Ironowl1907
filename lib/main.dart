@@ -6,8 +6,10 @@ import 'package:workout_logger/providers/muscle_group_provider.dart';
 import 'package:workout_logger/providers/routine_exercise_provider.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
 import 'package:workout_logger/providers/workout_exercise_provider.dart';
+import 'package:workout_logger/providers/workout_set_provider.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/services/routine_exercise_repository.dart';
+import 'package:workout_logger/services/workout_set_repository.dart';
 import 'widgets/navigation_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -48,6 +50,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => WorkoutExerciseProvider(dbService: dbService),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WorkoutSetProvider(dbService: dbService),
         ),
       ],
       child: MaterialApp(

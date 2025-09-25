@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
@@ -6,12 +7,12 @@ class WorkoutSetRepository {
   WorkoutSetRepository(this.dbService);
 
   Future<int> create(Exercise exercise) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return db.insert("exercises", exercise.toMap());
   }
 
   Future<Exercise?> get(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "exercises",
       where: "id = ?",
@@ -21,12 +22,12 @@ class WorkoutSetRepository {
   }
 
   Future<int> createWorkoutSet(WorkoutSet workoutSet) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.insert("workout_sets", workoutSet.toMap());
   }
 
   Future<WorkoutSet?> getWorkoutSet(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "workout_sets",
       where: "id = ?",
@@ -38,7 +39,7 @@ class WorkoutSetRepository {
   Future<List<WorkoutSet>> getWorkoutSetsByExercise(
     int workoutExerciseId,
   ) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query(
       "workout_sets",
       where: "workout_exercise_id = ?",
@@ -49,13 +50,13 @@ class WorkoutSetRepository {
   }
 
   Future<List<WorkoutSet>> getAllWorkoutSets() async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     final result = await db.query("workout_sets");
     return result.map((map) => WorkoutSet.fromMap(map)).toList();
   }
 
   Future<int> updateWorkoutSet(WorkoutSet workoutSet) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.update(
       "workout_sets",
       workoutSet.toMap(),
@@ -65,12 +66,12 @@ class WorkoutSetRepository {
   }
 
   Future<int> deleteWorkoutSet(int id) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete("workout_sets", where: "id = ?", whereArgs: [id]);
   }
 
   Future<int> deleteWorkoutSetsByExercise(int workoutExerciseId) async {
-    final db = await dbService.database;
+    final Database db = dbService.db!;
     return await db.delete(
       "workout_sets",
       where: "workout_exercise_id = ?",

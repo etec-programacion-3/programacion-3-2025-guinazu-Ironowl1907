@@ -11,10 +11,7 @@ class RoutineExerciseProvider extends ChangeNotifier {
 
   List<RoutineExercise> get workouts => _routines;
 
-  RoutineExerciseProvider() {
-    dbService = DatabaseService();
-    dbService.initDB();
-
+  RoutineExerciseProvider({required this.dbService}) {
     routineRepo = RoutineExerciseRepository(dbService);
   }
 }

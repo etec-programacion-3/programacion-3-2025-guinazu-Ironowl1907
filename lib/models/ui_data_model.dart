@@ -1,16 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
-import 'package:workout_logger/services/routine_repository.dart';
-import 'package:workout_logger/services/routine_exercise_repository.dart';
-import 'package:workout_logger/services/exercise_repository.dart';
 import 'package:workout_logger/services/workout_exercise_repository.dart';
 import 'package:workout_logger/services/workout_repository.dart';
 import 'package:workout_logger/services/workout_set_repository.dart';
 
 class AppNotifier extends ChangeNotifier {
-  late RoutineRepository routinesRepo;
-  late RoutineExerciseRepository routinesExerciseRepo;
   late WorkoutExerciseRepository workoutExerciseRepo;
   late WorkoutSetRepository workoutSetRepo;
   late WorkoutRepository workoutRepo;
@@ -21,18 +16,14 @@ class AppNotifier extends ChangeNotifier {
     dbService = DatabaseService();
     dbService.initDB();
 
-    routinesRepo = RoutineRepository(dbService);
-    routinesExerciseRepo = RoutineExerciseRepository(dbService);
     workoutExerciseRepo = WorkoutExerciseRepository(dbService);
     workoutSetRepo = WorkoutSetRepository(dbService);
     workoutRepo = WorkoutRepository(dbService);
   }
 
   List<Workout> _workouts = [];
-  List<Routine> _routines = [];
 
   List<Workout> get workouts => _workouts;
-  List<Routine> get routines => _routines;
 
   // ===== WORKOUTS =====
   Future<void> loadWorkouts() async {

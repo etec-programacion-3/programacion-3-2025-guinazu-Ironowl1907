@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 
@@ -11,7 +12,7 @@ class MuscleGroupRepository {
   }
 
   Future<MuscleGroup?> get(int id) async {
-    final db = dbService.db;
+    final Database db = dbService.db!;
     final result = await db.query(
       "muscle_groups",
       where: "id = ?",
@@ -21,14 +22,14 @@ class MuscleGroupRepository {
   }
 
   Future<List<MuscleGroup>> getAll() async {
-    final db = dbService.db;
+    final Database db = dbService.db!;
     final result = await db.query("muscle_groups");
     return result.map((map) => MuscleGroup.fromMap(map)).toList();
   }
 
   Future<int> update(MuscleGroup muscleGroup) async {
-    final db = dbService.db;
-    return db!.update(
+    final Database db = dbService.db!;
+    return db.update(
       "muscle_groups",
       muscleGroup.toMap(),
       where: "id = ?",
@@ -37,7 +38,7 @@ class MuscleGroupRepository {
   }
 
   Future<int> delete(int id) async {
-    final db = dbService.db;
+    final Database db = dbService.db!;
     return db.delete("muscle_groups", where: "id = ?", whereArgs: [id]);
   }
 }

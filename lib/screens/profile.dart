@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/screens/exercises.dart';
 import 'package:workout_logger/screens/muscle_group.dart';
-import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Dashboard", style: themeData.textTheme.titleMedium),
+        children: <Widget>[
+          Text('Dashboard', style: themeData.textTheme.titleMedium),
           const SizedBox(height: 12),
           Expanded(
             child: GridView.count(
@@ -21,27 +21,30 @@ class ProfilePage extends StatelessWidget {
               mainAxisSpacing: 20,
               crossAxisSpacing: 20,
               childAspectRatio: 2.5,
-              children: [
+              children: <Widget>[
                 _DashboardButton(
-                  label: "Muscle Groups",
+                  label: 'Muscle Groups',
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => MuscleGroupPage(),
+                        builder: (BuildContext context) =>
+                            const MuscleGroupPage(),
                       ),
                     );
                   },
                 ),
-                _DashboardButton(label: "Exercises"),
                 _DashboardButton(
-                  label: "Routines",
+                  label: 'Exercises',
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => RoutinePage()),
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const ExercisePage(),
+                      ),
                     );
                   },
                 ),
-                _DashboardButton(label: "Progress"),
+                const _DashboardButton(label: 'Routines'),
+                const _DashboardButton(label: 'Progress'),
               ],
             ),
           ),
@@ -59,7 +62,7 @@ class _DashboardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox.expand(
       child: ElevatedButton(
@@ -84,12 +87,12 @@ class _DashboardButton extends StatelessWidget {
 
 PreferredSizeWidget profileAppBar() {
   return AppBar(
-    title: const Text("Profile"),
+    title: const Text('Profile'),
     bottom: PreferredSize(
       preferredSize: const Size.fromHeight(1.0),
       child: Builder(
-        builder: (context) {
-          final dividerColor = Theme.of(context).dividerColor;
+        builder: (BuildContext context) {
+          final Color dividerColor = Theme.of(context).dividerColor;
           return Container(color: dividerColor, height: 1.0);
         },
       ),

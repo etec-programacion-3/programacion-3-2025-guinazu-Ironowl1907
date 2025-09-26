@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/screens/muscle_group.dart';
 import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -21,7 +22,16 @@ class ProfilePage extends StatelessWidget {
               crossAxisSpacing: 20,
               childAspectRatio: 2.5,
               children: [
-                _DashboardButton(label: "Muscle Groups"),
+                _DashboardButton(
+                  label: "Muscle Groups",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => MuscleGroupPage(),
+                      ),
+                    );
+                  },
+                ),
                 _DashboardButton(label: "Exercises"),
                 _DashboardButton(
                   label: "Routines",

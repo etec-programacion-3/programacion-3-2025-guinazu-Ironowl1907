@@ -19,8 +19,12 @@ class NavigationProvider extends ChangeNotifier {
 class AppNavigation extends StatelessWidget {
   AppNavigation({super.key});
 
-  final List<Widget> _bodyWidgets = [HomePage(), WorkoutPage(), ProfilePage()];
-  final List<PreferredSizeWidget> _topBars = [
+  final List<Widget> _bodyWidgets = <Widget>[
+    const HomePage(),
+    const WorkoutPage(),
+    const ProfilePage(),
+  ];
+  final List<PreferredSizeWidget> _topBars = <PreferredSizeWidget>[
     homeAppBar(),
     workoutAppBar(),
     profileAppBar(),
@@ -28,55 +32,60 @@ class AppNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
 
     return Consumer<NavigationProvider>(
-      builder: (context, navigationProvider, child) {
-        return Scaffold(
-          appBar: _topBars[navigationProvider._currentIndex],
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: navigationProvider.currentIndex,
-            onTap: (index) => navigationProvider.setCurrentIndex(index),
-            type: BottomNavigationBarType.fixed,
-            items: [
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: "Home",
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/Exercise.svg',
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(
-                    navigationProvider.currentIndex == 1
-                        ? themeData.colorScheme.primary
-                        : themeData.colorScheme.onSurfaceVariant,
-                    BlendMode.srcIn,
+      builder:
+          (
+            BuildContext context,
+            NavigationProvider navigationProvider,
+            Widget? child,
+          ) {
+            return Scaffold(
+              appBar: _topBars[navigationProvider._currentIndex],
+              bottomNavigationBar: BottomNavigationBar(
+                currentIndex: navigationProvider.currentIndex,
+                onTap: (int index) => navigationProvider.setCurrentIndex(index),
+                type: BottomNavigationBarType.fixed,
+                items: <BottomNavigationBarItem>[
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
                   ),
-                ),
-                label: "Workout",
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/account.svg',
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(
-                    navigationProvider.currentIndex == 2
-                        ? themeData.colorScheme.primary
-                        : themeData.colorScheme.onSurfaceVariant,
-                    BlendMode.srcIn,
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/Exercise.svg',
+                      width: 24,
+                      height: 24,
+                      colorFilter: ColorFilter.mode(
+                        navigationProvider.currentIndex == 1
+                            ? themeData.colorScheme.primary
+                            : themeData.colorScheme.onSurfaceVariant,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    label: 'Workout',
                   ),
-                ),
-                label: "Profile",
+                  BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      'assets/account.svg',
+                      width: 24,
+                      height: 24,
+                      colorFilter: ColorFilter.mode(
+                        navigationProvider.currentIndex == 2
+                            ? themeData.colorScheme.primary
+                            : themeData.colorScheme.onSurfaceVariant,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    label: 'Profile',
+                  ),
+                ],
               ),
-            ],
-          ),
-          // You'll need to add body content here
-          body: _bodyWidgets[navigationProvider.currentIndex],
-        );
-      },
+              // You'll need to add body content here
+              body: _bodyWidgets[navigationProvider.currentIndex],
+            );
+          },
     );
   }
 }

@@ -7,12 +7,13 @@ class MuscleGroupProvider extends ChangeNotifier {
   late MuscleGroupRepository muscleGroupsRepo;
   late DatabaseService dbService;
 
-  List<MuscleGroup> _muscleGroup = [];
+  List<MuscleGroup> _muscleGroup = <MuscleGroup>[];
 
-  List<MuscleGroup> get workouts => _muscleGroup;
+  List<MuscleGroup> get muscleGroups => _muscleGroup;
 
   MuscleGroupProvider({required this.dbService}) {
     muscleGroupsRepo = MuscleGroupRepository(dbService);
+    load();
   }
 
   Future<void> load() async {
@@ -22,21 +23,21 @@ class MuscleGroupProvider extends ChangeNotifier {
 
   Future<void> add(MuscleGroup muscleGroup) async {
     if (await muscleGroupsRepo.create(muscleGroup) == 0) {
-      print("Error insering muscle group");
+      print('Error insering muscle group');
     }
     load();
   }
 
   Future<void> delete(MuscleGroup muscleGroup) async {
     if (await muscleGroupsRepo.delete(muscleGroup.id!) == 0) {
-      print("Error deleting muscle group");
+      print('Error deleting muscle group');
     }
     load();
   }
 
   Future<void> update(MuscleGroup muscleGroup) async {
     if (await muscleGroupsRepo.update(muscleGroup) == 0) {
-      print("Error updating muscle group");
+      print('Error updating muscle group');
     }
     load();
   }

@@ -1,11 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    var themeData = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Dashboard", style: themeData.textTheme.titleMedium),
+          const SizedBox(height: 12),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              childAspectRatio: 2.5,
+              children: [
+                _DashboardButton(label: "Muscle Groups"),
+                _DashboardButton(label: "Exercises"),
+                _DashboardButton(
+                  label: "Routines",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RoutinePage()),
+                    );
+                  },
+                ),
+                _DashboardButton(label: "Progress"),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+
+  const _DashboardButton({required this.label, this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SizedBox.expand(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 2,
+          backgroundColor: colorScheme.primaryContainer,
+          foregroundColor: colorScheme.onPrimaryContainer,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          textStyle: const TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        onPressed: onPressed ?? () => print(label),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.titleMedium,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }
 

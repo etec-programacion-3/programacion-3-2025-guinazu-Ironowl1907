@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => WorkoutProvider(dbService: dbService),
         ),
-        ChangeNotifierProvider(create: (context) => AppStateProvider()),
+        ChangeNotifierProvider(create: (context) => NavigationProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark,
           ),
         ),
-        home: const AppNavigation(),
+        home: AppNavigation(),
       ),
     );
   }

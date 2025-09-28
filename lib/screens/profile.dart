@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/screens/exercises.dart';
 import 'package:workout_logger/screens/muscle_group.dart';
+import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -43,7 +44,16 @@ class ProfilePage extends StatelessWidget {
                     );
                   },
                 ),
-                const _DashboardButton(label: 'Routines'),
+                _DashboardButton(
+                  label: 'Routines',
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const RoutinePage(),
+                      ),
+                    );
+                  },
+                ),
                 const _DashboardButton(label: 'Progress'),
               ],
             ),

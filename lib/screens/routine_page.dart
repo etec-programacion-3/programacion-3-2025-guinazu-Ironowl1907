@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/screens/newRoutine.dart';
 import 'package:workout_logger/widgets/routine_card.dart';
 
 class RoutinePage extends StatelessWidget {
@@ -30,6 +31,17 @@ class RoutinePage extends StatelessWidget {
                 },
               );
             },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  const CreateRoutinePage(routine: null),
+            ),
+          );
+        },
       ),
     );
   }

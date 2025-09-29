@@ -6,56 +6,62 @@ class RoutineExerciseRepository {
   final DatabaseService dbService;
   RoutineExerciseRepository(this.dbService);
 
-  Future<int> create(Exercise exercise) async {
+  Future<RoutineExercise?> get(int id) async {
     final Database db = dbService.db!;
-    return db.insert("exercises", exercise.toMap());
-  }
-
-  Future<Exercise?> get(int id) async {
-    final Database db = dbService.db!;
-    final result = await db.query(
-      "exercises",
-      where: "id = ?",
-      whereArgs: [id],
+    final List<Map<String, Object?>> result = await db.query(
+      'routine_exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
     );
-    return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
+    return result.isNotEmpty ? RoutineExercise.fromMap(result.first) : null;
   }
 
-  // ROUTINE EXERCISE CRUD
-  Future<int> createRoutineExercise(RoutineExercise routineExercise) async {
+  Future<List<RoutineExercise>?> getAll() async {
     final Database db = dbService.db!;
-    return await db.insert("routine_exercises", routineExercise.toMap());
+    final List<Map<String, Object?>> result = await db.query(
+      'routine_exercises',
+    );
+
+    return result.isNotEmpty
+        ? result
+              .map((Map<String, Object?> map) => RoutineExercise.fromMap(map))
+              .toList()
+        : null;
+  }
+
+  Future<int> create(RoutineExercise routineExercise) async {
+    final Database db = dbService.db!;
+    return await db.insert('routine_exercises', routineExercise.toMap());
   }
 
   Future<DetailedRoutineExercise?> getDetailedRoutineExercise(int id) async {
     final Database db = dbService.db!;
 
-    final routineExerciseResult = await db.query(
-      "routine_exercises",
-      where: "id = ?",
-      whereArgs: [id],
+    final List<Map<String, Object?>> routineExerciseResult = await db.query(
+      'routine_exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
     );
 
     if (routineExerciseResult.isEmpty) {
       return null;
     }
 
-    final routineExercise = RoutineExercise.fromMap(
+    final RoutineExercise routineExercise = RoutineExercise.fromMap(
       routineExerciseResult.first,
     );
 
-    // Get the associated exercise
-    final exerciseResult = await db.query(
-      "exercises",
-      where: "id = ?",
-      whereArgs: [routineExercise.exerciseId],
+    final List<Map<String, Object?>> exerciseResult = await db.query(
+      'exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[routineExercise.exerciseId],
     );
 
     if (exerciseResult.isEmpty) {
       return null;
     }
 
-    final exercise = Exercise.fromMap(exerciseResult.first);
+    final Exercise exercise = Exercise.fromMap(exerciseResult.first);
 
     return DetailedRoutineExercise(exercise, routineExercise);
   }
@@ -66,7 +72,7 @@ class RoutineExerciseRepository {
   ) async {
     final Database db = dbService.db!;
 
-    final result = await db.rawQuery(
+    final List<Map<String, Object?>> result = await db.rawQuery(
       '''
     SELECT 
       re.id as re_id,
@@ -85,18 +91,18 @@ class RoutineExerciseRepository {
     WHERE re.routine_id = ?
     ORDER BY re.`order` ASC
   ''',
-      [routineId],
+      <Object?>[routineId],
     );
 
-    return result.map((row) {
-      final exercise = Exercise(
+    return result.map((Map<String, Object?> row) {
+      final Exercise exercise = Exercise(
         id: row['e_id'] as int?,
         name: row['e_name'] as String,
         description: row['e_description'] as String?,
         muscleGroupId: row['muscle_group_id'] as int?,
       );
 
-      final routineExercise = RoutineExercise(
+      final RoutineExercise routineExercise = RoutineExercise(
         id: row['re_id'] as int?,
         routineId: row['routine_id'] as int,
         exerciseId: row['exercise_id'] as int,
@@ -110,60 +116,46 @@ class RoutineExerciseRepository {
     }).toList();
   }
 
-  Future<RoutineExercise?> getRoutineExercise(int id) async {
-    final Database db = dbService.db!;
-    final result = await db.query(
-      "routine_exercises",
-      where: "id = ?",
-      whereArgs: [id],
-    );
-    return result.isNotEmpty ? RoutineExercise.fromMap(result.first) : null;
-  }
-
   Future<List<RoutineExercise>> getRoutineExercisesByRoutine(
     int routineId,
   ) async {
     final Database db = dbService.db!;
-    final result = await db.query(
-      "routine_exercises",
-      where: "routine_id = ?",
-      whereArgs: [routineId],
-      orderBy: "`order` ASC",
+    final List<Map<String, Object?>> result = await db.query(
+      'routine_exercises',
+      where: 'routine_id = ?',
+      whereArgs: <Object?>[routineId],
+      orderBy: '`order` ASC',
     );
-    return result.map((map) => RoutineExercise.fromMap(map)).toList();
+    return result
+        .map((Map<String, Object?> map) => RoutineExercise.fromMap(map))
+        .toList();
   }
 
-  Future<List<RoutineExercise>> getAllRoutineExercises() async {
-    final Database db = dbService.db!;
-    final result = await db.query("routine_exercises");
-    return result.map((map) => RoutineExercise.fromMap(map)).toList();
-  }
-
-  Future<int> updateRoutineExercise(RoutineExercise routineExercise) async {
+  Future<int> update(RoutineExercise routineExercise) async {
     final Database db = dbService.db!;
     return await db.update(
-      "routine_exercises",
+      'routine_exercises',
       routineExercise.toMap(),
-      where: "id = ?",
-      whereArgs: [routineExercise.id],
+      where: 'id = ?',
+      whereArgs: <Object?>[routineExercise.id],
     );
   }
 
-  Future<int> deleteRoutineExercise(int id) async {
+  Future<int> delete(int id) async {
     final Database db = dbService.db!;
     return await db.delete(
-      "routine_exercises",
-      where: "id = ?",
-      whereArgs: [id],
+      'routine_exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
     );
   }
 
-  Future<int> deleteRoutineExercisesByRoutine(int routineId) async {
+  Future<int> deleteByRoutine(int routineId) async {
     final Database db = dbService.db!;
     return await db.delete(
-      "routine_exercises",
-      where: "routine_id = ?",
-      whereArgs: [routineId],
+      'routine_exercises',
+      where: 'routine_id = ?',
+      whereArgs: <Object?>[routineId],
     );
   }
 }

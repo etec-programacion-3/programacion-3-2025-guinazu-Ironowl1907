@@ -4,21 +4,18 @@ import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
 
 class CreateRoutinePage extends StatelessWidget {
-  final Routine? routine;
-
-  const CreateRoutinePage({super.key, this.routine});
+  const CreateRoutinePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initialize on first build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<RoutineProvider>().initializeCreation(routine: routine);
+      // context.read<RoutineProvider>().initializeCreation();
     });
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(routine == null ? 'Create Routine' : 'Edit Routine'),
-        actions: [
+        title: const Text('Create Routine'),
+        actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () => _saveRoutine(context),
@@ -26,8 +23,7 @@ class CreateRoutinePage extends StatelessWidget {
         ],
       ),
       body: Column(
-        children: [
-          _buildRoutineInfoSection(context),
+        children: <Widget>[
           const Divider(height: 1),
           Expanded(child: _buildExercisesList(context)),
         ],
@@ -39,61 +35,6 @@ class CreateRoutinePage extends StatelessWidget {
     );
   }
 
-  Widget _buildRoutineInfoSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'Routine Name',
-              border: OutlineInputBorder(),
-            ),
-            controller:
-                TextEditingController(
-                    text: context.watch<RoutineProvider>().routineName,
-                  )
-                  ..selection = TextSelection.fromPosition(
-                    TextPosition(
-                      offset: context
-                          .watch<RoutineProvider>()
-                          .routineName
-                          .length,
-                    ),
-                  ),
-            onChanged: (value) {
-              context.read<RoutineProvider>().setRoutineName(value);
-            },
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'Description (Optional)',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 2,
-            controller:
-                TextEditingController(
-                    text: context.watch<RoutineProvider>().routineDescription,
-                  )
-                  ..selection = TextSelection.fromPosition(
-                    TextPosition(
-                      offset: context
-                          .watch<RoutineProvider>()
-                          .routineDescription
-                          .length,
-                    ),
-                  ),
-            onChanged: (value) {
-              context.read<RoutineProvider>().setRoutineDescription(value);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildExercisesList(BuildContext context) {
     final exercises = context.watch<RoutineProvider>().creationExercises;
 
@@ -101,7 +42,7 @@ class CreateRoutinePage extends StatelessWidget {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Icon(Icons.fitness_center, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
@@ -120,10 +61,10 @@ class CreateRoutinePage extends StatelessWidget {
 
     return ReorderableListView.builder(
       itemCount: exercises.length,
-      onReorder: (oldIndex, newIndex) {
+      onReorder: (int oldIndex, int newIndex) {
         context.read<RoutineProvider>().reorderExercises(oldIndex, newIndex);
       },
-      itemBuilder: (context, index) {
+      itemBuilder: (BuildContext context, int index) {
         return _buildExerciseCard(context, exercises[index], index);
       },
     );
@@ -143,9 +84,9 @@ class CreateRoutinePage extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Row(
-              children: [
+              children: <Widget>[
                 Icon(Icons.drag_handle, color: Colors.grey[400]),
                 const SizedBox(width: 8),
                 Expanded(
@@ -174,7 +115,7 @@ class CreateRoutinePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Row(
-              children: [
+              children: <Widget>[
                 _buildInfoChip(
                   Icons.repeat,
                   '${routineExercise.sets ?? 0} sets',
@@ -206,7 +147,7 @@ class CreateRoutinePage extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: <Widget>[
           Icon(icon, size: 14, color: Colors.grey[700]),
           const SizedBox(width: 4),
           Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
@@ -220,10 +161,10 @@ class CreateRoutinePage extends StatelessWidget {
     // This is a placeholder
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: const Text('Add Exercise'),
         content: const Text('Exercise selection dialog goes here'),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
@@ -251,21 +192,23 @@ class CreateRoutinePage extends StatelessWidget {
     int index,
     RoutineExercise exercise,
   ) {
-    final setsController = TextEditingController(text: '${exercise.sets ?? 3}');
-    final repsController = TextEditingController(
+    final TextEditingController setsController = TextEditingController(
+      text: '${exercise.sets ?? 3}',
+    );
+    final TextEditingController repsController = TextEditingController(
       text: '${exercise.reps ?? 10}',
     );
-    final restController = TextEditingController(
+    final TextEditingController restController = TextEditingController(
       text: '${exercise.restSeconds ?? 60}',
     );
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: const Text('Edit Exercise'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             TextField(
               controller: setsController,
               decoration: const InputDecoration(labelText: 'Sets'),
@@ -283,7 +226,7 @@ class CreateRoutinePage extends StatelessWidget {
             ),
           ],
         ),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
@@ -305,41 +248,5 @@ class CreateRoutinePage extends StatelessWidget {
     );
   }
 
-  void _saveRoutine(BuildContext context) async {
-    final provider = context.read<RoutineProvider>();
-
-    if (!provider.isCreationValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please add a name and at least one exercise'),
-        ),
-      );
-      return;
-    }
-
-    // Create the routine
-    final newRoutine = Routine(
-      id: routine?.id,
-      name: provider.routineName,
-      description: provider.routineDescription.isEmpty
-          ? null
-          : provider.routineDescription,
-      createdAt: routine?.createdAt ?? DateTime.now(),
-    );
-
-    if (routine == null) {
-      await provider.add(newRoutine);
-    } else {
-      await provider.update(newRoutine);
-    }
-
-    // Save exercises (you'll need to implement this in your repository)
-    // For each exercise in creationExercises, save to database
-
-    provider.clearCreation();
-
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
-  }
+  void _saveRoutine(BuildContext context) async {}
 }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
-import 'package:workout_logger/screens/newRoutine.dart';
+import 'package:workout_logger/screens/new_routine.dart';
 import 'package:workout_logger/screens/routine_details.dart';
-import 'package:workout_logger/services/database_service.dart';
 
 Widget routineCard(Routine routine, ColorScheme colorScheme) {
   return Consumer<RoutineProvider>(
@@ -12,7 +11,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
         (BuildContext context, RoutineProvider routineProvider, Widget? child) {
           return FutureBuilder<List<DetailedRoutineExercise>>(
             future: routineProvider.getDetailedRoutineExercisesByRoutine(
-              routine,
+              routine.id!,
             ),
             builder:
                 (
@@ -251,8 +250,7 @@ void _showRoutineMenu(Routine routine, BuildContext context) {
               Navigator.pop(context);
               Navigator.of(context).push<bool>(
                 MaterialPageRoute<bool>(
-                  builder: (BuildContext context) =>
-                      CreateRoutinePage(routine: routine),
+                  builder: (BuildContext context) => const CreateRoutinePage(),
                 ),
               );
             },

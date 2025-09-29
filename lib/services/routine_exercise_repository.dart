@@ -66,7 +66,6 @@ class RoutineExerciseRepository {
     return DetailedRoutineExercise(exercise, routineExercise);
   }
 
-  // Get all detailed routine exercises for a specific routine
   Future<List<DetailedRoutineExercise>> getDetailedRoutineExercisesByRoutine(
     int routineId,
   ) async {

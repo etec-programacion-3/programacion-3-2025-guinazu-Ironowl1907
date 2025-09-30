@@ -40,4 +40,10 @@ class RoutineExerciseProvider extends ChangeNotifier {
     }
     load();
   }
+
+  Future<Exercise> getExerciseFromRoutineExercise(
+    RoutineExercise rExercise,
+  ) async {
+    return routineRepo.getExerciseFromRoutineExercise(rExercise);
+  }
 }

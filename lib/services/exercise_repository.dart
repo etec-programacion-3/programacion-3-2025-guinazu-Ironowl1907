@@ -55,4 +55,14 @@ class ExerciseRepository {
     final Database db = dbService.db!;
     return db.delete('exercises', where: 'id = ?', whereArgs: <Object?>[id]);
   }
+
+  Future<Exercise> getFromRoutineExercise(RoutineExercise rExercise) async {
+    final Database db = dbService.db!;
+    final List<Map<String, Object?>> result = await db.query(
+      'exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[rExercise.exerciseId],
+    );
+    return Exercise.fromMap(result.first);
+  }
 }

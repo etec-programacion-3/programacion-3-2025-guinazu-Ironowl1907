@@ -130,6 +130,18 @@ class RoutineExerciseRepository {
         .toList();
   }
 
+  Future<Exercise> getExerciseFromRoutineExercise(
+    RoutineExercise rExercise,
+  ) async {
+    final Database db = dbService.db!;
+    final List<Map<String, Object?>> result = await db.query(
+      'exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[rExercise.exerciseId],
+    );
+    return Exercise.fromMap(result.first);
+  }
+
   Future<int> update(RoutineExercise routineExercise) async {
     final Database db = dbService.db!;
     return await db.update(

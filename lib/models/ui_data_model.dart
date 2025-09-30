@@ -1,0 +1,42 @@
+import 'package:flutter/foundation.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/services/workout_repository.dart';
+
+class AppNotifier extends ChangeNotifier {
+  late WorkoutRepository workoutRepo;
+
+  late DatabaseService dbService;
+
+  AppNotifier() {
+    dbService = DatabaseService();
+    dbService.initDB();
+
+    workoutRepo = WorkoutRepository(dbService);
+  }
+
+  List<Workout> _workouts = [];
+
+  List<Workout> get workouts => _workouts;
+
+  // ===== WORKOUTS =====
+  Future<void> loadWorkouts() async {
+    _workouts = await workoutRepo.getAllWorkouts();
+    notifyListeners();
+  }
+
+  Future<void> addWorkout(Workout workout) async {
+    await workoutRepo.createWorkout(workout);
+    await loadWorkouts();
+  }
+
+  Future<void> updateWorkout(Workout workout) async {
+    await workoutRepo.updateWorkout(workout);
+    await loadWorkouts();
+  }
+
+  Future<void> deleteWorkout(int id) async {
+    await workoutRepo.deleteWorkout(id);
+    await loadWorkouts();
+  }
+}

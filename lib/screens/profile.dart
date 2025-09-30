@@ -1,69 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:workout_logger/screens/exercises.dart';
-import 'package:workout_logger/screens/muscle_group.dart';
-import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key, required this.updateCallback});
-
-  final Function updateCallback;
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
+    final ThemeData themeData = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.all(18.0),
+      padding: const EdgeInsets.all(12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Dashboard",
-            style: TextStyle(
-              fontSize: 16,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
-          ),
+        children: <Widget>[
+          Text('Dashboard', style: themeData.textTheme.titleMedium),
           const SizedBox(height: 12),
-
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
               mainAxisSpacing: 20,
               crossAxisSpacing: 20,
               childAspectRatio: 2.5,
-              children: [
+              children: <Widget>[
                 _DashboardButton(
-                  label: "Muscle Groups",
+                  label: 'Muscle Groups',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MuscleGroupPage(),
-                      ),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Muscle Group Page')),
                     );
                   },
                 ),
                 _DashboardButton(
-                  label: "Exercises",
+                  label: 'Exercises',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ExercisePage(),
-                      ),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Exercises Page')),
                     );
                   },
                 ),
                 _DashboardButton(
-                  label: "Routines",
+                  label: 'Routines',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => RoutinePage()),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Routines page')),
                     );
                   },
                 ),
-                const _DashboardButton(label: "Progress"),
+                _DashboardButton(
+                  label: 'Progress',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Routines page')),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -73,7 +61,6 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-// Custom Dashboard Button
 class _DashboardButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -82,7 +69,7 @@ class _DashboardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox.expand(
       child: ElevatedButton(
@@ -97,7 +84,7 @@ class _DashboardButton extends StatelessWidget {
         onPressed: onPressed ?? () => print(label),
         child: Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),
       ),
@@ -107,12 +94,12 @@ class _DashboardButton extends StatelessWidget {
 
 PreferredSizeWidget profileAppBar() {
   return AppBar(
-    title: const Text("Profile"),
+    title: const Text('Profile'),
     bottom: PreferredSize(
       preferredSize: const Size.fromHeight(1.0),
       child: Builder(
-        builder: (context) {
-          final dividerColor = Theme.of(context).dividerColor;
+        builder: (BuildContext context) {
+          final Color dividerColor = Theme.of(context).dividerColor;
           return Container(color: dividerColor, height: 1.0);
         },
       ),

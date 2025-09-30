@@ -10,7 +10,7 @@ class CreateRoutinePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // context.read<RoutineProvider>().initializeCreation();
+      context.read<RoutineProvider>().initializeCreation();
     });
 
     return Scaffold(
@@ -166,10 +166,7 @@ class CreateRoutinePage extends StatelessWidget {
         builder: (BuildContext context) => const ExerciseSelectionPage(),
       ),
     );
-
-    if (selectedExercise != null) {
-      print('Selected: ${selectedExercise.name}');
-    }
+    context.read<RoutineProvider>().creationExercises.add(RoutineExercise());
   }
 
   void _showEditExerciseDialog(

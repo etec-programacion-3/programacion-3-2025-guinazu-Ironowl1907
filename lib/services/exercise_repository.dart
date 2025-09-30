@@ -8,47 +8,51 @@ class ExerciseRepository {
 
   Future<int> create(Exercise exercise) async {
     final Database db = dbService.db!;
-    return db.insert("exercises", exercise.toMap());
+    return db.insert('exercises', exercise.toMap());
   }
 
   Future<Exercise?> get(int id) async {
     final Database db = dbService.db!;
-    final result = await db.query(
-      "exercises",
-      where: "id = ?",
-      whereArgs: [id],
+    final List<Map<String, Object?>> result = await db.query(
+      'exercises',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
     );
     return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
   }
 
   Future<List<Exercise>> getAll() async {
     final Database db = dbService.db!;
-    final result = await db.query("exercises");
-    return result.map((map) => Exercise.fromMap(map)).toList();
+    final List<Map<String, Object?>> result = await db.query('exercises');
+    return result
+        .map((Map<String, Object?> map) => Exercise.fromMap(map))
+        .toList();
   }
 
   Future<List<Exercise>> getByMuscleGroup(int muscleGroupId) async {
     final Database db = dbService.db!;
-    final result = await db.query(
-      "exercises",
-      where: "muscle_group_id = ?",
-      whereArgs: [muscleGroupId],
+    final List<Map<String, Object?>> result = await db.query(
+      'exercises',
+      where: 'muscle_group_id = ?',
+      whereArgs: <Object?>[muscleGroupId],
     );
-    return result.map((map) => Exercise.fromMap(map)).toList();
+    return result
+        .map((Map<String, Object?> map) => Exercise.fromMap(map))
+        .toList();
   }
 
   Future<int> update(Exercise exercise) async {
     final Database db = dbService.db!;
     return db.update(
-      "exercises",
+      'exercises',
       exercise.toMap(),
-      where: "id = ?",
-      whereArgs: [exercise.id],
+      where: 'id = ?',
+      whereArgs: <Object?>[exercise.id],
     );
   }
 
   Future<int> delete(int id) async {
     final Database db = dbService.db!;
-    return db.delete("exercises", where: "id = ?", whereArgs: [id]);
+    return db.delete('exercises', where: 'id = ?', whereArgs: <Object?>[id]);
   }
 }

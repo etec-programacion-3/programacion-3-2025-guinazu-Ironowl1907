@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/screens/exercise_selector.dart';
 
 class CreateRoutinePage extends StatelessWidget {
   const CreateRoutinePage({super.key});
@@ -36,7 +37,9 @@ class CreateRoutinePage extends StatelessWidget {
   }
 
   Widget _buildExercisesList(BuildContext context) {
-    final exercises = context.watch<RoutineProvider>().creationExercises;
+    final List<RoutineExercise> exercises = context
+        .watch<RoutineProvider>()
+        .creationExercises;
 
     if (exercises.isEmpty) {
       return Center(
@@ -156,35 +159,17 @@ class CreateRoutinePage extends StatelessWidget {
     );
   }
 
-  void _showAddExerciseDialog(BuildContext context) {
-    // You'll need to implement a dialog to select exercises
-    // This is a placeholder
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Add Exercise'),
-        content: const Text('Exercise selection dialog goes here'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Add selected exercise
-              context.read<RoutineProvider>().addExerciseToCreation(
-                1, // Replace with selected exercise ID
-                sets: 3,
-                reps: 10,
-                restSeconds: 60,
-              );
-              Navigator.pop(context);
-            },
-            child: const Text('Add'),
-          ),
-        ],
+  Future<void> _showAddExerciseDialog(BuildContext context) async {
+    final Exercise? selectedExercise = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => const ExerciseSelectionPage(),
       ),
     );
+
+    if (selectedExercise != null) {
+      print('Selected: ${selectedExercise.name}');
+    }
   }
 
   void _showEditExerciseDialog(

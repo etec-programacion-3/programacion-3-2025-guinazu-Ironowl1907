@@ -7,7 +7,7 @@ class ExerciseProvider extends ChangeNotifier {
   late ExerciseRepository exerciseRepo;
   late DatabaseService dbService;
 
-  List<Exercise> _exercises = [];
+  List<Exercise> _exercises = <Exercise>[];
 
   List<Exercise> get exercises => _exercises;
 
@@ -22,21 +22,21 @@ class ExerciseProvider extends ChangeNotifier {
 
   Future<void> add(Exercise exer) async {
     if (await exerciseRepo.create(exer) == 0) {
-      print("Error insering muscle group");
+      print('Error insering muscle group');
     }
     load();
   }
 
   Future<void> delete(Exercise exer) async {
     if (await exerciseRepo.delete(exer.id!) == 0) {
-      print("Error deleting muscle group");
+      print('Error deleting muscle group');
     }
     load();
   }
 
   Future<void> update(Exercise exer) async {
     if (await exerciseRepo.update(exer) == 0) {
-      print("Error updating muscle group");
+      print('Error updating muscle group');
     }
     load();
   }

@@ -7,7 +7,7 @@ class WorkoutSetProvider extends ChangeNotifier {
   late WorkoutSetRepository workoutSetRepo;
   late DatabaseService dbService;
 
-  List<MuscleGroup> _muscleGroup = [];
+  final List<MuscleGroup> _muscleGroup = <MuscleGroup>[];
 
   List<MuscleGroup> get workouts => _muscleGroup;
 

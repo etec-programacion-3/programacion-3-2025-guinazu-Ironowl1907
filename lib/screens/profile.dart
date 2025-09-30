@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:workout_logger/screens/exercises.dart';
-import 'package:workout_logger/screens/muscle_group.dart';
-import 'package:workout_logger/screens/routine_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -26,35 +23,35 @@ class ProfilePage extends StatelessWidget {
                 _DashboardButton(
                   label: 'Muscle Groups',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            const MuscleGroupPage(),
-                      ),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Muscle Group Page')),
                     );
                   },
                 ),
                 _DashboardButton(
                   label: 'Exercises',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => const ExercisePage(),
-                      ),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Exercises Page')),
                     );
                   },
                 ),
                 _DashboardButton(
                   label: 'Routines',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => const RoutinePage(),
-                      ),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Routines page')),
                     );
                   },
                 ),
-                const _DashboardButton(label: 'Progress'),
+                _DashboardButton(
+                  label: 'Progress',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Routines page')),
+                    );
+                  },
+                ),
               ],
             ),
           ),

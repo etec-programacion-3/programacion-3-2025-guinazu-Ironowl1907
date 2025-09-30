@@ -9,10 +9,6 @@ class CreateRoutinePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<RoutineProvider>().initializeCreation();
-    });
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Routine'),
@@ -62,14 +58,23 @@ class CreateRoutinePage extends StatelessWidget {
       );
     }
 
-    return ReorderableListView.builder(
-      itemCount: exercises.length,
-      onReorder: (int oldIndex, int newIndex) {
-        context.read<RoutineProvider>().reorderExercises(oldIndex, newIndex);
-      },
-      itemBuilder: (BuildContext context, int index) {
-        return _buildExerciseCard(context, exercises[index], index);
-      },
+    return Consumer<RoutineProvider>(
+      builder:
+          (
+            BuildContext context,
+            RoutineProvider routineProvider,
+            Widget? child,
+          ) {
+            return ReorderableListView.builder(
+              itemCount: exercises.length,
+              onReorder: (int oldIndex, int newIndex) {
+                routineProvider.reorderExercises(oldIndex, newIndex);
+              },
+              itemBuilder: (BuildContext context, int index) {
+                return _buildExerciseCard(context, exercises[index], index);
+              },
+            );
+          },
     );
   }
 
@@ -166,7 +171,9 @@ class CreateRoutinePage extends StatelessWidget {
         builder: (BuildContext context) => const ExerciseSelectionPage(),
       ),
     );
-    context.read<RoutineProvider>().creationExercises.add(RoutineExercise());
+    context.read<RoutineProvider>().addExerciseToCreation(
+      selectedExercise!.id!,
+    );
   }
 
   void _showEditExerciseDialog(

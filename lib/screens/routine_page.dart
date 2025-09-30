@@ -37,7 +37,10 @@ class RoutinePage extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (BuildContext context) => const CreateRoutinePage(),
+              builder: (BuildContext context) {
+                context.read<RoutineProvider>().initializeCreation();
+                return const CreateRoutinePage();
+              },
             ),
           );
         },

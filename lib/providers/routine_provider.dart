@@ -10,6 +10,7 @@ class RoutineProvider extends ChangeNotifier {
   List<Routine> get routines => _routines;
 
   // For creation/editing
+  int? newRoutineId;
   List<RoutineExercise> _creationExercises = <RoutineExercise>[];
   List<RoutineExercise> get creationExercises => _creationExercises;
 
@@ -50,17 +51,11 @@ class RoutineProvider extends ChangeNotifier {
   }
 
   // Creation methods
-  void initializeCreation({Routine? routine}) {
-    if (routine != null) {
-      _routineName = routine.name;
-      _routineDescription = routine.description ?? '';
-      // Load existing exercises if editing
-      // You'll need to implement this based on your repo
-    } else {
-      _routineName = '';
-      _routineDescription = '';
-      _creationExercises = <RoutineExercise>[];
-    }
+  Future<void> initializeCreation() async {
+    newRoutineId = await routineRepo.create(Routine(name: 'Unamed'));
+    _routineName = 'Unamed';
+    _routineDescription = '';
+    _creationExercises = <RoutineExercise>[];
     notifyListeners();
   }
 

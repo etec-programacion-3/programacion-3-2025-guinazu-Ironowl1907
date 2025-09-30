@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:nested/nested.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:workout_logger/providers/app_state_provider.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
 import 'package:workout_logger/providers/routine_exercise_provider.dart';
@@ -21,7 +21,7 @@ Future<void> main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  DatabaseService dbService = DatabaseService();
+  final DatabaseService dbService = DatabaseService();
   dbService.initDB();
 
   runApp(MyApp(dbService: dbService));
@@ -35,29 +35,38 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
+      providers: <SingleChildWidget>[
         ChangeNotifierProvider(
-          create: (context) => MuscleGroupProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              MuscleGroupProvider(dbService: dbService),
         ),
         ChangeNotifierProvider(
-          create: (context) => ExerciseProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              ExerciseProvider(dbService: dbService),
         ),
         ChangeNotifierProvider(
-          create: (context) => RoutineProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              RoutineProvider(dbService: dbService),
         ),
         ChangeNotifierProvider(
-          create: (context) => RoutineExerciseProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              RoutineExerciseProvider(dbService: dbService),
         ),
         ChangeNotifierProvider(
-          create: (context) => WorkoutExerciseProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              WorkoutExerciseProvider(dbService: dbService),
         ),
         ChangeNotifierProvider(
-          create: (context) => WorkoutSetProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              WorkoutSetProvider(dbService: dbService),
         ),
         ChangeNotifierProvider(
-          create: (context) => WorkoutProvider(dbService: dbService),
+          create: (BuildContext context) =>
+              WorkoutProvider(dbService: dbService),
         ),
-        ChangeNotifierProvider(create: (context) => NavigationProvider()),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => NavigationProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
-import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
 import 'package:workout_logger/screens/exercise_selector.dart';
 
@@ -98,13 +97,10 @@ class CreateRoutinePage extends StatelessWidget {
               children: <Widget>[
                 Icon(Icons.drag_handle, color: Colors.grey[400]),
                 const SizedBox(width: 8),
-                Expanded(
+                const Expanded(
                   child: Text(
-                    'Exercise #${context.read<ExerciseProvider>().getFromRoutineExercise(routineExercise)}', // Replace with actual exercise name
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'Exercise', // Replace with actual exercise name
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 IconButton(

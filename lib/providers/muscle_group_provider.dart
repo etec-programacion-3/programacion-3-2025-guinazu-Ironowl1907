@@ -18,6 +18,7 @@ class MuscleGroupProvider extends ChangeNotifier {
 
   Future<void> load() async {
     _muscleGroup = await muscleGroupsRepo.getAll();
+    print('load');
     notifyListeners();
   }
 

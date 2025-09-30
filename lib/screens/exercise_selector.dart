@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 
-// Provider to manage search state
 class ExerciseSelectionProvider extends ChangeNotifier {
   String _searchQuery = '';
 
@@ -100,9 +99,7 @@ class ExerciseList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ExerciseProvider exerciseProvider = Provider.of<ExerciseProvider>(
-      context,
-    );
+    final ExerciseProvider exerciseProvider = context.watch<ExerciseProvider>();
     final ExerciseSelectionProvider searchProvider =
         Provider.of<ExerciseSelectionProvider>(context);
 

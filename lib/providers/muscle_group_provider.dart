@@ -13,7 +13,6 @@ class MuscleGroupProvider extends ChangeNotifier {
 
   MuscleGroupProvider({required this.dbService}) {
     muscleGroupsRepo = MuscleGroupRepository(dbService);
-    load();
   }
 
   Future<void> load() async {

@@ -41,13 +41,38 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
   }
 
   Widget _muscleGroupCard(MuscleGroup muscleGroup) {
-    return GestureDetector(
-      onTap: () {
-        _addOrEditMuscleGroup(context, muscleGroup: muscleGroup);
-      },
-      child: ListTile(
-        title: Text(muscleGroup.name),
-        trailing: const Icon(Icons.edit),
+    return ListTile(
+      title: Text(muscleGroup.name),
+      trailing: PopupMenuButton<String>(
+        onSelected: (String value) {
+          if (value == 'edit') {
+            _addOrEditMuscleGroup(context, muscleGroup: muscleGroup);
+          } else if (value == 'delete') {
+            _deleteMuscleGroup(context, muscleGroup);
+          }
+        },
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+          const PopupMenuItem<String>(
+            value: 'edit',
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.edit),
+                SizedBox(width: 8),
+                Text('Edit'),
+              ],
+            ),
+          ),
+          const PopupMenuItem<String>(
+            value: 'delete',
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.delete),
+                SizedBox(width: 8),
+                Text('Delete'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -96,6 +121,39 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
                 }
               },
               child: Text(muscleGroup == null ? 'Create' : 'Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteMuscleGroup(BuildContext context, MuscleGroup muscleGroup) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Muscle Group'),
+          content: Text(
+            'Are you sure you want to delete "${muscleGroup.name}"?',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.read<MuscleGroupProvider>().delete(muscleGroup);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Delete'),
             ),
           ],
         );

@@ -39,7 +39,9 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget _exerciseCard(Exercise exercise, BuildContext context) {
     return FutureBuilder<MuscleGroup?>(
-      future: context.read<MuscleGroupProvider>().get(exercise.muscleGroupId!),
+      future: context.read<MuscleGroupProvider>().get(
+        exercise.muscleGroupId ?? 0,
+      ),
       builder:
           (BuildContext context, AsyncSnapshot<MuscleGroup?> asyncSnapshot) {
             String label;
@@ -53,23 +55,28 @@ class _ExercisePageState extends State<ExercisePage> {
               label = 'Unknown';
             }
 
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          exercise.name,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox.square(dimension: 8),
-                        Row(children: <Widget>[_muscleGroupChip(label)]),
-                      ],
-                    ),
-                  ],
+            return GestureDetector(
+              onTap: () {
+                _addOrEditExercise(context, exercise);
+              },
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            exercise.name,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox.square(dimension: 8),
+                          Row(children: <Widget>[_muscleGroupChip(label)]),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -80,4 +87,84 @@ class _ExercisePageState extends State<ExercisePage> {
   Widget _muscleGroupChip(String label) {
     return Chip(label: Text(label));
   }
+
+  void _addOrEditExercise(BuildContext context, Exercise? exercise) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController descriptionConroller = TextEditingController();
+    if (exercise != null) {
+      nameController.text = exercise.name;
+      descriptionConroller.text = exercise.description ?? '';
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(exercise == null ? 'Create Exercise' : 'Edit Exercise'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Name',
+                    label: Text('Exercise Name'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: descriptionConroller,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Description',
+                    label: Text('Description'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text('Muscle Groups'),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add'),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final String name = nameController.text.trim();
+                if (name.isNotEmpty) {
+                  if (exercise == null) {
+                    Navigator.of(context).pop();
+                    context.read<ExerciseProvider>().add(Exercise(name: name));
+                  } else {
+                    Navigator.of(context).pop();
+                    context.read<ExerciseProvider>().update(
+                      Exercise(name: name, id: exercise.id),
+                    );
+                  }
+                }
+              },
+              child: Text(exercise == null ? 'Create' : 'Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+

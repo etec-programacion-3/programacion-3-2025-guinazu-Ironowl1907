@@ -17,8 +17,11 @@ class MuscleGroupProvider extends ChangeNotifier {
 
   Future<void> load() async {
     _muscleGroup = await muscleGroupsRepo.getAll();
-    print('load');
     notifyListeners();
+  }
+
+  Future<MuscleGroup?> get(int id) async {
+    return muscleGroupsRepo.get(id);
   }
 
   Future<void> add(MuscleGroup muscleGroup) async {

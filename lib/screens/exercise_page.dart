@@ -57,7 +57,7 @@ class _ExercisePageState extends State<ExercisePage> {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -69,7 +69,6 @@ class _ExercisePageState extends State<ExercisePage> {
                         Row(children: <Widget>[_muscleGroupChip(label)]),
                       ],
                     ),
-                    Icon(Icons.edit),
                   ],
                 ),
               ),

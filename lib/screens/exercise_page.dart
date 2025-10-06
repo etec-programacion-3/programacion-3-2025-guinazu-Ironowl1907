@@ -13,18 +13,16 @@ class ExercisePage extends StatefulWidget {
 
 class _ExercisePageState extends State<ExercisePage> {
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      Provider.of<ExerciseProvider>(context, listen: false).load();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final ExerciseProvider provider = context.watch<ExerciseProvider>();
     return Scaffold(
       appBar: AppBar(title: const Text('Exercises')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addOrEditExercise(context, null);
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView.builder(
@@ -37,55 +35,12 @@ class _ExercisePageState extends State<ExercisePage> {
     );
   }
 
-  Widget _exerciseCard(Exercise exercise, BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _addOrEditExercise(context, exercise);
-      },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Row(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    exercise.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox.square(dimension: 8),
-                  Row(children: <Widget>[_muscleGroupChip(context, exercise)]),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _muscleGroupChip(BuildContext context, Exercise exercise) {
-    return FutureBuilder<MuscleGroup?>(
-      future: context.read<MuscleGroupProvider>().get(
-        exercise.muscleGroupId ?? 0,
-      ),
-      builder:
-          (BuildContext context, AsyncSnapshot<MuscleGroup?> asyncSnapshot) {
-            String label;
-            if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-              label = 'Loading...';
-            } else if (asyncSnapshot.hasError) {
-              label = 'Error';
-            } else if (asyncSnapshot.hasData && asyncSnapshot.data != null) {
-              label = asyncSnapshot.data!.name;
-            } else {
-              label = 'None';
-            }
-
-            return Chip(label: Text(label));
-          },
-    );
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ExerciseProvider>(context, listen: false).load();
+    });
   }
 
   void _addOrEditExercise(BuildContext context, Exercise? exercise) {
@@ -164,6 +119,57 @@ class _ExercisePageState extends State<ExercisePage> {
           ],
         );
       },
+    );
+  }
+
+  Widget _exerciseCard(Exercise exercise, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        _addOrEditExercise(context, exercise);
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    exercise.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox.square(dimension: 8),
+                  Row(children: <Widget>[_muscleGroupChip(context, exercise)]),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _muscleGroupChip(BuildContext context, Exercise exercise) {
+    return FutureBuilder<MuscleGroup?>(
+      future: context.read<MuscleGroupProvider>().get(
+        exercise.muscleGroupId ?? 0,
+      ),
+      builder:
+          (BuildContext context, AsyncSnapshot<MuscleGroup?> asyncSnapshot) {
+            String label;
+            if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+              label = 'Loading...';
+            } else if (asyncSnapshot.hasError) {
+              label = 'Error';
+            } else if (asyncSnapshot.hasData && asyncSnapshot.data != null) {
+              label = asyncSnapshot.data!.name;
+            } else {
+              label = 'None';
+            }
+
+            return Chip(label: Text(label));
+          },
     );
   }
 }

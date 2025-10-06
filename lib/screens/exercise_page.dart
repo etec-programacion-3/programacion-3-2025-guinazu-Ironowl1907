@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
+import 'package:workout_logger/screens/muscle_selector.dart';
 
 class ExercisePage extends StatefulWidget {
   const ExercisePage({super.key});
@@ -86,7 +87,15 @@ class _ExercisePageState extends State<ExercisePage> {
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.add),
                     label: const Text('Add'),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              const MuscleGroupSelector(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

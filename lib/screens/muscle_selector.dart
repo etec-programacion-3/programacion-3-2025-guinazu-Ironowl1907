@@ -26,17 +26,7 @@ class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
     final MuscleGroupProvider provider = context.watch<MuscleGroupProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Muscle Groups'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(selectedMuscleGroups);
-            },
-            child: const Text('Done', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Select Muscle Groups')),
       body: provider.muscleGroups.isEmpty
           ? const Center(child: Text('No muscle groups available'))
           : ListView.builder(
@@ -62,6 +52,22 @@ class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
                 );
               },
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        onPressed: () {
+          Navigator.of(context).pop(selectedMuscleGroups);
+        },
+        label: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Done',
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

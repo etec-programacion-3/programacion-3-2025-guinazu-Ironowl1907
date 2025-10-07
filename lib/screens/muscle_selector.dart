@@ -18,6 +18,9 @@ class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      Provider.of<MuscleGroupProvider>(context, listen: false).load();
+    });
     _searchController.addListener(() {
       setState(() {
         searchQuery = _searchController.text;
@@ -37,6 +40,21 @@ class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
       appBar: AppBar(title: const Text('Select Muscle')),
       body: Consumer<MuscleGroupProvider>(
         builder: (BuildContext context, MuscleGroupProvider provider, _) {
+          if (provider.muscleGroups.isEmpty) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.fitness_center, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    'No muslces added yet.',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          }
           final List<MuscleGroup> filteredMuscles = provider.muscleGroups.where(
             (MuscleGroup muscle) {
               final String nameLower = muscle.name.toLowerCase();
@@ -92,4 +110,3 @@ class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
     );
   }
 }
-

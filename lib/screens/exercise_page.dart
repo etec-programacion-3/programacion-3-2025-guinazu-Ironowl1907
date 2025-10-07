@@ -26,12 +26,26 @@ class _ExercisePageState extends State<ExercisePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: ListView.builder(
-          itemCount: provider.exercises.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _exerciseCard(provider.exercises[index], context);
-          },
-        ),
+        child: provider.exercises.isEmpty
+            ? const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.fitness_center, size: 64, color: Colors.grey),
+                    SizedBox(height: 16),
+                    Text(
+                      'No exercises added yet.',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                itemCount: provider.exercises.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _exerciseCard(provider.exercises[index], context);
+                },
+              ),
       ),
     );
   }

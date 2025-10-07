@@ -44,7 +44,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                         await Navigator.of(context).push<bool>(
                           MaterialPageRoute<bool>(
                             builder: (BuildContext context) =>
-                                RoutineDetailsPage(routine: routine),
+                                const Placeholder(),
                           ),
                         );
                       },
@@ -95,7 +95,6 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
 
                             const SizedBox(height: 12),
 
-                            // --- Tags ---
                             Row(
                               children: <Widget>[
                                 Container(
@@ -248,7 +247,7 @@ void _showRoutineMenu(Routine routine, BuildContext context) {
               Navigator.pop(context);
               Navigator.of(context).push<bool>(
                 MaterialPageRoute<bool>(
-                  builder: (BuildContext context) => const CreateRoutinePage(),
+                  builder: (BuildContext context) => const Placeholder(),
                 ),
               );
             },
@@ -294,83 +293,6 @@ void _showRoutineMenu(Routine routine, BuildContext context) {
     ),
   );
 }
-
-// Future<void> duplicateRoutine(Routine routine, BuildContext context) async {
-//   try {
-//     showDialog(
-//       context: context,
-//       barrierDismissible: false,
-//       builder: (BuildContext context) => const Center(child: CircularProgressIndicator()),
-//     );
-//
-//     final originalRoutineExercises = await DatabaseService.instance
-//         .getRoutineExercisesByRoutine(routine.id!);
-//
-//     final Routine duplicatedRoutine = Routine(
-//       name: 'Copy of ${routine.name}',
-//       description: routine.description,
-//     );
-//
-//     final newRoutineId = await DatabaseService.instance.createRoutine(
-//       duplicatedRoutine,
-//     );
-//
-//     for (final routineExercise in originalRoutineExercises) {
-//       final RoutineExercise newRoutineExercise = RoutineExercise(
-//         routineId: newRoutineId,
-//         exerciseId: routineExercise.exerciseId,
-//         sets: routineExercise.sets,
-//         order: routineExercise.order,
-//         reps: routineExercise.reps,
-//         restSeconds: routineExercise.restSeconds,
-//       );
-//
-//       await DatabaseService.instance.createRoutineExercise(newRoutineExercise);
-//     }
-//
-//     if (context.mounted) {
-//       Navigator.pop(context);
-//     }
-//
-//     if (context.mounted) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(
-//           content: Text('Routine "${routine.name}" duplicated successfully'),
-//           action: SnackBarAction(
-//             label: 'Edit',
-//             onPressed: () async {
-//               // Navigate to edit the duplicated routine
-//               final Routine newRoutine = Routine(
-//                 id: newRoutineId,
-//                 name: duplicatedRoutine.name,
-//                 description: duplicatedRoutine.description,
-//               );
-//
-//               Navigator.of(context).push<bool>(
-//                 MaterialPageRoute<bool>(
-//                   builder: (BuildContext context) => CreateRoutinePage(routine: newRoutine),
-//                 ),
-//               );
-//             },
-//           ),
-//         ),
-//       );
-//     }
-//   } catch (e) {
-//     if (context.mounted) {
-//       Navigator.pop(context);
-//     }
-//
-//     if (context.mounted) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(
-//           content: Text('Error duplicating routine: $e'),
-//           backgroundColor: Colors.red,
-//         ),
-//       );
-//     }
-//   }
-// }
 
 void showDeleteConfirmation(Routine routine, BuildContext context) {
   showDialog(

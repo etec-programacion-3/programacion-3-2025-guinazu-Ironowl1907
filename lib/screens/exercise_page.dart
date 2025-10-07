@@ -61,6 +61,7 @@ class _ExercisePageState extends State<ExercisePage> {
   void _addOrEditExercise(BuildContext context, Exercise? exercise) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController descriptionConroller = TextEditingController();
+    final List<MuscleGroup> listedMuscleGroups = <MuscleGroup>[];
     if (exercise != null) {
       nameController.text = exercise.name;
       descriptionConroller.text = exercise.description ?? '';
@@ -69,77 +70,113 @@ class _ExercisePageState extends State<ExercisePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(exercise == null ? 'Create Exercise' : 'Edit Exercise'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Name',
-                    label: Text('Exercise Name'),
-                  ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text(
+                exercise == null ? 'Create Exercise' : 'Edit Exercise',
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Name',
+                        label: Text('Exercise Name'),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: descriptionConroller,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Description',
+                        label: Text('Description'),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('Muscle Groups'),
+                    const SizedBox(height: 8),
+                    // Display selected muscle groups
+                    if (listedMuscleGroups.isNotEmpty)
+                      Wrap(
+                        spacing: 8,
+                        children: listedMuscleGroups
+                            .map(
+                              (MuscleGroup mg) => Chip(
+                                label: Text(mg.name),
+                                onDeleted: () {
+                                  setState(() {
+                                    listedMuscleGroups.remove(mg);
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add'),
+                        onPressed: () async {
+                          final List<MuscleGroup>? result =
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute<List<MuscleGroup>>(
+                                  builder: (BuildContext context) =>
+                                      const MuscleGroupSelector(),
+                                ),
+                              );
+                          if (result != null) {
+                            setState(() {
+                              listedMuscleGroups.clear();
+                              listedMuscleGroups.addAll(result);
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: descriptionConroller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Description',
-                    label: Text('Description'),
-                  ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
                 ),
-                const SizedBox(height: 8),
-                const Text('Muscle Groups'),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              const MuscleGroupSelector(),
-                        ),
-                      );
-                    },
-                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    final String name = nameController.text.trim();
+                    if (name.isNotEmpty) {
+                      if (exercise == null) {
+                        Navigator.of(context).pop();
+                        context.read<ExerciseProvider>().add(
+                          Exercise(name: name),
+                        );
+                        // Now you have access to listedMuscleGroups here
+                        // You can pass it to your Exercise model or handle it as needed
+                      } else {
+                        Navigator.of(context).pop();
+                        context.read<ExerciseProvider>().update(
+                          Exercise(name: name, id: exercise.id),
+                        );
+                        // Now you have access to listedMuscleGroups here
+                      }
+                    }
+                  },
+                  child: Text(exercise == null ? 'Create' : 'Save'),
                 ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final String name = nameController.text.trim();
-                if (name.isNotEmpty) {
-                  if (exercise == null) {
-                    Navigator.of(context).pop();
-                    context.read<ExerciseProvider>().add(Exercise(name: name));
-                  } else {
-                    Navigator.of(context).pop();
-                    context.read<ExerciseProvider>().update(
-                      Exercise(name: name, id: exercise.id),
-                    );
-                  }
-                }
-              },
-              child: Text(exercise == null ? 'Create' : 'Save'),
-            ),
-          ],
+            );
+          },
         );
       },
     );

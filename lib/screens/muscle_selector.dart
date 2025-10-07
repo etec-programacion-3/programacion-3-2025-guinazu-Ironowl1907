@@ -11,9 +11,7 @@ class MuscleGroupSelector extends StatefulWidget {
 }
 
 class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
-  List<MuscleGroup> selectedMuscles = <MuscleGroup>[];
-  final TextEditingController _searchController = TextEditingController();
-  String searchQuery = '';
+  final List<MuscleGroup> selectedMuscleGroups = <MuscleGroup>[];
 
   @override
   void initState() {
@@ -21,92 +19,49 @@ class _MuscleGroupSelectorState extends State<MuscleGroupSelector> {
     Future.microtask(() {
       Provider.of<MuscleGroupProvider>(context, listen: false).load();
     });
-    _searchController.addListener(() {
-      setState(() {
-        searchQuery = _searchController.text;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final MuscleGroupProvider provider = context.watch<MuscleGroupProvider>();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Select Muscle')),
-      body: Consumer<MuscleGroupProvider>(
-        builder: (BuildContext context, MuscleGroupProvider provider, _) {
-          if (provider.muscleGroups.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.fitness_center, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'No muslces added yet.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                ],
-              ),
-            );
-          }
-          final List<MuscleGroup> filteredMuscles = provider.muscleGroups.where(
-            (MuscleGroup muscle) {
-              final String nameLower = muscle.name.toLowerCase();
-              final String searchLower = searchQuery.toLowerCase();
-              return nameLower.contains(searchLower);
+      appBar: AppBar(
+        title: const Text('Select Muscle Groups'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(selectedMuscleGroups);
             },
-          ).toList();
+            child: const Text('Done', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+      body: provider.muscleGroups.isEmpty
+          ? const Center(child: Text('No muscle groups available'))
+          : ListView.builder(
+              itemCount: provider.muscleGroups.length,
+              itemBuilder: (BuildContext context, int index) {
+                final MuscleGroup muscleGroup = provider.muscleGroups[index];
+                final bool isSelected = selectedMuscleGroups.contains(
+                  muscleGroup,
+                );
 
-          return Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    labelText: 'Search Muscle',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredMuscles.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _muscleGroupCard(filteredMuscles[index]);
+                return CheckboxListTile(
+                  title: Text(muscleGroup.name),
+                  value: isSelected,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        selectedMuscleGroups.add(muscleGroup);
+                      } else {
+                        selectedMuscleGroups.remove(muscleGroup);
+                      }
+                    });
                   },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _muscleGroupCard(MuscleGroup muscleGroup) {
-    final bool isSelected = selectedMuscles.contains(muscleGroup);
-    return ListTile(
-      title: Text(muscleGroup.name),
-      trailing: Checkbox(
-        value: isSelected,
-        onChanged: (bool? value) {
-          setState(() {
-            if (value == true) {
-              selectedMuscles.add(muscleGroup);
-            } else {
-              selectedMuscles.remove(muscleGroup);
-            }
-          });
-        },
-      ),
+                );
+              },
+            ),
     );
   }
 }

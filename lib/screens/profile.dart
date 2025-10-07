@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_logger/screens/exercise_page.dart';
 import 'package:workout_logger/screens/muscle_group_page.dart';
+import 'package:workout_logger/screens/routines_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -46,8 +47,10 @@ class ProfilePage extends StatelessWidget {
                 _DashboardButton(
                   label: 'Routines',
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Routines page')),
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const RoutinesPage(),
+                      ),
                     );
                   },
                 ),

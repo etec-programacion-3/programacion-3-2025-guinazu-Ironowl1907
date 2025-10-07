@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
-import 'package:workout_logger/screens/new_routine.dart';
-import 'package:workout_logger/screens/routine_details.dart';
 
 Widget routineCard(Routine routine, ColorScheme colorScheme) {
   return Consumer<RoutineProvider>(

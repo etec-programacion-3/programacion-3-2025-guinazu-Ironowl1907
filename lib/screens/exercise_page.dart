@@ -58,13 +58,24 @@ class _ExercisePageState extends State<ExercisePage> {
     });
   }
 
-  void _addOrEditExercise(BuildContext context, Exercise? exercise) {
+  Future<void> _addOrEditExercise(
+    BuildContext context,
+    Exercise? exercise,
+  ) async {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController descriptionConroller = TextEditingController();
-    final List<MuscleGroup> listedMuscleGroups = <MuscleGroup>[];
+    List<MuscleGroup> listedMuscleGroups = <MuscleGroup>[];
     if (exercise != null) {
       nameController.text = exercise.name;
       descriptionConroller.text = exercise.description ?? '';
+      if (exercise.muscleGroupId != null) {
+        final MuscleGroup? muscleGroup = await context
+            .read<MuscleGroupProvider>()
+            .get(exercise.muscleGroupId!);
+        if (muscleGroup != null) {
+          listedMuscleGroups = <MuscleGroup>[muscleGroup];
+        }
+      }
     }
 
     showDialog(
@@ -101,7 +112,6 @@ class _ExercisePageState extends State<ExercisePage> {
                     const SizedBox(height: 8),
                     const Text('Muscle Groups'),
                     const SizedBox(height: 8),
-                    // Display selected muscle groups
                     if (listedMuscleGroups.isNotEmpty)
                       Wrap(
                         spacing: 8,
@@ -155,21 +165,25 @@ class _ExercisePageState extends State<ExercisePage> {
                 ElevatedButton(
                   onPressed: () {
                     final String name = nameController.text.trim();
-                    if (name.isNotEmpty) {
-                      if (exercise == null) {
-                        Navigator.of(context).pop();
-                        context.read<ExerciseProvider>().add(
-                          Exercise(name: name),
-                        );
-                        // Now you have access to listedMuscleGroups here
-                        // You can pass it to your Exercise model or handle it as needed
-                      } else {
-                        Navigator.of(context).pop();
-                        context.read<ExerciseProvider>().update(
-                          Exercise(name: name, id: exercise.id),
-                        );
-                        // Now you have access to listedMuscleGroups here
-                      }
+                    if (name.isEmpty) return;
+                    if (listedMuscleGroups.isEmpty) return;
+                    if (exercise == null) {
+                      Navigator.of(context).pop();
+                      context.read<ExerciseProvider>().add(
+                        Exercise(
+                          name: name,
+                          muscleGroupId: listedMuscleGroups.first.id,
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                      context.read<ExerciseProvider>().update(
+                        Exercise(
+                          name: name,
+                          id: exercise.id,
+                          muscleGroupId: listedMuscleGroups.first.id,
+                        ),
+                      );
                     }
                   },
                   child: Text(exercise == null ? 'Create' : 'Save'),
@@ -211,10 +225,10 @@ class _ExercisePageState extends State<ExercisePage> {
   }
 
   Widget _muscleGroupChip(BuildContext context, Exercise exercise) {
+    final MuscleGroupProvider muscleGroupProvider = context
+        .watch<MuscleGroupProvider>();
     return FutureBuilder<MuscleGroup?>(
-      future: context.read<MuscleGroupProvider>().get(
-        exercise.muscleGroupId ?? 0,
-      ),
+      future: muscleGroupProvider.get(exercise.muscleGroupId ?? 0),
       builder:
           (BuildContext context, AsyncSnapshot<MuscleGroup?> asyncSnapshot) {
             String label;

@@ -56,23 +56,23 @@ class RoutineRepository {
 
     final List<Map<String, Object?>> result = await db.rawQuery(
       '''
-    SELECT 
-      re.id as re_id,
-      re.routine_id,
-      re.exercise_id,
-      re.`order`,
-      re.sets,
-      re.reps,
-      re.rest_seconds,
-      e.id as e_id,
-      e.name as e_name,
-      e.description as e_description,
-      e.muscle_group_id
-    FROM routine_exercises re
-    JOIN exercises e ON re.exercise_id = e.id
-    WHERE re.routine_id = ?
-    ORDER BY re.`order` ASC
-  ''',
+      SELECT 
+        re.id as re_id,
+        re.routine_id,
+        re.exercise_id,
+        re.`order`,
+        re.sets,
+        re.reps,
+        re.rest_seconds,
+        e.id as e_id,
+        e.name as e_name,
+        e.description as e_description,
+        e.muscle_group_id
+      FROM routine_exercises re
+      JOIN exercises e ON re.exercise_id = e.id
+      WHERE re.routine_id = ?
+      ORDER BY re.`order` ASC
+      ''',
       <Object?>[routineId],
     );
 

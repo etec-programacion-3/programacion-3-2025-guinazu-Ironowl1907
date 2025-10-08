@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/services/routine_exercise_repository.dart';
 import 'package:workout_logger/services/routine_repository.dart';
 
 class RoutineProvider extends ChangeNotifier {
   late RoutineRepository routineRepo;
+  late RoutineExerciseRepository exerciseRepo;
   late DatabaseService dbService;
   List<Routine> _routines = <Routine>[];
   List<Routine> get routines => _routines;
@@ -22,6 +24,7 @@ class RoutineProvider extends ChangeNotifier {
 
   RoutineProvider({required this.dbService}) {
     routineRepo = RoutineRepository(dbService);
+    exerciseRepo = RoutineExerciseRepository(dbService);
   }
 
   Future<void> load() async {
@@ -61,12 +64,12 @@ class RoutineProvider extends ChangeNotifier {
 
   void setRoutineName(String name) {
     _routineName = name;
-    notifyListeners();
+    load();
   }
 
   void setRoutineDescription(String description) {
     _routineDescription = description;
-    notifyListeners();
+    load();
   }
 
   void addExerciseToCreation(
@@ -84,7 +87,7 @@ class RoutineProvider extends ChangeNotifier {
       restSeconds: restSeconds ?? 60,
     );
     _creationExercises.add(newExercise);
-    notifyListeners();
+    load();
   }
 
   void removeExerciseFromCreation(int index) {
@@ -93,7 +96,7 @@ class RoutineProvider extends ChangeNotifier {
     for (int i = 0; i < _creationExercises.length; i++) {
       _creationExercises[i].order = i;
     }
-    notifyListeners();
+    load();
   }
 
   void updateExerciseInCreation(
@@ -107,7 +110,7 @@ class RoutineProvider extends ChangeNotifier {
     if (restSeconds != null) {
       _creationExercises[index].restSeconds = restSeconds;
     }
-    notifyListeners();
+    load();
   }
 
   void reorderExercises(int oldIndex, int newIndex) {
@@ -118,14 +121,14 @@ class RoutineProvider extends ChangeNotifier {
     for (int i = 0; i < _creationExercises.length; i++) {
       _creationExercises[i].order = i;
     }
-    notifyListeners();
+    load();
   }
 
   void clearCreation() {
     _routineName = '';
     _routineDescription = '';
     _creationExercises = <RoutineExercise>[];
-    notifyListeners();
+    load();
   }
 
   bool get isCreationValid {
@@ -136,5 +139,22 @@ class RoutineProvider extends ChangeNotifier {
     int routineId,
   ) async {
     return routineRepo.getDetailedRoutineExercisesByRoutine(routineId);
+  }
+
+  Future<int> saveCreation() async {
+    print('Creation: ${creationExercises.toString()}');
+    creationExercises.map((RoutineExercise exercise) {
+      exercise.routineId = newRoutineId!;
+      exerciseRepo.create(exercise);
+    });
+    final Future<int> result = routineRepo.update(
+      Routine(
+        id: newRoutineId,
+        name: routineName,
+        description: routineDescription,
+      ),
+    );
+    load();
+    return result;
   }
 }

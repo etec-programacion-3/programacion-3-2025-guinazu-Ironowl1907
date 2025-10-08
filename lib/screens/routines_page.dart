@@ -4,8 +4,21 @@ import 'package:workout_logger/providers/routine_provider.dart';
 import 'package:workout_logger/screens/routine_create_page.dart';
 import 'package:workout_logger/widgets/routine_card.dart';
 
-class RoutinesPage extends StatelessWidget {
+class RoutinesPage extends StatefulWidget {
   const RoutinesPage({super.key});
+
+  @override
+  State<RoutinesPage> createState() => _RoutinesPageState();
+}
+
+class _RoutinesPageState extends State<RoutinesPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<RoutineProvider>(context, listen: false).load();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +42,14 @@ class RoutinesPage extends StatelessWidget {
               ),
             );
           }
-          return ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return routineCard(provider.routines[index], colorScheme);
-            },
+          return Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ListView.builder(
+              itemCount: provider.routines.length,
+              itemBuilder: (BuildContext context, int index) {
+                return routineCard(provider.routines[index], colorScheme);
+              },
+            ),
           );
         },
       ),

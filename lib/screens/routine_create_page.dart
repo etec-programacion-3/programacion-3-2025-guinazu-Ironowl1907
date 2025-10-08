@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_logger/providers/muscle_group_provider.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/models/models.dart';
@@ -18,6 +19,9 @@ class _RoutineCreatorPageState extends State<RoutineCreatorPage> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      Provider.of<MuscleGroupProvider>(context, listen: false).load();
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final RoutineProvider routineProvider = context.read<RoutineProvider>();
       routineProvider.initializeCreation();
@@ -64,8 +68,7 @@ class _RoutineCreatorPageState extends State<RoutineCreatorPage> {
       );
       return;
     }
-
-    // TODO: Save routine
+    await routineProvider.saveCreation();
 
     Navigator.pop(context);
   }
@@ -150,58 +153,57 @@ class _RoutineCreatorPageState extends State<RoutineCreatorPage> {
                   ),
 
                   // Exercise List
-                  Expanded(
-                    child: routineProvider.creationExercises.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.fitness_center,
-                                  size: 64,
-                                  color: Colors.grey.shade400,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No exercises added yet',
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(color: Colors.grey.shade600),
-                                ),
-                                const SizedBox(height: 8),
-                              ],
-                            ),
-                          )
-                        : ReorderableListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: routineProvider.creationExercises.length,
-                            onReorder: (int oldIndex, int newIndex) {
-                              routineProvider.reorderExercises(
-                                oldIndex,
-                                newIndex,
-                              );
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              final RoutineExercise exercise =
-                                  routineProvider.creationExercises[index];
-                              return ExerciseCard(
-                                key: ValueKey(exercise.exerciseId),
-                                exercise: exercise,
-                                index: index,
-                                onEdit: () =>
-                                    _showEditExerciseDialog(index, exercise),
-                                onDelete: () {
-                                  routineProvider.removeExerciseFromCreation(
-                                    index,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                  ),
+                  exerciseList(routineProvider, context),
                 ],
               );
             },
       ),
+    );
+  }
+
+  Expanded exerciseList(RoutineProvider routineProvider, BuildContext context) {
+    return Expanded(
+      child: routineProvider.creationExercises.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.fitness_center,
+                    size: 64,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No exercises added yet',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            )
+          : ReorderableListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: routineProvider.creationExercises.length,
+              onReorder: (int oldIndex, int newIndex) {
+                routineProvider.reorderExercises(oldIndex, newIndex);
+              },
+              itemBuilder: (BuildContext context, int index) {
+                final RoutineExercise exercise =
+                    routineProvider.creationExercises[index];
+                return ExerciseCard(
+                  key: ValueKey(exercise.exerciseId),
+                  exercise: exercise,
+                  index: index,
+                  onEdit: () => _showEditExerciseDialog(index, exercise),
+                  onDelete: () {
+                    routineProvider.removeExerciseFromCreation(index);
+                  },
+                );
+              },
+            ),
     );
   }
 }
@@ -298,6 +300,14 @@ class AddExerciseBottomSheet extends StatefulWidget {
 
 class _AddExerciseBottomSheetState extends State<AddExerciseBottomSheet> {
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ExerciseProvider>(context, listen: false).load();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

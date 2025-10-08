@@ -37,7 +37,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    color: colorScheme.primaryContainer,
+                    color: colorScheme.surfaceContainerLow,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () async {
@@ -66,7 +66,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: colorScheme.onPrimaryContainer,
+                                      color: colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
@@ -74,7 +74,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                                   icon: const Icon(Icons.more_vert),
                                   onPressed: () =>
                                       _showRoutineMenu(routine, context),
-                                  color: colorScheme.onPrimaryContainer,
+                                  color: colorScheme.onSurface,
                                 ),
                               ],
                             ),
@@ -87,55 +87,10 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                                 routine.description!,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: colorScheme.onPrimaryContainer
-                                      .withOpacity(0.7),
+                                  color: colorScheme.onSurface.withOpacity(0.7),
                                 ),
                               ),
                             ],
-
-                            const SizedBox(height: 12),
-
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.secondaryContainer,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '${exercises.length} exercises',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: colorScheme.onSecondaryContainer,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.tertiaryContainer,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '~45 min', // TODO: calculate dynamically
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: colorScheme.onTertiaryContainer,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
 
                             const SizedBox(height: 12),
 
@@ -145,7 +100,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: colorScheme.onPrimaryContainer,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -154,8 +109,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                                 'No exercises added yet',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: colorScheme.onPrimaryContainer
-                                      .withOpacity(0.5),
+                                  color: colorScheme.onSurface.withOpacity(0.5),
                                   fontStyle: FontStyle.italic,
                                 ),
                               )

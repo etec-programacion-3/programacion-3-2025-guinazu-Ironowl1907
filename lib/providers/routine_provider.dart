@@ -143,18 +143,21 @@ class RoutineProvider extends ChangeNotifier {
 
   Future<int> saveCreation() async {
     print('Creation: ${creationExercises.toString()}');
-    creationExercises.map((RoutineExercise exercise) {
+
+    for (RoutineExercise exercise in creationExercises) {
       exercise.routineId = newRoutineId!;
-      exerciseRepo.create(exercise);
-    });
-    final Future<int> result = routineRepo.update(
+      await exerciseRepo.create(exercise);
+    }
+
+    final int result = await routineRepo.update(
       Routine(
         id: newRoutineId,
         name: routineName,
         description: routineDescription,
       ),
     );
-    load();
+
+    await load();
     return result;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/screens/routine_create_page.dart';
 
 Widget routineCard(Routine routine, ColorScheme colorScheme) {
   return Consumer<RoutineProvider>(
@@ -44,7 +45,7 @@ Widget routineCard(Routine routine, ColorScheme colorScheme) {
                         await Navigator.of(context).push<bool>(
                           MaterialPageRoute<bool>(
                             builder: (BuildContext context) =>
-                                const Placeholder(),
+                                RoutineCreatorPage(currentRoutine: routine),
                           ),
                         );
                       },

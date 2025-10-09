@@ -54,12 +54,24 @@ class RoutineProvider extends ChangeNotifier {
   }
 
   // Creation methods
-  Future<void> initializeCreation() async {
-    newRoutineId = await routineRepo.create(Routine(name: 'Unamed'));
-    _routineName = 'Unamed';
-    _routineDescription = '';
-    _creationExercises = <RoutineExercise>[];
-    notifyListeners();
+  Future<void> initializeCreation(Routine? routine) async {
+    if (routine == null) {
+      newRoutineId = null;
+      _routineName = 'Unnamed';
+      _routineDescription = '';
+      _creationExercises = <RoutineExercise>[];
+    } else {
+      newRoutineId = routine.id;
+      _routineName = routine.name;
+      _routineDescription = routine.description ?? '';
+      final List<DetailedRoutineExercise> detailedRoutineExercise =
+          await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
+
+      _creationExercises = detailedRoutineExercise
+          .map((i) => i.routineExercise)
+          .toList();
+    }
+    notifyListeners(); // Use notifyListeners() instead of load()
   }
 
   void setRoutineName(String name) {
@@ -142,22 +154,26 @@ class RoutineProvider extends ChangeNotifier {
   }
 
   Future<int> saveCreation() async {
-    print('Creation: ${creationExercises.toString()}');
+    if (newRoutineId == null) {
+      newRoutineId = await routineRepo.create(
+        Routine(name: routineName, description: routineDescription),
+      );
+    } else {
+      await routineRepo.update(
+        Routine(
+          id: newRoutineId,
+          name: routineName,
+          description: routineDescription,
+        ),
+      );
+    }
 
     for (RoutineExercise exercise in creationExercises) {
       exercise.routineId = newRoutineId!;
       await exerciseRepo.create(exercise);
     }
 
-    final int result = await routineRepo.update(
-      Routine(
-        id: newRoutineId,
-        name: routineName,
-        description: routineDescription,
-      ),
-    );
-
     await load();
-    return result;
+    return newRoutineId!;
   }
 }

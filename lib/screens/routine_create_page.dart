@@ -6,7 +6,9 @@ import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/models/models.dart';
 
 class RoutineCreatorPage extends StatefulWidget {
-  const RoutineCreatorPage({super.key});
+  const RoutineCreatorPage({super.key, this.currentRoutine});
+
+  final Routine? currentRoutine;
 
   @override
   State<RoutineCreatorPage> createState() => _RoutineCreatorPageState();
@@ -24,7 +26,7 @@ class _RoutineCreatorPageState extends State<RoutineCreatorPage> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final RoutineProvider routineProvider = context.read<RoutineProvider>();
-      routineProvider.initializeCreation();
+      routineProvider.initializeCreation(widget.currentRoutine);
       _nameController.text = routineProvider.routineName;
       _descriptionController.text = routineProvider.routineDescription;
     });
@@ -237,6 +239,9 @@ class ExerciseCard extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               );
             }
+            if (snapshot.error != null) {
+              return Text('<ERROR>: ${snapshot.error}');
+            }
             return const Text('Loading...');
           },
         ),
@@ -286,7 +291,9 @@ class ExerciseCard extends StatelessWidget {
   }
 
   Future<Exercise?> _getExercise(BuildContext context) async {
+    context.read<ExerciseProvider>().load();
     final List<Exercise> exercises = context.read<ExerciseProvider>().exercises;
+    print("Exercises : ${exercises}");
     return exercises.firstWhere((Exercise e) => e.id == exercise.exerciseId);
   }
 }

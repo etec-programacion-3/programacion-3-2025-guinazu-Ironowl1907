@@ -2,18 +2,27 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/services/routine_repository.dart';
 import 'package:workout_logger/services/workout_repository.dart';
 
 class WorkoutProvider extends ChangeNotifier {
   late WorkoutRepository workoutRepo;
+  late RoutineRepository routineRepo;
   late DatabaseService dbService;
 
   final List<Workout> _workouts = <Workout>[];
-
   List<Workout> get workouts => _workouts;
+
+  Routine? _currentRoutine;
+  Routine? get currentRoutine => _currentRoutine;
+
+  List<DetailedRoutineExercise>? _currentRoutineExercises;
+  List<DetailedRoutineExercise>? get currentRoutineExercises =>
+      _currentRoutineExercises;
 
   WorkoutProvider({required this.dbService}) {
     workoutRepo = WorkoutRepository(dbService);
+    routineRepo = RoutineRepository(dbService);
   }
 
   Future<Workout?> initializeWorkout(Routine? routine) async {
@@ -21,7 +30,7 @@ class WorkoutProvider extends ChangeNotifier {
       print('TODO freeform workout');
       return null;
     }
-    print("initialize workout");
+    print('initialize workout');
 
     final Workout workout = Workout(
       title: 'Unnamed Workout',
@@ -29,6 +38,10 @@ class WorkoutProvider extends ChangeNotifier {
     );
     final int id = await workoutRepo.createWorkout(workout);
     workout.id = id;
+
+    _currentRoutine = routine;
+    _currentRoutineExercises = await routineRepo
+        .getDetailedRoutineExercisesByRoutine(routine.id!);
     return workout;
   }
 

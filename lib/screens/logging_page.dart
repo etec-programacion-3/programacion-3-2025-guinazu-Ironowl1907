@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
-import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/providers/workout_provider.dart';
 
 class LoggingPage extends StatefulWidget {
   const LoggingPage({
@@ -17,19 +17,36 @@ class LoggingPage extends StatefulWidget {
 }
 
 class _LoggingPageState extends State<LoggingPage> {
-  List<DetailedRoutineExercise>? routineExercises;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: _appBar(context), body: _body());
   }
 
   Widget _body() {
-    return Placeholder();
+    return Consumer<WorkoutProvider>(
+      builder: (BuildContext context, WorkoutProvider provider, _) {
+        if (provider.currentRoutineExercises == null) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[Text('Error')],
+            ),
+          );
+        }
+        return ListView.builder(
+          itemCount: provider.currentRoutineExercises!.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _exerciseLogCard(
+              provider.currentRoutineExercises![index].routineExercise,
+            );
+          },
+        );
+      },
+    );
   }
 
-  Widget _exerciseLogCard(WorkoutExercise exercise) {
-    return const Placeholder();
+  Widget _exerciseLogCard(RoutineExercise exercise) {
+    return Text(exercise.toMap().toString());
   }
 
   AppBar _appBar(BuildContext context) {

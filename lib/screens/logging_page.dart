@@ -65,7 +65,6 @@ class _LoggingPageState extends State<LoggingPage> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
 
           _setsTable(exercise),
         ],
@@ -91,12 +90,10 @@ class _LoggingPageState extends State<LoggingPage> {
             ],
           ),
         ),
-        Container(
-          child: Column(
-            children: <Widget>[
-              ...List.generate(3, (int index) => _setRow(index + 1)),
-            ],
-          ),
+        Column(
+          children: <Widget>[
+            ...List.generate(3, (int index) => _setRow(index + 1)),
+          ],
         ),
       ],
     );

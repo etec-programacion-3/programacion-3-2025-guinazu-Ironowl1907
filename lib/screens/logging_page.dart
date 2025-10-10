@@ -49,12 +49,12 @@ class _LoggingPageState extends State<LoggingPage> {
   Widget _exerciseLogCard(DetailedRoutineExercise exercise) {
     return Card(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
@@ -64,14 +64,127 @@ class _LoggingPageState extends State<LoggingPage> {
                 IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
               ],
             ),
-            TextButton(
-              onPressed: () {
-                // TODO: Set Timer
-              },
-              child: const Text('Timer 3min'),
-            ),
-          ],
+          ),
+          const SizedBox(height: 12),
+
+          _setsTable(exercise),
+        ],
+      ),
+    );
+  }
+
+  Widget _setsTable(DetailedRoutineExercise exercise) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: const Row(
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                child: Text('#', textAlign: TextAlign.center),
+              ),
+              Expanded(child: Text('Prev', textAlign: TextAlign.center)),
+              Expanded(child: Text('Reps', textAlign: TextAlign.center)),
+              Expanded(child: Text('Weight', textAlign: TextAlign.center)),
+              SizedBox(width: 40, child: Icon(Icons.check)),
+            ],
+          ),
         ),
+        Container(
+          child: Column(
+            children: <Widget>[
+              ...List.generate(3, (int index) => _setRow(index + 1)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _setRow(int setNumber) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      child: Row(
+        children: <Widget>[
+          // Set Number
+          SizedBox(
+            width: 40,
+            child: Text(
+              '$setNumber',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+
+          Expanded(
+            child: Text(
+              '12 × 50kg',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+          ),
+
+          Expanded(
+            child: SizedBox(
+              height: 36,
+              child: TextField(
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: '0',
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          Expanded(
+            child: SizedBox(
+              height: 36,
+              child: TextField(
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: '0',
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          SizedBox(
+            width: 40,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.check_circle_outline, size: 24),
+              onPressed: () {
+                // Mark set as complete
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

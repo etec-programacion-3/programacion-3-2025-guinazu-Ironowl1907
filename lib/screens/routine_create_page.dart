@@ -79,7 +79,9 @@ class _RoutineCreatorPageState extends State<RoutineCreatorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Routine'),
+        title: Text(
+          widget.currentRoutine == null ? 'Create Routine' : 'Update Routine',
+        ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.check),
@@ -293,7 +295,6 @@ class ExerciseCard extends StatelessWidget {
   Future<Exercise?> _getExercise(BuildContext context) async {
     context.read<ExerciseProvider>().load();
     final List<Exercise> exercises = context.read<ExerciseProvider>().exercises;
-    print("Exercises : ${exercises}");
     return exercises.firstWhere((Exercise e) => e.id == exercise.exerciseId);
   }
 }

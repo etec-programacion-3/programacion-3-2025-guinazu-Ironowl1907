@@ -11,10 +11,11 @@ class RoutineProvider extends ChangeNotifier {
   List<Routine> _routines = <Routine>[];
   List<Routine> get routines => _routines;
 
-  // For creation/editing
   int? newRoutineId;
   List<RoutineExercise> _creationExercises = <RoutineExercise>[];
   List<RoutineExercise> get creationExercises => _creationExercises;
+
+  List<int> _originalExerciseIds = <int>[];
 
   String _routineName = '';
   String get routineName => _routineName;
@@ -53,13 +54,13 @@ class RoutineProvider extends ChangeNotifier {
     load();
   }
 
-  // Creation methods
   Future<void> initializeCreation(Routine? routine) async {
     if (routine == null) {
       newRoutineId = null;
       _routineName = 'Unnamed';
       _routineDescription = '';
       _creationExercises = <RoutineExercise>[];
+      _originalExerciseIds = <int>[];
     } else {
       newRoutineId = routine.id;
       _routineName = routine.name;
@@ -68,10 +69,15 @@ class RoutineProvider extends ChangeNotifier {
           await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
 
       _creationExercises = detailedRoutineExercise
-          .map((i) => i.routineExercise)
+          .map((DetailedRoutineExercise i) => i.routineExercise)
+          .toList();
+
+      _originalExerciseIds = _creationExercises
+          .where((e) => e.id != null)
+          .map((e) => e.id!)
           .toList();
     }
-    notifyListeners(); // Use notifyListeners() instead of load()
+    notifyListeners();
   }
 
   void setRoutineName(String name) {
@@ -91,7 +97,7 @@ class RoutineProvider extends ChangeNotifier {
     int? restSeconds,
   }) {
     final RoutineExercise newExercise = RoutineExercise(
-      routineId: 0, // Temporary, will be set when saving
+      routineId: newRoutineId ?? 0,
       exerciseId: exerciseId,
       order: _creationExercises.length,
       sets: sets ?? 3,
@@ -104,7 +110,6 @@ class RoutineProvider extends ChangeNotifier {
 
   void removeExerciseFromCreation(int index) {
     _creationExercises.removeAt(index);
-    // Update order
     for (int i = 0; i < _creationExercises.length; i++) {
       _creationExercises[i].order = i;
     }
@@ -129,7 +134,6 @@ class RoutineProvider extends ChangeNotifier {
     if (newIndex > oldIndex) newIndex--;
     final RoutineExercise exercise = _creationExercises.removeAt(oldIndex);
     _creationExercises.insert(newIndex, exercise);
-    // Update order
     for (int i = 0; i < _creationExercises.length; i++) {
       _creationExercises[i].order = i;
     }
@@ -140,6 +144,7 @@ class RoutineProvider extends ChangeNotifier {
     _routineName = '';
     _routineDescription = '';
     _creationExercises = <RoutineExercise>[];
+    _originalExerciseIds = <int>[];
     load();
   }
 
@@ -155,10 +160,12 @@ class RoutineProvider extends ChangeNotifier {
 
   Future<int> saveCreation() async {
     if (newRoutineId == null) {
+      print('Creating routine');
       newRoutineId = await routineRepo.create(
         Routine(name: routineName, description: routineDescription),
       );
     } else {
+      print('Updating routine');
       await routineRepo.update(
         Routine(
           id: newRoutineId,
@@ -168,9 +175,28 @@ class RoutineProvider extends ChangeNotifier {
       );
     }
 
+    final Set<int> currentExerciseIds = <int>{};
+
     for (RoutineExercise exercise in creationExercises) {
       exercise.routineId = newRoutineId!;
-      await exerciseRepo.create(exercise);
+
+      if (exercise.id == null) {
+        print('Creating routine exercise ${exercise.toMap()}');
+        final int newId = await exerciseRepo.create(exercise);
+        exercise.id = newId;
+        currentExerciseIds.add(newId);
+      } else {
+        print('Updating routine exercise ${exercise.toMap()}');
+        await exerciseRepo.update(exercise);
+        currentExerciseIds.add(exercise.id!);
+      }
+    }
+
+    for (int originalId in _originalExerciseIds) {
+      if (!currentExerciseIds.contains(originalId)) {
+        print('Deleting routine exercise with id $originalId');
+        await exerciseRepo.delete(originalId);
+      }
     }
 
     await load();

@@ -61,7 +61,15 @@ class _LoggingPageState extends State<LoggingPage> {
                   exercise.exercise.name,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+                Row(
+                  children: <Widget>[
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.timer)),
+                    IconButton(
+                      icon: const Icon(Icons.more_vert),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -80,13 +88,13 @@ class _LoggingPageState extends State<LoggingPage> {
           child: const Row(
             children: <Widget>[
               SizedBox(
-                width: 40,
+                width: 30,
                 child: Text('#', textAlign: TextAlign.center),
               ),
               Expanded(child: Text('Prev', textAlign: TextAlign.center)),
               Expanded(child: Text('Reps', textAlign: TextAlign.center)),
               Expanded(child: Text('Weight', textAlign: TextAlign.center)),
-              SizedBox(width: 40, child: Icon(Icons.check)),
+              SizedBox(width: 30, child: Icon(Icons.check)),
             ],
           ),
         ),
@@ -113,7 +121,7 @@ class _LoggingPageState extends State<LoggingPage> {
         children: <Widget>[
           // Set Number
           SizedBox(
-            width: 40,
+            width: 30,
             child: Text(
               '$setNumber',
               textAlign: TextAlign.center,
@@ -171,7 +179,7 @@ class _LoggingPageState extends State<LoggingPage> {
           const SizedBox(width: 8),
 
           SizedBox(
-            width: 40,
+            width: 30,
             child: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),

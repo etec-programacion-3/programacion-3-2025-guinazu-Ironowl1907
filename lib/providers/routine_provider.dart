@@ -1,18 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
+import 'package:workout_logger/services/routine_exercise_repository.dart';
 import 'package:workout_logger/services/routine_repository.dart';
 
 class RoutineProvider extends ChangeNotifier {
   late RoutineRepository routineRepo;
+  late RoutineExerciseRepository exerciseRepo;
   late DatabaseService dbService;
   List<Routine> _routines = <Routine>[];
   List<Routine> get routines => _routines;
 
-  // For creation/editing
   int? newRoutineId;
   List<RoutineExercise> _creationExercises = <RoutineExercise>[];
   List<RoutineExercise> get creationExercises => _creationExercises;
+
+  List<int> _originalExerciseIds = <int>[];
 
   String _routineName = '';
   String get routineName => _routineName;
@@ -22,6 +25,7 @@ class RoutineProvider extends ChangeNotifier {
 
   RoutineProvider({required this.dbService}) {
     routineRepo = RoutineRepository(dbService);
+    exerciseRepo = RoutineExerciseRepository(dbService);
   }
 
   Future<void> load() async {
@@ -50,23 +54,40 @@ class RoutineProvider extends ChangeNotifier {
     load();
   }
 
-  // Creation methods
-  Future<void> initializeCreation() async {
-    newRoutineId = await routineRepo.create(Routine(name: 'Unamed'));
-    _routineName = 'Unamed';
-    _routineDescription = '';
-    _creationExercises = <RoutineExercise>[];
+  Future<void> initializeCreation(Routine? routine) async {
+    if (routine == null) {
+      newRoutineId = null;
+      _routineName = 'Unnamed';
+      _routineDescription = '';
+      _creationExercises = <RoutineExercise>[];
+      _originalExerciseIds = <int>[];
+    } else {
+      newRoutineId = routine.id;
+      _routineName = routine.name;
+      _routineDescription = routine.description ?? '';
+      final List<DetailedRoutineExercise> detailedRoutineExercise =
+          await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
+
+      _creationExercises = detailedRoutineExercise
+          .map((DetailedRoutineExercise i) => i.routineExercise)
+          .toList();
+
+      _originalExerciseIds = _creationExercises
+          .where((e) => e.id != null)
+          .map((e) => e.id!)
+          .toList();
+    }
     notifyListeners();
   }
 
   void setRoutineName(String name) {
     _routineName = name;
-    notifyListeners();
+    load();
   }
 
   void setRoutineDescription(String description) {
     _routineDescription = description;
-    notifyListeners();
+    load();
   }
 
   void addExerciseToCreation(
@@ -76,7 +97,7 @@ class RoutineProvider extends ChangeNotifier {
     int? restSeconds,
   }) {
     final RoutineExercise newExercise = RoutineExercise(
-      routineId: 0, // Temporary, will be set when saving
+      routineId: newRoutineId ?? 0,
       exerciseId: exerciseId,
       order: _creationExercises.length,
       sets: sets ?? 3,
@@ -84,16 +105,15 @@ class RoutineProvider extends ChangeNotifier {
       restSeconds: restSeconds ?? 60,
     );
     _creationExercises.add(newExercise);
-    notifyListeners();
+    load();
   }
 
   void removeExerciseFromCreation(int index) {
     _creationExercises.removeAt(index);
-    // Update order
     for (int i = 0; i < _creationExercises.length; i++) {
       _creationExercises[i].order = i;
     }
-    notifyListeners();
+    load();
   }
 
   void updateExerciseInCreation(
@@ -107,25 +127,25 @@ class RoutineProvider extends ChangeNotifier {
     if (restSeconds != null) {
       _creationExercises[index].restSeconds = restSeconds;
     }
-    notifyListeners();
+    load();
   }
 
   void reorderExercises(int oldIndex, int newIndex) {
     if (newIndex > oldIndex) newIndex--;
     final RoutineExercise exercise = _creationExercises.removeAt(oldIndex);
     _creationExercises.insert(newIndex, exercise);
-    // Update order
     for (int i = 0; i < _creationExercises.length; i++) {
       _creationExercises[i].order = i;
     }
-    notifyListeners();
+    load();
   }
 
   void clearCreation() {
     _routineName = '';
     _routineDescription = '';
     _creationExercises = <RoutineExercise>[];
-    notifyListeners();
+    _originalExerciseIds = <int>[];
+    load();
   }
 
   bool get isCreationValid {
@@ -136,5 +156,50 @@ class RoutineProvider extends ChangeNotifier {
     int routineId,
   ) async {
     return routineRepo.getDetailedRoutineExercisesByRoutine(routineId);
+  }
+
+  Future<int> saveCreation() async {
+    if (newRoutineId == null) {
+      print('Creating routine');
+      newRoutineId = await routineRepo.create(
+        Routine(name: routineName, description: routineDescription),
+      );
+    } else {
+      print('Updating routine');
+      await routineRepo.update(
+        Routine(
+          id: newRoutineId,
+          name: routineName,
+          description: routineDescription,
+        ),
+      );
+    }
+
+    final Set<int> currentExerciseIds = <int>{};
+
+    for (RoutineExercise exercise in creationExercises) {
+      exercise.routineId = newRoutineId!;
+
+      if (exercise.id == null) {
+        print('Creating routine exercise ${exercise.toMap()}');
+        final int newId = await exerciseRepo.create(exercise);
+        exercise.id = newId;
+        currentExerciseIds.add(newId);
+      } else {
+        print('Updating routine exercise ${exercise.toMap()}');
+        await exerciseRepo.update(exercise);
+        currentExerciseIds.add(exercise.id!);
+      }
+    }
+
+    for (int originalId in _originalExerciseIds) {
+      if (!currentExerciseIds.contains(originalId)) {
+        print('Deleting routine exercise with id $originalId');
+        await exerciseRepo.delete(originalId);
+      }
+    }
+
+    await load();
+    return newRoutineId!;
   }
 }

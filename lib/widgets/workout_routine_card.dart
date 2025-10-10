@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/providers/workout_provider.dart';
+import 'package:workout_logger/screens/logging_page.dart';
 
 class WorkoutRoutineCard extends StatefulWidget {
   const WorkoutRoutineCard({super.key, required this.routine});
@@ -37,7 +39,20 @@ class _WorkoutRoutineCardState extends State<WorkoutRoutineCard> {
                   SizedBox(
                     width: double.infinity,
                     child: FloatingActionButton(
-                      onPressed: () {},
+                      heroTag: widget.routine.id,
+                      onPressed: () async {
+                        final Workout? workout = await context
+                            .read<WorkoutProvider>()
+                            .initializeWorkout(widget.routine);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => LoggingPage(
+                              currentRoutine: widget.routine,
+                              currentWorkout: workout,
+                            ),
+                          ),
+                        );
+                      },
                       child: const Text('Start Routine'),
                     ),
                   ),

@@ -4,8 +4,13 @@ import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
 
 class LoggingPage extends StatefulWidget {
-  const LoggingPage({super.key, this.currentRoutine});
+  const LoggingPage({
+    super.key,
+    this.currentRoutine,
+    required this.currentWorkout,
+  });
   final Routine? currentRoutine;
+  final Workout? currentWorkout;
 
   @override
   State<LoggingPage> createState() => _LoggingPageState();
@@ -20,7 +25,7 @@ class _LoggingPageState extends State<LoggingPage> {
   }
 
   Widget _body() {
-    return;
+    return Placeholder();
   }
 
   Widget _exerciseLogCard(WorkoutExercise exercise) {

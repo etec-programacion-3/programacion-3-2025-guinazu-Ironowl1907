@@ -16,6 +16,22 @@ class WorkoutProvider extends ChangeNotifier {
     workoutRepo = WorkoutRepository(dbService);
   }
 
+  Future<Workout?> initializeWorkout(Routine? routine) async {
+    if (routine == null) {
+      print('TODO freeform workout');
+      return null;
+    }
+    print("initialize workout");
+
+    final Workout workout = Workout(
+      title: 'Unnamed Workout',
+      routineId: routine.id,
+    );
+    final int id = await workoutRepo.createWorkout(workout);
+    workout.id = id;
+    return workout;
+  }
+
   Future<Workout?> getUnfinishedWorkout() async {
     final Database db = dbService.db!;
     final List<Map<String, Object?>> result = await db.query(

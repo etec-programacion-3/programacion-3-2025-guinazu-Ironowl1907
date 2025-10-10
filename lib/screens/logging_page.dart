@@ -23,30 +23,57 @@ class _LoggingPageState extends State<LoggingPage> {
   }
 
   Widget _body() {
-    return Consumer<WorkoutProvider>(
-      builder: (BuildContext context, WorkoutProvider provider, _) {
-        if (provider.currentRoutineExercises == null) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[Text('Error')],
-            ),
-          );
-        }
-        return ListView.builder(
-          itemCount: provider.currentRoutineExercises!.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _exerciseLogCard(
-              provider.currentRoutineExercises![index].routineExercise,
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Consumer<WorkoutProvider>(
+        builder: (BuildContext context, WorkoutProvider provider, _) {
+          if (provider.currentRoutineExercises == null) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[Text('Error')],
+              ),
             );
-          },
-        );
-      },
+          }
+          return ListView.builder(
+            itemCount: provider.currentRoutineExercises!.length,
+            itemBuilder: (BuildContext context, int index) {
+              return _exerciseLogCard(provider.currentRoutineExercises![index]);
+            },
+          );
+        },
+      ),
     );
   }
 
-  Widget _exerciseLogCard(RoutineExercise exercise) {
-    return Text(exercise.toMap().toString());
+  Widget _exerciseLogCard(DetailedRoutineExercise exercise) {
+    return Card(
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  exercise.exercise.name,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+              ],
+            ),
+            TextButton(
+              onPressed: () {
+                // TODO: Set Timer
+              },
+              child: const Text('Timer 3min'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   AppBar _appBar(BuildContext context) {

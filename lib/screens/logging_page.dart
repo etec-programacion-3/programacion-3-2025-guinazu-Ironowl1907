@@ -193,7 +193,8 @@ class _LoggingPageState extends State<LoggingPage> {
               constraints: const BoxConstraints(),
               icon: const Icon(Icons.check, size: 24),
               onPressed: () {
-                // Mark set as complete
+                // TODO : Need to save
+                print('Saving progress for  $setNumber');
               },
             ),
           ),

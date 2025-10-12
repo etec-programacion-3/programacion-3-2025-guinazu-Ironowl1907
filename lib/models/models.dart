@@ -15,7 +15,7 @@ class MuscleGroup {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name};
+    return <String, dynamic>{'id': id, 'name': name};
   }
 
   // Create from Map
@@ -58,7 +58,7 @@ class Exercise {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'description': description,
@@ -113,7 +113,7 @@ class Routine {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'description': description,
@@ -186,7 +186,7 @@ class RoutineExercise {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'routine_id': routineId,
       'exercise_id': exerciseId,
@@ -253,7 +253,7 @@ class Workout {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'title': title,
       'routine_id': routineId,
@@ -295,6 +295,8 @@ class WorkoutExercise {
   int workoutId;
   int exerciseId;
   int orderIndex;
+  int sets;
+  int reps;
   DateTime? completedAt;
 
   WorkoutExercise({
@@ -302,6 +304,8 @@ class WorkoutExercise {
     required this.workoutId,
     required this.exerciseId,
     required this.orderIndex,
+    required this.sets,
+    required this.reps,
     this.completedAt,
   });
 
@@ -315,16 +319,20 @@ class WorkoutExercise {
   set setWorkoutId(int workoutId) => this.workoutId = workoutId;
   set setExerciseId(int exerciseId) => this.exerciseId = exerciseId;
   set setOrderIndex(int orderIndex) => this.orderIndex = orderIndex;
+  set setSets(int sets) => this.sets = sets;
+  set setReps(int reps) => this.reps = reps;
   set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
 
   bool get isCompleted => completedAt != null;
   void markCompleted() => completedAt = DateTime.now();
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'workout_id': workoutId,
       'exercise_id': exerciseId,
+      'reps': reps,
+      'sets': sets,
       'order_index': orderIndex,
       'completed_at': completedAt?.toIso8601String(),
     };
@@ -336,6 +344,8 @@ class WorkoutExercise {
       workoutId: map['workout_id'],
       exerciseId: map['exercise_id'],
       orderIndex: map['order_index'],
+      sets: map['sets'],
+      reps: map['reps'],
       completedAt: map['completed_at'] != null
           ? DateTime.parse(map['completed_at'])
           : null,
@@ -349,6 +359,8 @@ class WorkoutExercise {
         workout_id INTEGER NOT NULL,
         exercise_id INTEGER NOT NULL,
         order_index INTEGER NOT NULL,
+        sets INTEGER NOT NULL,
+        reps INTEGER NOT NULL,
         completed_at TIMESTAMP,
         FOREIGN KEY(workout_id) REFERENCES workouts(id),
         FOREIGN KEY(exercise_id) REFERENCES exercises(id)
@@ -410,7 +422,7 @@ class WorkoutSet {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'workout_exercise_id': workoutExerciseId,
       'set_number': setNumber,
@@ -469,7 +481,7 @@ class DetailedRoutineExercise {
 // Helper class to get all table creation queries
 class DatabaseSchema {
   static List<String> getAllCreateTableQueries() {
-    return [
+    return <String>[
       MuscleGroup.createTableQuery(),
       Exercise.createTableQuery(),
       Routine.createTableQuery(),

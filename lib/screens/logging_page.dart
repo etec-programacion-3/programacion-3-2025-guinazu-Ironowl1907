@@ -94,20 +94,25 @@ class _LoggingPageState extends State<LoggingPage> {
               Expanded(child: Text('Prev', textAlign: TextAlign.center)),
               Expanded(child: Text('Reps', textAlign: TextAlign.center)),
               Expanded(child: Text('Weight', textAlign: TextAlign.center)),
-              SizedBox(width: 30, child: Icon(Icons.check)),
+              SizedBox(width: 30, child: Icon(Icons.check_circle)),
             ],
           ),
         ),
         Column(
           children: <Widget>[
-            ...List.generate(3, (int index) => _setRow(index + 1)),
+            ...List.generate(
+              exercise.routineExercise.sets!,
+              (int index) => _setRow(exercise, index + 1),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _setRow(int setNumber) {
+  Widget _setRow(DetailedRoutineExercise exercise, int setNumber) {
+    final TextEditingController weightContrller = TextEditingController();
+    final TextEditingController repsController = TextEditingController();
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -131,6 +136,7 @@ class _LoggingPageState extends State<LoggingPage> {
 
           Expanded(
             child: Text(
+              // TODO: Pevious numbers
               '12 × 50kg',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -144,6 +150,7 @@ class _LoggingPageState extends State<LoggingPage> {
             child: SizedBox(
               height: 36,
               child: TextField(
+                controller: repsController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -163,6 +170,7 @@ class _LoggingPageState extends State<LoggingPage> {
             child: SizedBox(
               height: 36,
               child: TextField(
+                controller: weightContrller,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -183,7 +191,7 @@ class _LoggingPageState extends State<LoggingPage> {
             child: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              icon: const Icon(Icons.check_circle_outline, size: 24),
+              icon: const Icon(Icons.check, size: 24),
               onPressed: () {
                 // Mark set as complete
               },

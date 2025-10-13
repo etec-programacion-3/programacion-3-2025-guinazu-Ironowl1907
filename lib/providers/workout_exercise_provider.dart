@@ -7,11 +7,14 @@ class WorkoutExerciseProvider extends ChangeNotifier {
   late WorkoutExerciseRepository workoutExerciseRepo;
   late DatabaseService dbService;
 
-  final List<MuscleGroup> _muscleGroup = <MuscleGroup>[];
-
-  List<MuscleGroup> get workouts => _muscleGroup;
+  List<WorkoutExercise>? _currentWorkoutExercises;
+  List<WorkoutExercise>? get workoutExercises => _currentWorkoutExercises;
 
   WorkoutExerciseProvider({required this.dbService}) {
     workoutExerciseRepo = WorkoutExerciseRepository(dbService);
+  }
+
+  Future<List<WorkoutExercise>> getByWorkout(int workoutId) async {
+    return workoutExerciseRepo.getByWorkout(workoutId);
   }
 }

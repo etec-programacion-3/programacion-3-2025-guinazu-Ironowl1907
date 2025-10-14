@@ -214,7 +214,15 @@ class _LoggingPageState extends State<LoggingPage> {
       actions: <Widget>[
         Padding(
           padding: const EdgeInsets.all(20.0),
-          child: TextButton(onPressed: () {}, child: const Text('Finish')),
+          child: TextButton(
+            onPressed: () async {
+              await context.read<WorkoutProvider>().finishWorkout(
+                widget.currentWorkout!,
+              );
+              Navigator.of(context).pop();
+            },
+            child: const Text('Finish'),
+          ),
         ),
       ],
       title: Text(

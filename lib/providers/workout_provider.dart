@@ -14,7 +14,7 @@ class WorkoutProvider extends ChangeNotifier {
 
   Routine? _currentRoutine;
   Workout? _currentWorkout;
-  final List<DetailedWorkoutExercise> _currentWorkoutExercises =
+  List<DetailedWorkoutExercise>? _currentWorkoutExercises =
       <DetailedWorkoutExercise>[];
 
   Routine? get currentRoutine => _currentRoutine;
@@ -26,6 +26,10 @@ class WorkoutProvider extends ChangeNotifier {
     workoutRepo = WorkoutRepository(dbService);
     routineRepo = RoutineRepository(dbService);
     workoutExerciseRepo = WorkoutExerciseRepository(dbService);
+  }
+
+  Future<int> update(Workout workout) async {
+    return workoutRepo.update(workout);
   }
 
   Future<Workout?> initializeWorkout(Routine? routine) async {
@@ -45,6 +49,7 @@ class WorkoutProvider extends ChangeNotifier {
     workout.id = id;
 
     _currentRoutine = routine;
+    _currentWorkoutExercises = <DetailedWorkoutExercise>[];
 
     final List<DetailedRoutineExercise> currentRoutineExercise =
         await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
@@ -60,12 +65,23 @@ class WorkoutProvider extends ChangeNotifier {
       );
 
       await workoutExerciseRepo.create(workoutExercise);
-      _currentWorkoutExercises.add(
+      _currentWorkoutExercises!.add(
         DetailedWorkoutExercise(detailedExercise.exercise, workoutExercise),
       );
     }
     _currentWorkout = workout;
     return workout;
+  }
+
+  Future<void> finishWorkout(Workout workout) async {
+    print('Finishing workout');
+    _currentWorkout!.setEndedAt = DateTime.now();
+    print(_currentWorkout!.toMap());
+    update(workout);
+
+    _currentRoutine = null;
+    _currentWorkout = null;
+    _currentWorkoutExercises = null;
   }
 
   Future<Workout?> getUnfinishedWorkout() async {

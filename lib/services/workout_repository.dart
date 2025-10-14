@@ -11,7 +11,7 @@ class WorkoutRepository {
     return await db.insert('workouts', workout.toMap());
   }
 
-  Future<Workout?> getWorkout(int id) async {
+  Future<Workout?> get(int id) async {
     final Database db = dbService.db!;
     final List<Map<String, Object?>> result = await db.query(
       'workouts',
@@ -21,7 +21,7 @@ class WorkoutRepository {
     return result.isNotEmpty ? Workout.fromMap(result.first) : null;
   }
 
-  Future<List<Workout>> getAllWorkouts() async {
+  Future<List<Workout>> getAll() async {
     final Database db = dbService.db!;
     final List<Map<String, Object?>> result = await db.query(
       'workouts',
@@ -32,7 +32,7 @@ class WorkoutRepository {
         .toList();
   }
 
-  Future<List<Workout>> getWorkoutsByRoutine(int routineId) async {
+  Future<List<Workout>> getByRoutine(int routineId) async {
     final Database db = dbService.db!;
     final List<Map<String, Object?>> result = await db.query(
       'workouts',
@@ -45,7 +45,7 @@ class WorkoutRepository {
         .toList();
   }
 
-  Future<int> updateWorkout(Workout workout) async {
+  Future<int> update(Workout workout) async {
     final Database db = dbService.db!;
     return await db.update(
       'workouts',
@@ -55,7 +55,7 @@ class WorkoutRepository {
     );
   }
 
-  Future<int> deleteWorkout(int id) async {
+  Future<int> delete(int id) async {
     final Database db = dbService.db!;
     return await db.delete(
       'workouts',

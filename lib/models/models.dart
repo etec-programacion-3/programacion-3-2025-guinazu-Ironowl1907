@@ -478,6 +478,13 @@ class DetailedRoutineExercise {
   DetailedRoutineExercise(this.exercise, this.routineExercise);
 }
 
+class DetailedWorkoutExercise {
+  Exercise exercise;
+  WorkoutExercise workoutExercise;
+
+  DetailedWorkoutExercise(this.exercise, this.workoutExercise);
+}
+
 // Helper class to get all table creation queries
 class DatabaseSchema {
   static List<String> getAllCreateTableQueries() {

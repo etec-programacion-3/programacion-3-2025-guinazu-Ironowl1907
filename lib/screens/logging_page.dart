@@ -27,7 +27,7 @@ class _LoggingPageState extends State<LoggingPage> {
       padding: const EdgeInsets.all(12.0),
       child: Consumer<WorkoutProvider>(
         builder: (BuildContext context, WorkoutProvider provider, _) {
-          if (provider.currentRoutineExercises == null) {
+          if (provider.workoutExercises == null) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -36,9 +36,9 @@ class _LoggingPageState extends State<LoggingPage> {
             );
           }
           return ListView.builder(
-            itemCount: provider.currentRoutineExercises!.length,
+            itemCount: provider.workoutExercises!.length,
             itemBuilder: (BuildContext context, int index) {
-              return _exerciseLogCard(provider.currentRoutineExercises![index]);
+              return _exerciseLogCard(provider.workoutExercises![index]);
             },
           );
         },
@@ -46,7 +46,7 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _exerciseLogCard(DetailedRoutineExercise exercise) {
+  Widget _exerciseLogCard(DetailedWorkoutExercise exercise) {
     return Card(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       child: Column(
@@ -80,7 +80,7 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _setsTable(DetailedRoutineExercise exercise) {
+  Widget _setsTable(DetailedWorkoutExercise exercise) {
     return Column(
       children: <Widget>[
         Container(
@@ -101,7 +101,7 @@ class _LoggingPageState extends State<LoggingPage> {
         Column(
           children: <Widget>[
             ...List.generate(
-              exercise.routineExercise.sets!,
+              exercise.workoutExercise.sets,
               (int index) => _setRow(exercise, index + 1),
             ),
           ],
@@ -110,7 +110,7 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _setRow(DetailedRoutineExercise exercise, int setNumber) {
+  Widget _setRow(DetailedWorkoutExercise exercise, int setNumber) {
     final TextEditingController weightContrller = TextEditingController();
     final TextEditingController repsController = TextEditingController();
     return Container(

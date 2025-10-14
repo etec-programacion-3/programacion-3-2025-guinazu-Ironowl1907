@@ -14,11 +14,12 @@ class WorkoutProvider extends ChangeNotifier {
 
   Routine? _currentRoutine;
   Workout? _currentWorkout;
-  Map<WorkoutExercise, DetailedRoutineExercise>? _currentWorkoutExercises;
+  final List<DetailedWorkoutExercise> _currentWorkoutExercises =
+      <DetailedWorkoutExercise>[];
 
   Routine? get currentRoutine => _currentRoutine;
   Workout? get currentWorkout => _currentWorkout;
-  Map<WorkoutExercise, DetailedRoutineExercise>? get workoutExercises =>
+  List<DetailedWorkoutExercise>? get workoutExercises =>
       _currentWorkoutExercises;
 
   WorkoutProvider({required this.dbService}) {
@@ -44,7 +45,6 @@ class WorkoutProvider extends ChangeNotifier {
     workout.id = id;
 
     _currentRoutine = routine;
-    _currentWorkoutExercises = <WorkoutExercise, DetailedRoutineExercise>{};
 
     final List<DetailedRoutineExercise> currentRoutineExercise =
         await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
@@ -60,13 +60,11 @@ class WorkoutProvider extends ChangeNotifier {
       );
 
       await workoutExerciseRepo.create(workoutExercise);
-      _currentWorkoutExercises!.addEntries(
-        <WorkoutExercise, DetailedRoutineExercise>{
-          workoutExercise: detailedExercise,
-        },
+      _currentWorkoutExercises.add(
+        DetailedWorkoutExercise(detailedExercise.exercise, workoutExercise),
       );
     }
-
+    _currentWorkout = workout;
     return workout;
   }
 

@@ -6,76 +6,67 @@ class WorkoutSetRepository {
   final DatabaseService dbService;
   WorkoutSetRepository(this.dbService);
 
-  Future<int> create(Exercise exercise) async {
+  Future<int> create(WorkoutSet workoutSet) async {
     final Database db = dbService.db!;
-    return db.insert("exercises", exercise.toMap());
+    return await db.insert('workout_sets', workoutSet.toMap());
   }
 
-  Future<Exercise?> get(int id) async {
+  Future<WorkoutSet?> get(int id) async {
     final Database db = dbService.db!;
-    final result = await db.query(
-      "exercises",
-      where: "id = ?",
-      whereArgs: [id],
-    );
-    return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
-  }
-
-  Future<int> createWorkoutSet(WorkoutSet workoutSet) async {
-    final Database db = dbService.db!;
-    return await db.insert("workout_sets", workoutSet.toMap());
-  }
-
-  Future<WorkoutSet?> getWorkoutSet(int id) async {
-    final Database db = dbService.db!;
-    final result = await db.query(
-      "workout_sets",
-      where: "id = ?",
-      whereArgs: [id],
+    final List<Map<String, Object?>> result = await db.query(
+      'workout_sets',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
     );
     return result.isNotEmpty ? WorkoutSet.fromMap(result.first) : null;
   }
 
-  Future<List<WorkoutSet>> getWorkoutSetsByExercise(
-    int workoutExerciseId,
-  ) async {
+  Future<List<WorkoutSet>> getByExercise(int workoutExerciseId) async {
     final Database db = dbService.db!;
-    final result = await db.query(
-      "workout_sets",
-      where: "workout_exercise_id = ?",
-      whereArgs: [workoutExerciseId],
-      orderBy: "set_number ASC",
+    final List<Map<String, Object?>> result = await db.query(
+      'workout_sets',
+      where: 'workout_exercise_id = ?',
+      whereArgs: <Object?>[workoutExerciseId],
+      orderBy: 'set_number ASC',
     );
-    return result.map((map) => WorkoutSet.fromMap(map)).toList();
+    return result
+        .map((Map<String, Object?> map) => WorkoutSet.fromMap(map))
+        .toList();
   }
 
-  Future<List<WorkoutSet>> getAllWorkoutSets() async {
+  Future<List<WorkoutSet>> getAll() async {
     final Database db = dbService.db!;
-    final result = await db.query("workout_sets");
-    return result.map((map) => WorkoutSet.fromMap(map)).toList();
+    final List<Map<String, Object?>> result = await db.query('workout_sets');
+    return result
+        .map((Map<String, Object?> map) => WorkoutSet.fromMap(map))
+        .toList();
   }
 
-  Future<int> updateWorkoutSet(WorkoutSet workoutSet) async {
+  Future<int> update(WorkoutSet workoutSet) async {
     final Database db = dbService.db!;
     return await db.update(
-      "workout_sets",
+      'workout_sets',
       workoutSet.toMap(),
-      where: "id = ?",
-      whereArgs: [workoutSet.id],
+      where: 'id = ?',
+      whereArgs: <Object?>[workoutSet.id],
     );
   }
 
-  Future<int> deleteWorkoutSet(int id) async {
-    final Database db = dbService.db!;
-    return await db.delete("workout_sets", where: "id = ?", whereArgs: [id]);
-  }
-
-  Future<int> deleteWorkoutSetsByExercise(int workoutExerciseId) async {
+  Future<int> delete(int id) async {
     final Database db = dbService.db!;
     return await db.delete(
-      "workout_sets",
-      where: "workout_exercise_id = ?",
-      whereArgs: [workoutExerciseId],
+      'workout_sets',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+    );
+  }
+
+  Future<int> deleteByExercise(int workoutExerciseId) async {
+    final Database db = dbService.db!;
+    return await db.delete(
+      'workout_sets',
+      where: 'workout_exercise_id = ?',
+      whereArgs: <Object?>[workoutExerciseId],
     );
   }
 }

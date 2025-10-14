@@ -76,7 +76,6 @@ class WorkoutProvider extends ChangeNotifier {
   Future<void> finishWorkout(Workout workout) async {
     print('Finishing workout');
     _currentWorkout!.setEndedAt = DateTime.now();
-    print(_currentWorkout!.toMap());
     update(workout);
 
     _currentRoutine = null;

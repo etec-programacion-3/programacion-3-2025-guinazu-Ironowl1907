@@ -12,11 +12,14 @@ class WorkoutProvider extends ChangeNotifier {
   late WorkoutExerciseRepository workoutExerciseRepo;
   late DatabaseService dbService;
 
-  final List<Workout> _workouts = <Workout>[];
-  List<Workout> get workouts => _workouts;
-
   Routine? _currentRoutine;
+  Workout? _currentWorkout;
+  Map<WorkoutExercise, DetailedRoutineExercise>? _currentWorkoutExercises;
+
   Routine? get currentRoutine => _currentRoutine;
+  Workout? get currentWorkout => _currentWorkout;
+  Map<WorkoutExercise, DetailedRoutineExercise>? get workoutExercises =>
+      _currentWorkoutExercises;
 
   WorkoutProvider({required this.dbService}) {
     workoutRepo = WorkoutRepository(dbService);
@@ -41,6 +44,7 @@ class WorkoutProvider extends ChangeNotifier {
     workout.id = id;
 
     _currentRoutine = routine;
+    _currentWorkoutExercises = <WorkoutExercise, DetailedRoutineExercise>{};
 
     final List<DetailedRoutineExercise> currentRoutineExercise =
         await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
@@ -52,12 +56,15 @@ class WorkoutProvider extends ChangeNotifier {
         exerciseId: detailedExercise.exercise.id!,
         orderIndex: detailedExercise.routineExercise.order,
         sets: detailedExercise.routineExercise.sets ?? 3,
-        reps:
-            detailedExercise.routineExercise.reps ??
-            10, // Default to 10 if null
+        reps: detailedExercise.routineExercise.reps ?? 10,
       );
 
       await workoutExerciseRepo.create(workoutExercise);
+      _currentWorkoutExercises!.addEntries(
+        <WorkoutExercise, DetailedRoutineExercise>{
+          workoutExercise: detailedExercise,
+        },
+      );
     }
 
     return workout;

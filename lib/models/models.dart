@@ -375,10 +375,9 @@ class WorkoutSet {
   int setNumber;
   int? reps;
   double? weightKg;
-  int? durationSeconds;
   int? restSeconds;
   String? notes;
-  DateTime? completedAt;
+  int completed;
 
   WorkoutSet({
     this.id,
@@ -386,10 +385,9 @@ class WorkoutSet {
     required this.setNumber,
     this.reps,
     this.weightKg,
-    this.durationSeconds,
     this.restSeconds,
     this.notes,
-    this.completedAt,
+    this.completed = 0,
   });
 
   // Getters
@@ -398,10 +396,9 @@ class WorkoutSet {
   int get getSetNumber => setNumber;
   int? get getReps => reps;
   double? get getWeightKg => weightKg;
-  int? get getDurationSeconds => durationSeconds;
   int? get getRestSeconds => restSeconds;
   String? get getNotes => notes;
-  DateTime? get getCompletedAt => completedAt;
+  int get getCompleted => completed;
 
   // Setters
   set setId(int? id) => this.id = id;
@@ -410,17 +407,9 @@ class WorkoutSet {
   set setSetNumber(int setNumber) => this.setNumber = setNumber;
   set setReps(int? reps) => this.reps = reps;
   set setWeightKg(double? weightKg) => this.weightKg = weightKg;
-  set setDurationSeconds(int? durationSeconds) =>
-      this.durationSeconds = durationSeconds;
   set setRestSeconds(int? restSeconds) => this.restSeconds = restSeconds;
   set setNotes(String? notes) => this.notes = notes;
-  set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
 
-  // Helper methods
-  bool get isCompleted => completedAt != null;
-  void markCompleted() => completedAt = DateTime.now();
-
-  // Convert to Map for database operations
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -428,10 +417,9 @@ class WorkoutSet {
       'set_number': setNumber,
       'reps': reps,
       'weight_kg': weightKg,
-      'duration_seconds': durationSeconds,
       'rest_seconds': restSeconds,
       'notes': notes,
-      'completed_at': completedAt?.toIso8601String(),
+      'completed': completed,
     };
   }
 
@@ -443,12 +431,9 @@ class WorkoutSet {
       setNumber: map['set_number'],
       reps: map['reps'],
       weightKg: map['weight_kg']?.toDouble(),
-      durationSeconds: map['duration_seconds'],
       restSeconds: map['rest_seconds'],
       notes: map['notes'],
-      completedAt: map['completed_at'] != null
-          ? DateTime.parse(map['completed_at'])
-          : null,
+      completed: map['completed'],
     );
   }
 
@@ -461,10 +446,9 @@ class WorkoutSet {
         set_number INTEGER NOT NULL,
         reps INTEGER,
         weight_kg REAL,
-        duration_seconds INTEGER,
         rest_seconds INTEGER,
         notes TEXT,
-        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        completedt INTEGET,
         FOREIGN KEY(workout_exercise_id) REFERENCES workout_exercises(id)
       );
     ''';

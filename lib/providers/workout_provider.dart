@@ -16,11 +16,15 @@ class WorkoutProvider extends ChangeNotifier {
 
   Routine? _currentRoutine;
   Workout? _currentWorkout;
-  final List<WorkoutExercise> _currentWorkoutExercises = <WorkoutExercise>[];
+  final Map<int, DetailedWorkoutExercise> _currentWorkoutExercises =
+      <int, DetailedWorkoutExercise>{};
+  final Map<int, List<WorkoutSet>> _workoutSets = <int, List<WorkoutSet>>{};
 
   Routine? get currentRoutine => _currentRoutine;
   Workout? get currentWorkout => _currentWorkout;
-  List<WorkoutExercise>? get workoutExercises => _currentWorkoutExercises;
+  Map<int, DetailedWorkoutExercise> get workoutExercises =>
+      _currentWorkoutExercises;
+  Map<int, List<WorkoutSet>> get workoutSets => _workoutSets;
 
   WorkoutProvider({required this.dbService}) {
     workoutRepo = WorkoutRepository(dbService);
@@ -39,6 +43,7 @@ class WorkoutProvider extends ChangeNotifier {
       return null;
     }
     print('initialize workout');
+    _currentRoutine = routine;
 
     // Creating the workout object
     final Workout newWorkout = Workout(
@@ -50,12 +55,16 @@ class WorkoutProvider extends ChangeNotifier {
     // Loading it on the db
     final int workoutId = await workoutRepo.createWorkout(newWorkout);
     newWorkout.id = workoutId;
+    _currentWorkout = newWorkout;
 
-    // Geting the exercises from the routine
+    // Getting the exercises from the routine
     final List<DetailedRoutineExercise> routineExericises = await routineRepo
         .getDetailedRoutineExercisesByRoutine(currentRoutine!.id!);
 
-    final List<WorkoutExercise> workoutExercises = <WorkoutExercise>[];
+    // Clear previous data
+    _currentWorkoutExercises.clear();
+    _workoutSets.clear();
+
     for (int i = 0; i < routineExericises.length; i++) {
       // Create the workout exercises
       final DetailedRoutineExercise exercise = routineExericises[i];
@@ -66,10 +75,17 @@ class WorkoutProvider extends ChangeNotifier {
         sets: exercise.routineExercise.sets!,
         reps: exercise.routineExercise.reps!,
       );
+      final DetailedWorkoutExercise dwe = DetailedWorkoutExercise(
+        exercise.exercise,
+        we,
+      );
       we.id = await workoutExerciseRepo.create(we);
-      workoutExercises.add(we);
 
-      // Create the workout sets as default uncompleted
+      // Store in map with workout exercise id as key
+      _currentWorkoutExercises[we.id!] = dwe;
+
+      // Create the workout sets and store them in the map
+      final List<WorkoutSet> sets = <WorkoutSet>[];
       for (int ie = 0; ie < exercise.routineExercise.sets!; ie++) {
         final WorkoutSet workoutSet = WorkoutSet(
           workoutExerciseId: we.id!,
@@ -77,10 +93,45 @@ class WorkoutProvider extends ChangeNotifier {
           reps: exercise.routineExercise.reps!,
           weightKg: 100, //TODO: Remove placeholder
         );
-        workoutSetRepo.create(workoutSet);
+        workoutSet.id = await workoutSetRepo.create(workoutSet);
+        sets.add(workoutSet);
       }
+
+      _workoutSets[we.id!] = sets;
     }
 
+    // Debug printing
+    print('\n=== Workout Initialized ===');
+    print('Workout ID: ${newWorkout.id}');
+    print('Total Exercises: ${_currentWorkoutExercises.length}');
+    print('\nWorkout Exercises and Sets:');
+
+    _currentWorkoutExercises.forEach((
+      int exerciseId,
+      DetailedWorkoutExercise workoutExercise,
+    ) {
+      print('\n--- Exercise ID: $exerciseId ---');
+      print('  Exercise DB ID: ${workoutExercise.workoutExercise.exerciseId}');
+      print('  Order: ${workoutExercise.workoutExercise.orderIndex}');
+      print('  Target Sets: ${workoutExercise.workoutExercise.sets}');
+      print('  Target Reps: ${workoutExercise.workoutExercise.reps}');
+
+      final List<WorkoutSet>? sets = _workoutSets[exerciseId];
+      if (sets != null) {
+        print('  Sets (${sets.length}):');
+        for (final WorkoutSet set in sets) {
+          print(
+            '    Set ${set.setNumber}: ${set.reps} reps @ ${set.weightKg}kg (ID: ${set.id})',
+          );
+        }
+      } else {
+        print('  No sets found');
+      }
+    });
+
+    print('\n=========================\n');
+
+    notifyListeners();
     return newWorkout;
   }
 
@@ -94,6 +145,7 @@ class WorkoutProvider extends ChangeNotifier {
       orderBy: 'started_at DESC', // Get most recent
       limit: 1,
     );
+
     if (result.isEmpty) return null;
 
     final Workout workout = Workout.fromMap(result[0]);

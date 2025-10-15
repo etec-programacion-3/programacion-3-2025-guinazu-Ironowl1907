@@ -27,18 +27,26 @@ class _LoggingPageState extends State<LoggingPage> {
       padding: const EdgeInsets.all(12.0),
       child: Consumer<WorkoutProvider>(
         builder: (BuildContext context, WorkoutProvider provider, _) {
-          if (provider.workoutExercises == null) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[Text('Error')],
-              ),
-            );
-          }
+          final List<MapEntry<int, DetailedWorkoutExercise>> exercises =
+              provider.workoutExercises.entries.toList()..sort(
+                (
+                  MapEntry<int, DetailedWorkoutExercise> a,
+                  MapEntry<int, DetailedWorkoutExercise> b,
+                ) => a.value.workoutExercise.orderIndex.compareTo(
+                  b.value.workoutExercise.orderIndex,
+                ),
+              );
+
           return ListView.builder(
-            itemCount: provider.workoutExercises!.length,
+            itemCount: exercises.length,
             itemBuilder: (BuildContext context, int index) {
-              return _exerciseLogCard(provider.workoutExercises![index]);
+              final MapEntry<int, DetailedWorkoutExercise> entry =
+                  exercises[index];
+              return _exerciseLogCard(
+                entry.key, // workout exercise id
+                entry.value, // DetailedWorkoutExercise
+                provider,
+              );
             },
           );
         },
@@ -46,7 +54,11 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _exerciseLogCard(DetailedWorkoutExercise exercise) {
+  Widget _exerciseLogCard(
+    int workoutExerciseId,
+    DetailedWorkoutExercise exercise,
+    WorkoutProvider provider,
+  ) {
     return Card(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       child: Column(
@@ -73,14 +85,20 @@ class _LoggingPageState extends State<LoggingPage> {
               ],
             ),
           ),
-
-          _setsTable(exercise),
+          _setsTable(workoutExerciseId, exercise, provider),
         ],
       ),
     );
   }
 
-  Widget _setsTable(DetailedWorkoutExercise exercise) {
+  Widget _setsTable(
+    int workoutExerciseId,
+    DetailedWorkoutExercise exercise,
+    WorkoutProvider provider,
+  ) {
+    final List<WorkoutSet> sets =
+        provider.workoutSets[workoutExerciseId] ?? <WorkoutSet>[];
+
     return Column(
       children: <Widget>[
         Container(
@@ -99,20 +117,28 @@ class _LoggingPageState extends State<LoggingPage> {
           ),
         ),
         Column(
-          children: <Widget>[
-            ...List.generate(
-              exercise.workoutExercise.sets,
-              (int index) => _setRow(exercise, index + 1),
-            ),
-          ],
+          children: sets
+              .map(
+                (WorkoutSet set) => _setRow(workoutExerciseId, set, provider),
+              )
+              .toList(),
         ),
       ],
     );
   }
 
-  Widget _setRow(DetailedWorkoutExercise exercise, int setNumber) {
-    final TextEditingController weightContrller = TextEditingController();
-    final TextEditingController repsController = TextEditingController();
+  Widget _setRow(
+    int workoutExerciseId,
+    WorkoutSet set,
+    WorkoutProvider provider,
+  ) {
+    final TextEditingController weightController = TextEditingController(
+      text: set.weightKg != null ? set.weightKg.toString() : '',
+    );
+    final TextEditingController repsController = TextEditingController(
+      text: set.reps != null ? set.reps.toString() : '',
+    );
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -128,7 +154,7 @@ class _LoggingPageState extends State<LoggingPage> {
           SizedBox(
             width: 30,
             child: Text(
-              '$setNumber',
+              '${set.setNumber}',
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -136,7 +162,7 @@ class _LoggingPageState extends State<LoggingPage> {
 
           Expanded(
             child: Text(
-              // TODO: Pevious numbers
+              // TODO: Previous numbers from last workout
               '12 × 50kg',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -160,6 +186,9 @@ class _LoggingPageState extends State<LoggingPage> {
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
+                onChanged: (String value) {
+                  set.reps = int.tryParse(value);
+                },
               ),
             ),
           ),
@@ -170,7 +199,7 @@ class _LoggingPageState extends State<LoggingPage> {
             child: SizedBox(
               height: 36,
               child: TextField(
-                controller: weightContrller,
+                controller: weightController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -180,6 +209,9 @@ class _LoggingPageState extends State<LoggingPage> {
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
+                onChanged: (String value) {
+                  set.weightKg = double.tryParse(value);
+                },
               ),
             ),
           ),
@@ -191,10 +223,24 @@ class _LoggingPageState extends State<LoggingPage> {
             child: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              icon: const Icon(Icons.check, size: 24),
-              onPressed: () {
-                // TODO : Need to save
-                print('Saving progress for  $setNumber');
+              icon: Icon(
+                set.completed == 1 ? Icons.check_circle : Icons.check,
+                size: 24,
+                color: set.completed == 1
+                    ? Theme.of(context).colorScheme.primary
+                    : null,
+              ),
+              onPressed: () async {
+                // Toggle completion
+                set.completed = set.completed == 1 ? 0 : 1;
+
+                // Save to database
+                await provider.workoutSetRepo.update(set);
+
+                // Update UI
+                setState(() {});
+
+                print('Set ${set.setNumber} completed: ${set.completed}');
               },
             ),
           ),

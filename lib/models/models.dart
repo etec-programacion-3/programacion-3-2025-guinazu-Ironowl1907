@@ -1,4 +1,4 @@
-// MuscleGroup class
+// MuscleGroup classmodel
 class MuscleGroup {
   int? id;
   String name;
@@ -297,7 +297,6 @@ class WorkoutExercise {
   int orderIndex;
   int sets;
   int reps;
-  DateTime? completedAt;
 
   WorkoutExercise({
     this.id,
@@ -306,14 +305,12 @@ class WorkoutExercise {
     required this.orderIndex,
     required this.sets,
     required this.reps,
-    this.completedAt,
   });
 
   int? get getId => id;
   int get getWorkoutId => workoutId;
   int get getExerciseId => exerciseId;
   int get getOrderIndex => orderIndex;
-  DateTime? get getCompletedAt => completedAt;
 
   set setId(int? id) => this.id = id;
   set setWorkoutId(int workoutId) => this.workoutId = workoutId;
@@ -321,10 +318,6 @@ class WorkoutExercise {
   set setOrderIndex(int orderIndex) => this.orderIndex = orderIndex;
   set setSets(int sets) => this.sets = sets;
   set setReps(int reps) => this.reps = reps;
-  set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
-
-  bool get isCompleted => completedAt != null;
-  void markCompleted() => completedAt = DateTime.now();
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -334,7 +327,6 @@ class WorkoutExercise {
       'reps': reps,
       'sets': sets,
       'order_index': orderIndex,
-      'completed_at': completedAt?.toIso8601String(),
     };
   }
 
@@ -346,9 +338,6 @@ class WorkoutExercise {
       orderIndex: map['order_index'],
       sets: map['sets'],
       reps: map['reps'],
-      completedAt: map['completed_at'] != null
-          ? DateTime.parse(map['completed_at'])
-          : null,
     );
   }
 
@@ -361,7 +350,6 @@ class WorkoutExercise {
         order_index INTEGER NOT NULL,
         sets INTEGER NOT NULL,
         reps INTEGER NOT NULL,
-        completed_at TIMESTAMP,
         FOREIGN KEY(workout_id) REFERENCES workouts(id),
         FOREIGN KEY(exercise_id) REFERENCES exercises(id)
       );
@@ -448,7 +436,7 @@ class WorkoutSet {
         weight_kg REAL,
         rest_seconds INTEGER,
         notes TEXT,
-        completedt INTEGET,
+        completed INTEGET,
         FOREIGN KEY(workout_exercise_id) REFERENCES workout_exercises(id)
       );
     ''';

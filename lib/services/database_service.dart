@@ -9,7 +9,7 @@ class DatabaseService {
     final databaseDirPath = await getDatabasesPath();
     final databasePath = join(databaseDirPath, "master.db");
     print("Searching for Db on: $databasePath");
-    db = await openDatabase(databasePath, version: 2, onCreate: _onCreate);
+    db = await openDatabase(databasePath, version: 1, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {

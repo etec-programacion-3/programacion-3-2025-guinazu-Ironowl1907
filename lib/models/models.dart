@@ -469,18 +469,6 @@ class DetailedWorkoutExercise {
   DetailedWorkoutExercise(this.exercise, this.workoutExercise);
 }
 
-class DetailedWorkoutExerciseWithSets {
-  Exercise exercise;
-  WorkoutExercise workoutExercise;
-  List<WorkoutSet> sets;
-
-  DetailedWorkoutExerciseWithSets(
-    this.exercise,
-    this.workoutExercise,
-    this.sets,
-  );
-}
-
 // Helper class to get all table creation queries
 class DatabaseSchema {
   static List<String> getAllCreateTableQueries() {

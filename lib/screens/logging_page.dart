@@ -46,7 +46,7 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _exerciseLogCard(DetailedWorkoutExerciseWithSets exercise) {
+  Widget _exerciseLogCard(DetailedWorkoutExercise exercise) {
     return Card(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       child: Column(
@@ -80,7 +80,7 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _setsTable(DetailedWorkoutExerciseWithSets exercise) {
+  Widget _setsTable(DetailedWorkoutExercise exercise) {
     return Column(
       children: <Widget>[
         Container(
@@ -110,7 +110,7 @@ class _LoggingPageState extends State<LoggingPage> {
     );
   }
 
-  Widget _setRow(DetailedWorkoutExerciseWithSets exercise, int setNumber) {
+  Widget _setRow(DetailedWorkoutExercise exercise, int setNumber) {
     final TextEditingController weightContrller = TextEditingController();
     final TextEditingController repsController = TextEditingController();
     return Container(

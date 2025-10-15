@@ -14,12 +14,12 @@ class WorkoutProvider extends ChangeNotifier {
 
   Routine? _currentRoutine;
   Workout? _currentWorkout;
-  List<DetailedWorkoutExercise>? _currentWorkoutExercises =
-      <DetailedWorkoutExercise>[];
+  List<DetailedWorkoutExerciseWithSets>? _currentWorkoutExercises =
+      <DetailedWorkoutExerciseWithSets>[];
 
   Routine? get currentRoutine => _currentRoutine;
   Workout? get currentWorkout => _currentWorkout;
-  List<DetailedWorkoutExercise>? get workoutExercises =>
+  List<DetailedWorkoutExerciseWithSets>? get workoutExercises =>
       _currentWorkoutExercises;
 
   WorkoutProvider({required this.dbService}) {
@@ -49,7 +49,7 @@ class WorkoutProvider extends ChangeNotifier {
     workout.id = id;
 
     _currentRoutine = routine;
-    _currentWorkoutExercises = <DetailedWorkoutExercise>[];
+    _currentWorkoutExercises = <DetailedWorkoutExerciseWithSets>[];
 
     final List<DetailedRoutineExercise> currentRoutineExercise =
         await routineRepo.getDetailedRoutineExercisesByRoutine(routine.id!);
@@ -64,12 +64,47 @@ class WorkoutProvider extends ChangeNotifier {
         reps: detailedExercise.routineExercise.reps ?? 10,
       );
 
-      await workoutExerciseRepo.create(workoutExercise);
+      workoutExercise.id = await workoutExerciseRepo.create(workoutExercise);
       _currentWorkoutExercises!.add(
-        DetailedWorkoutExercise(detailedExercise.exercise, workoutExercise),
+        DetailedWorkoutExerciseWithSets(
+          detailedExercise.exercise,
+          workoutExercise,
+          List.generate(detailedExercise.routineExercise.getSets!, (int index) {
+            return WorkoutSet(
+              workoutExerciseId: workoutExercise.id!,
+              setNumber: index + 1,
+            );
+          }),
+        ),
       );
     }
     _currentWorkout = workout;
+    print('=== Workout Initialized ===');
+    print('Workout ID: ${workout.id}');
+    print('Workout Title: ${workout.title}');
+    print('Routine: ${routine.name} (ID: ${routine.id})');
+    print('Started At: ${workout.startedAt}');
+    print('Total Exercises: ${_currentWorkoutExercises!.length}');
+    print('');
+
+    for (int i = 0; i < _currentWorkoutExercises!.length; i++) {
+      final DetailedWorkoutExerciseWithSets detailedExercise =
+          _currentWorkoutExercises![i];
+      print('Exercise ${i + 1}: ${detailedExercise.exercise.name}');
+      print('  - Exercise ID: ${detailedExercise.exercise.id}');
+      print('  - WorkoutExercise ID: ${detailedExercise.workoutExercise.id}');
+      print('  - Order: ${detailedExercise.workoutExercise.orderIndex}');
+      print('  - Total Sets: ${detailedExercise.workoutExercise.sets}');
+      print('  - Default Reps: ${detailedExercise.workoutExercise.reps}');
+      print('  - Sets:');
+      for (WorkoutSet set in detailedExercise.sets) {
+        print('   ${set.toMap()}');
+      }
+
+      print('');
+    }
+    print('=========================');
+
     return workout;
   }
 

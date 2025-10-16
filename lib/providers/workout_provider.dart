@@ -14,6 +14,9 @@ class WorkoutProvider extends ChangeNotifier {
   late WorkoutSetRepository workoutSetRepo;
   late DatabaseService dbService;
 
+  List<Workout>? _workouts;
+  List<Workout>? get workouts => _workouts;
+
   Routine? _currentRoutine;
   Workout? _currentWorkout;
   final Map<int, DetailedWorkoutExercise> _currentWorkoutExercises =
@@ -31,6 +34,11 @@ class WorkoutProvider extends ChangeNotifier {
     routineRepo = RoutineRepository(dbService);
     workoutExerciseRepo = WorkoutExerciseRepository(dbService);
     workoutSetRepo = WorkoutSetRepository(dbService);
+  }
+
+  Future<void> load() async {
+    _workouts = await workoutRepo.getAll();
+    notifyListeners();
   }
 
   Future<int> update(Workout workout) async {

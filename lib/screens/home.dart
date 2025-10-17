@@ -50,7 +50,6 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-        // Display the list of workouts
         return ListView.builder(
           itemCount: provider.workouts!.length,
           itemBuilder: (BuildContext context, int index) {

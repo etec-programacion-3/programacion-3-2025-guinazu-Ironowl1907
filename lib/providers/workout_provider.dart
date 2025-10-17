@@ -53,28 +53,23 @@ class WorkoutProvider extends ChangeNotifier {
     print('initialize workout');
     _currentRoutine = routine;
 
-    // Creating the workout object
     final Workout newWorkout = Workout(
       title: currentRoutine == null ? 'Unamed' : currentRoutine!.name,
       routineId: currentRoutine!.id,
       startedAt: DateTime.now(),
     );
 
-    // Loading it on the db
     final int workoutId = await workoutRepo.createWorkout(newWorkout);
     newWorkout.id = workoutId;
     _currentWorkout = newWorkout;
 
-    // Getting the exercises from the routine
     final List<DetailedRoutineExercise> routineExericises = await routineRepo
         .getDetailedRoutineExercisesByRoutine(currentRoutine!.id!);
 
-    // Clear previous data
     _currentWorkoutExercises.clear();
     _workoutSets.clear();
 
     for (int i = 0; i < routineExericises.length; i++) {
-      // Create the workout exercises
       final DetailedRoutineExercise exercise = routineExericises[i];
       final WorkoutExercise we = WorkoutExercise(
         workoutId: currentWorkout!.id!,
@@ -89,10 +84,8 @@ class WorkoutProvider extends ChangeNotifier {
       );
       we.id = await workoutExerciseRepo.create(we);
 
-      // Store in map with workout exercise id as key
       _currentWorkoutExercises[we.id!] = dwe;
 
-      // Create the workout sets and store them in the map
       final List<WorkoutSet> sets = <WorkoutSet>[];
       for (int ie = 0; ie < exercise.routineExercise.sets!; ie++) {
         final WorkoutSet workoutSet = WorkoutSet(

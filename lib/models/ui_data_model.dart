@@ -15,7 +15,7 @@ class AppNotifier extends ChangeNotifier {
     workoutRepo = WorkoutRepository(dbService);
   }
 
-  List<Workout> _workouts = [];
+  List<Workout> _workouts = <Workout>[];
 
   List<Workout> get workouts => _workouts;
 

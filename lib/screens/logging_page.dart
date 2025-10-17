@@ -231,13 +231,10 @@ class _LoggingPageState extends State<LoggingPage> {
                     : null,
               ),
               onPressed: () async {
-                // Toggle completion
                 set.completed = set.completed == 1 ? 0 : 1;
 
-                // Save to database
                 await provider.workoutSetRepo.update(set);
 
-                // Update UI
                 setState(() {});
 
                 print('Set ${set.setNumber} completed: ${set.completed}');

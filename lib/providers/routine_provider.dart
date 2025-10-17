@@ -73,8 +73,8 @@ class RoutineProvider extends ChangeNotifier {
           .toList();
 
       _originalExerciseIds = _creationExercises
-          .where((e) => e.id != null)
-          .map((e) => e.id!)
+          .where((RoutineExercise e) => e.id != null)
+          .map((RoutineExercise e) => e.id!)
           .toList();
     }
     notifyListeners();

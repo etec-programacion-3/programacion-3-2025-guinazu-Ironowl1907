@@ -22,7 +22,7 @@ Future<void> main() async {
   }
 
   final DatabaseService dbService = DatabaseService();
-  dbService.initDB();
+  await dbService.initDB();
 
   runApp(MyApp(dbService: dbService));
 }

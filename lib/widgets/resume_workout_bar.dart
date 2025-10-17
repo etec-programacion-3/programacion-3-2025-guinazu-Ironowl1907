@@ -1,7 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:workout_logger/models/models.dart';
-import 'package:workout_logger/services/database_service.dart';
-import 'package:workout_logger/screens/logging_page.dart';
 
 // Widget resumeWorkoutPopup(
 //   BuildContext context,

@@ -6,62 +6,61 @@ class WorkoutRepository {
   final DatabaseService dbService;
   WorkoutRepository(this.dbService);
 
-  Future<int> create(Exercise exercise) async {
-    final Database db = dbService.db!;
-    return db.insert("exercises", exercise.toMap());
-  }
-
-  Future<Exercise?> get(int id) async {
-    final Database db = dbService.db!;
-    final result = await db.query(
-      "exercises",
-      where: "id = ?",
-      whereArgs: [id],
-    );
-    return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
-  }
-
-  // WORKOUT CRUD
   Future<int> createWorkout(Workout workout) async {
     final Database db = dbService.db!;
-    return await db.insert("workouts", workout.toMap());
+    return await db.insert('workouts', workout.toMap());
   }
 
-  Future<Workout?> getWorkout(int id) async {
+  Future<Workout?> get(int id) async {
     final Database db = dbService.db!;
-    final result = await db.query("workouts", where: "id = ?", whereArgs: [id]);
+    final List<Map<String, Object?>> result = await db.query(
+      'workouts',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+    );
     return result.isNotEmpty ? Workout.fromMap(result.first) : null;
   }
 
-  Future<List<Workout>> getAllWorkouts() async {
+  Future<List<Workout>> getAll() async {
     final Database db = dbService.db!;
-    final result = await db.query("workouts", orderBy: "started_at DESC");
-    return result.map((map) => Workout.fromMap(map)).toList();
-  }
-
-  Future<List<Workout>> getWorkoutsByRoutine(int routineId) async {
-    final Database db = dbService.db!;
-    final result = await db.query(
-      "workouts",
-      where: "routine_id = ?",
-      whereArgs: [routineId],
-      orderBy: "started_at DESC",
+    final List<Map<String, Object?>> result = await db.query(
+      'workouts',
+      orderBy: 'started_at DESC',
     );
-    return result.map((map) => Workout.fromMap(map)).toList();
+    return result
+        .map((Map<String, Object?> map) => Workout.fromMap(map))
+        .toList();
   }
 
-  Future<int> updateWorkout(Workout workout) async {
+  Future<List<Workout>> getByRoutine(int routineId) async {
+    final Database db = dbService.db!;
+    final List<Map<String, Object?>> result = await db.query(
+      'workouts',
+      where: 'routine_id = ?',
+      whereArgs: <Object?>[routineId],
+      orderBy: 'started_at DESC',
+    );
+    return result
+        .map((Map<String, Object?> map) => Workout.fromMap(map))
+        .toList();
+  }
+
+  Future<int> update(Workout workout) async {
     final Database db = dbService.db!;
     return await db.update(
-      "workouts",
+      'workouts',
       workout.toMap(),
-      where: "id = ?",
-      whereArgs: [workout.id],
+      where: 'id = ?',
+      whereArgs: <Object?>[workout.id],
     );
   }
 
-  Future<int> deleteWorkout(int id) async {
+  Future<int> delete(int id) async {
     final Database db = dbService.db!;
-    return await db.delete("workouts", where: "id = ?", whereArgs: [id]);
+    return await db.delete(
+      'workouts',
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+    );
   }
 }

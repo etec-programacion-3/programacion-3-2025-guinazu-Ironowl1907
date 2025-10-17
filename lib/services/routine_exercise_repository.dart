@@ -30,7 +30,7 @@ class RoutineExerciseRepository {
   }
 
   Future<int> create(RoutineExercise routineExercise) async {
-    print("Creating routine exercise ${routineExercise.toMap()}");
+    print('Creating routine exercise ${routineExercise.toMap()}');
     final Database db = dbService.db!;
     return await db.insert('routine_exercises', routineExercise.toMap());
   }

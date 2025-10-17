@@ -1,4 +1,4 @@
-// MuscleGroup class
+// MuscleGroup classmodel
 class MuscleGroup {
   int? id;
   String name;
@@ -15,7 +15,7 @@ class MuscleGroup {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name};
+    return <String, dynamic>{'id': id, 'name': name};
   }
 
   // Create from Map
@@ -58,7 +58,7 @@ class Exercise {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'description': description,
@@ -113,7 +113,7 @@ class Routine {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'description': description,
@@ -186,7 +186,7 @@ class RoutineExercise {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'routine_id': routineId,
       'exercise_id': exerciseId,
@@ -253,7 +253,7 @@ class Workout {
 
   // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'title': title,
       'routine_id': routineId,
@@ -295,38 +295,38 @@ class WorkoutExercise {
   int workoutId;
   int exerciseId;
   int orderIndex;
-  DateTime? completedAt;
+  int sets;
+  int reps;
 
   WorkoutExercise({
     this.id,
     required this.workoutId,
     required this.exerciseId,
     required this.orderIndex,
-    this.completedAt,
+    required this.sets,
+    required this.reps,
   });
 
   int? get getId => id;
   int get getWorkoutId => workoutId;
   int get getExerciseId => exerciseId;
   int get getOrderIndex => orderIndex;
-  DateTime? get getCompletedAt => completedAt;
 
   set setId(int? id) => this.id = id;
   set setWorkoutId(int workoutId) => this.workoutId = workoutId;
   set setExerciseId(int exerciseId) => this.exerciseId = exerciseId;
   set setOrderIndex(int orderIndex) => this.orderIndex = orderIndex;
-  set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
-
-  bool get isCompleted => completedAt != null;
-  void markCompleted() => completedAt = DateTime.now();
+  set setSets(int sets) => this.sets = sets;
+  set setReps(int reps) => this.reps = reps;
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'workout_id': workoutId,
       'exercise_id': exerciseId,
+      'reps': reps,
+      'sets': sets,
       'order_index': orderIndex,
-      'completed_at': completedAt?.toIso8601String(),
     };
   }
 
@@ -336,9 +336,8 @@ class WorkoutExercise {
       workoutId: map['workout_id'],
       exerciseId: map['exercise_id'],
       orderIndex: map['order_index'],
-      completedAt: map['completed_at'] != null
-          ? DateTime.parse(map['completed_at'])
-          : null,
+      sets: map['sets'],
+      reps: map['reps'],
     );
   }
 
@@ -349,7 +348,8 @@ class WorkoutExercise {
         workout_id INTEGER NOT NULL,
         exercise_id INTEGER NOT NULL,
         order_index INTEGER NOT NULL,
-        completed_at TIMESTAMP,
+        sets INTEGER NOT NULL,
+        reps INTEGER NOT NULL,
         FOREIGN KEY(workout_id) REFERENCES workouts(id),
         FOREIGN KEY(exercise_id) REFERENCES exercises(id)
       );
@@ -363,10 +363,9 @@ class WorkoutSet {
   int setNumber;
   int? reps;
   double? weightKg;
-  int? durationSeconds;
   int? restSeconds;
   String? notes;
-  DateTime? completedAt;
+  int completed;
 
   WorkoutSet({
     this.id,
@@ -374,10 +373,9 @@ class WorkoutSet {
     required this.setNumber,
     this.reps,
     this.weightKg,
-    this.durationSeconds,
     this.restSeconds,
     this.notes,
-    this.completedAt,
+    this.completed = 0,
   });
 
   // Getters
@@ -386,10 +384,9 @@ class WorkoutSet {
   int get getSetNumber => setNumber;
   int? get getReps => reps;
   double? get getWeightKg => weightKg;
-  int? get getDurationSeconds => durationSeconds;
   int? get getRestSeconds => restSeconds;
   String? get getNotes => notes;
-  DateTime? get getCompletedAt => completedAt;
+  int get getCompleted => completed;
 
   // Setters
   set setId(int? id) => this.id = id;
@@ -398,28 +395,19 @@ class WorkoutSet {
   set setSetNumber(int setNumber) => this.setNumber = setNumber;
   set setReps(int? reps) => this.reps = reps;
   set setWeightKg(double? weightKg) => this.weightKg = weightKg;
-  set setDurationSeconds(int? durationSeconds) =>
-      this.durationSeconds = durationSeconds;
   set setRestSeconds(int? restSeconds) => this.restSeconds = restSeconds;
   set setNotes(String? notes) => this.notes = notes;
-  set setCompletedAt(DateTime? completedAt) => this.completedAt = completedAt;
 
-  // Helper methods
-  bool get isCompleted => completedAt != null;
-  void markCompleted() => completedAt = DateTime.now();
-
-  // Convert to Map for database operations
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'workout_exercise_id': workoutExerciseId,
       'set_number': setNumber,
       'reps': reps,
       'weight_kg': weightKg,
-      'duration_seconds': durationSeconds,
       'rest_seconds': restSeconds,
       'notes': notes,
-      'completed_at': completedAt?.toIso8601String(),
+      'completed': completed,
     };
   }
 
@@ -431,12 +419,9 @@ class WorkoutSet {
       setNumber: map['set_number'],
       reps: map['reps'],
       weightKg: map['weight_kg']?.toDouble(),
-      durationSeconds: map['duration_seconds'],
       restSeconds: map['rest_seconds'],
       notes: map['notes'],
-      completedAt: map['completed_at'] != null
-          ? DateTime.parse(map['completed_at'])
-          : null,
+      completed: map['completed'],
     );
   }
 
@@ -449,10 +434,9 @@ class WorkoutSet {
         set_number INTEGER NOT NULL,
         reps INTEGER,
         weight_kg REAL,
-        duration_seconds INTEGER,
         rest_seconds INTEGER,
         notes TEXT,
-        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        completed INTEGET,
         FOREIGN KEY(workout_exercise_id) REFERENCES workout_exercises(id)
       );
     ''';
@@ -466,10 +450,17 @@ class DetailedRoutineExercise {
   DetailedRoutineExercise(this.exercise, this.routineExercise);
 }
 
+class DetailedWorkoutExercise {
+  Exercise exercise;
+  WorkoutExercise workoutExercise;
+
+  DetailedWorkoutExercise(this.exercise, this.workoutExercise);
+}
+
 // Helper class to get all table creation queries
 class DatabaseSchema {
   static List<String> getAllCreateTableQueries() {
-    return [
+    return <String>[
       MuscleGroup.createTableQuery(),
       Exercise.createTableQuery(),
       Routine.createTableQuery(),

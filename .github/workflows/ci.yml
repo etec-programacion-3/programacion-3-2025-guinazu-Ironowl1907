@@ -1,5 +1,4 @@
 name: CI
-
 on:
   push:
     branches:
@@ -8,6 +7,7 @@ on:
     branches:
       - main
 
+jobs:  # Missing 'jobs:' keyword
   build_androidApk:
     name: Build Flutter App (Android)
     runs-on: ubuntu-latest
@@ -24,7 +24,8 @@ on:
       - run: flutter clean
       - run: flutter build apk --debug
       - uses: ncipollo/release-action@v1
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # Only create releases on main push
         with:
           artifacts: "build/app/outputs/apk/debug/*"
-          tag: v1.0.${{ github.run_number}}
-          token: ${{ secrets.TOKEN}}
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.TOKEN }}

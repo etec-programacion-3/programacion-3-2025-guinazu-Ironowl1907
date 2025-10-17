@@ -143,7 +143,16 @@ class WorkoutProvider extends ChangeNotifier {
     return newWorkout;
   }
 
-  Future<void> finishWorkout(Workout workout) async {}
+  Future<void> finishWorkout(Workout workout) async {
+    if (_currentWorkout == null) {
+      print('Error workout null');
+    }
+    _currentWorkout!.setEndedAt = DateTime.now();
+    workoutRepo.update(_currentWorkout!);
+    _currentRoutine = null;
+    _currentWorkout = null;
+    _currentWorkoutExercises.clear();
+  }
 
   Future<Workout?> getUnfinishedWorkout() async {
     final Database db = dbService.db!;

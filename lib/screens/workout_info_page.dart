@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_exercise_provider.dart';
+import 'package:workout_logger/providers/workout_set_provider.dart';
 
 class WorkoutInfoPage extends StatefulWidget {
   const WorkoutInfoPage({super.key, required this.workout});
@@ -13,7 +14,7 @@ class WorkoutInfoPage extends StatefulWidget {
 
 class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
   List<DetailedWorkoutExercise> _exercises = <DetailedWorkoutExercise>[];
-  Map<int, List<WorkoutSet>> _exerciseSets = <int, List<WorkoutSet>>{};
+  final Map<int, List<WorkoutSet>> _exerciseSets = <int, List<WorkoutSet>>{};
   bool _isLoading = true;
 
   @override
@@ -26,6 +27,32 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
     _exercises = await context
         .read<WorkoutExerciseProvider>()
         .getDetailedWorkoutExercisesByWorkout(widget.workout.id!);
+
+    for (int i = 0; i < _exercises.length; i++) {
+      final DetailedWorkoutExercise exercise = _exercises[i];
+      final int workoutExerciseId = exercise.workoutExercise.id!;
+
+      final List<WorkoutSet> sets = await context
+          .read<WorkoutSetProvider>()
+          .getByExercise(workoutExerciseId);
+
+      _exerciseSets[workoutExerciseId] = sets;
+
+      if (sets.isNotEmpty) {
+        final int completed = sets
+            .where((WorkoutSet s) => s.completed == 1)
+            .length;
+
+        final WorkoutSet firstSet = sets.first;
+      } else {}
+    }
+
+    int totalSets = 0;
+    int completedSets = 0;
+    for (List<WorkoutSet> sets in _exerciseSets.values) {
+      totalSets += sets.length;
+      completedSets += sets.where((WorkoutSet s) => s.completed == 1).length;
+    }
 
     setState(() {
       _isLoading = false;

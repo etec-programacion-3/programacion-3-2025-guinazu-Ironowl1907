@@ -14,4 +14,8 @@ class WorkoutSetProvider extends ChangeNotifier {
   WorkoutSetProvider({required this.dbService}) {
     workoutSetRepo = WorkoutSetRepository(dbService);
   }
+
+  Future<List<WorkoutSet>> getByExercise(int workoutExerciseId) async {
+    return workoutSetRepo.getByExercise(workoutExerciseId);
+  }
 }

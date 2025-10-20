@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_logger/screens/workout_info_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,20 +51,35 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-        return ListView.builder(
-          itemCount: provider.workouts!.length,
-          itemBuilder: (BuildContext context, int index) {
-            final Workout workout = provider.workouts![index];
-            return ListTile(
-              title: Text(workout.title ?? 'Workout ${index + 1}'),
-              subtitle: Text(
-                workout.endedAt == null
-                    ? 'Unfinished'
-                    : workout.endedAt.toString(),
+        return workoutCard(provider);
+      },
+    );
+  }
+
+  Widget workoutCard(WorkoutProvider provider) {
+    return ListView.builder(
+      itemCount: provider.workouts!.length,
+      itemBuilder: (BuildContext context, int index) {
+        final Workout workout = provider.workouts![index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => WorkoutInfoPage(workout: workout),
               ),
-              // Add more workout details as needed
             );
           },
+
+          child: ListTile(
+            title: Text(workout.title ?? 'Workout ${index + 1}'),
+            subtitle: Text(
+              workout.endedAt == null
+                  ? 'Unfinished'
+                  : workout.endedAt.toString(),
+            ),
+            // Add more workout details as needed
+          ),
         );
       },
     );

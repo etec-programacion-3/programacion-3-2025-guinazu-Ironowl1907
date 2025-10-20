@@ -161,4 +161,16 @@ class WorkoutProvider extends ChangeNotifier {
     final Workout workout = Workout.fromMap(result[0]);
     return workout;
   }
+
+  Future<int> delete(int workoutId) async {
+    final Database db = dbService.db!;
+    final Future<int> id = db.delete(
+      'workouts',
+      where: 'id = ?',
+      whereArgs: <Object?>[workoutId],
+    );
+
+    load();
+    return id;
+  }
 }

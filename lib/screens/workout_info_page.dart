@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_exercise_provider.dart';
+import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:workout_logger/providers/workout_set_provider.dart';
 
 class WorkoutInfoPage extends StatefulWidget {
@@ -426,12 +427,10 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
   }
 
   void _handleEdit() {
-    // Navigate to edit screen or show edit dialog
     print('Edit selected');
   }
 
   void _handleDelete() {
-    // Show confirmation dialog before deleting
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -445,11 +444,11 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
             ),
             TextButton(
               onPressed: () {
-                // Perform delete operation
+                context.read<WorkoutProvider>().delete(widget.workout.id!);
                 Navigator.pop(context);
-                // Add your delete logic here
+                Navigator.pop(context);
               },
-              child: const Text('Delete'),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         );

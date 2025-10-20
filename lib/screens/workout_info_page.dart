@@ -4,6 +4,7 @@ import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_exercise_provider.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:workout_logger/providers/workout_set_provider.dart';
+import 'package:workout_logger/widgets/workout_status_bar.dart';
 
 class WorkoutInfoPage extends StatefulWidget {
   const WorkoutInfoPage({super.key, required this.workout});
@@ -38,14 +39,6 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
           .getByExercise(workoutExerciseId);
 
       _exerciseSets[workoutExerciseId] = sets;
-
-      if (sets.isNotEmpty) {
-        final int completed = sets
-            .where((WorkoutSet s) => s.completed == 1)
-            .length;
-
-        final WorkoutSet firstSet = sets.first;
-      } else {}
     }
 
     setState(() {
@@ -98,10 +91,8 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
           PopupMenuButton<String>(
             onSelected: (String value) {
               if (value == 'edit') {
-                // Handle edit action
                 _handleEdit();
               } else if (value == 'delete') {
-                // Handle delete action
                 _handleDelete();
               }
             },
@@ -136,105 +127,17 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
               padding: const EdgeInsets.all(12.0),
               child: ListView(
                 children: <Widget>[
-                  _buildInfoCard(theme),
+                  // Use the new reusable widget
+                  WorkoutInfoCard(
+                    workout: widget.workout,
+                    totalSets: _calculateTotalSets(),
+                    totalVolume: _calculateTotalVolume(),
+                    duration: _formatDuration(),
+                  ),
                   _buildExercisesSection(theme),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildInfoCard(ThemeData theme) {
-    return Card(
-      color: theme.colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              widget.workout.title ?? 'Unnamed',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (widget.workout.startedAt != null)
-              Text(
-                _formatDate(widget.workout.startedAt!),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                spacing: 12,
-                children: <Widget>[
-                  _buildInfoChip(
-                    'Duration',
-                    _formatDuration(),
-                    Icons.timer_outlined,
-                    theme,
-                  ),
-                  _buildInfoChip(
-                    'Sets',
-                    '${_calculateTotalSets()}',
-                    Icons.fitness_center,
-                    theme,
-                  ),
-                  _buildInfoChip(
-                    'Volume',
-                    '${_calculateTotalVolume().toStringAsFixed(0)} kg',
-                    Icons.trending_up,
-                    theme,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoChip(
-    String title,
-    String info,
-    IconData icon,
-    ThemeData theme,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outlineVariant, width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 18, color: theme.colorScheme.primary),
-          const SizedBox(width: 6),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                title,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-              Text(
-                info,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -398,32 +301,6 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
         style: theme.textTheme.bodyMedium?.copyWith(color: color),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final List<String> months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    return '${months[date.month - 1]} ${date.day}, ${date.year} at ${_formatTime(date)}';
-  }
-
-  String _formatTime(DateTime time) {
-    final int hour = time.hour > 12 ? time.hour - 12 : time.hour;
-    final String period = time.hour >= 12 ? 'PM' : 'AM';
-    final String minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute $period';
   }
 
   void _handleEdit() {

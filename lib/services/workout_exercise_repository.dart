@@ -71,4 +71,50 @@ class WorkoutExerciseRepository {
       whereArgs: <Object?>[workoutId],
     );
   }
+
+  Future<List<DetailedWorkoutExercise>> getDetailedWorkoutExercisesByWorkout(
+    int workoutId,
+  ) async {
+    final Database db = dbService.db!;
+    final List<Map<String, Object?>> result = await db.rawQuery(
+      '''
+    SELECT 
+      we.id as we_id,
+      we.workout_id,
+      we.exercise_id,
+      we.order_index,
+      we.sets,
+      we.reps,
+      e.id as e_id,
+      e.name as e_name,
+      e.description as e_description,
+      e.muscle_group_id
+    FROM workout_exercises we
+    JOIN exercises e ON we.exercise_id = e.id
+    WHERE we.workout_id = ?
+    ORDER BY we.order_index ASC
+    ''',
+      <Object?>[workoutId],
+    );
+
+    return result.map((Map<String, Object?> row) {
+      final Exercise exercise = Exercise(
+        id: row['e_id'] as int?,
+        name: row['e_name'] as String,
+        description: row['e_description'] as String?,
+        muscleGroupId: row['muscle_group_id'] as int?,
+      );
+
+      final WorkoutExercise workoutExercise = WorkoutExercise(
+        id: row['we_id'] as int?,
+        workoutId: row['workout_id'] as int,
+        exerciseId: row['exercise_id'] as int,
+        orderIndex: row['order_index'] as int,
+        sets: row['sets'] as int,
+        reps: row['reps'] as int,
+      );
+
+      return DetailedWorkoutExercise(exercise, workoutExercise);
+    }).toList();
+  }
 }

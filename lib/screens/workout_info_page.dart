@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/providers/workout_exercise_provider.dart';
 
 class WorkoutInfoPage extends StatefulWidget {
   const WorkoutInfoPage({super.key, required this.workout});
@@ -10,8 +12,8 @@ class WorkoutInfoPage extends StatefulWidget {
 }
 
 class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
-  final List<DetailedWorkoutExercise> _exercises = <DetailedWorkoutExercise>[];
-  final Map<int, List<WorkoutSet>> _exerciseSets = <int, List<WorkoutSet>>{};
+  List<DetailedWorkoutExercise> _exercises = <DetailedWorkoutExercise>[];
+  Map<int, List<WorkoutSet>> _exerciseSets = <int, List<WorkoutSet>>{};
   bool _isLoading = true;
 
   @override
@@ -21,17 +23,9 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
   }
 
   Future<void> _loadWorkoutData() async {
-    // TODO: Implement data loading logic here
-    // This is where you'll fetch:
-    // 1. All workout exercises for this workout
-    // 2. All sets for each exercise
-    // Example:
-    // final workoutProvider = context.read<WorkoutProvider>();
-    // _exercises = await workoutProvider.getWorkoutExercises(widget.workout.id);
-    // for (var exercise in _exercises) {
-    //   _exerciseSets[exercise.workoutExercise.id!] =
-    //     await workoutProvider.getExerciseSets(exercise.workoutExercise.id!);
-    // }
+    _exercises = await context
+        .read<WorkoutExerciseProvider>()
+        .getDetailedWorkoutExercisesByWorkout(widget.workout.id!);
 
     setState(() {
       _isLoading = false;

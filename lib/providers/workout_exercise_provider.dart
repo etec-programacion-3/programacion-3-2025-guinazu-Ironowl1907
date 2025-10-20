@@ -14,4 +14,10 @@ class WorkoutExerciseProvider extends ChangeNotifier {
   Future<List<WorkoutExercise>> getByWorkout(int workoutId) async {
     return workoutExerciseRepo.getByWorkout(workoutId);
   }
+
+  Future<List<DetailedWorkoutExercise>> getDetailedWorkoutExercisesByWorkout(
+    int workoutId,
+  ) {
+    return workoutExerciseRepo.getDetailedWorkoutExercisesByWorkout(workoutId);
+  }
 }

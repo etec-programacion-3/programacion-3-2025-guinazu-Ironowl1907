@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
+import 'package:workout_logger/screens/finish_workout_page.dart';
 import 'package:workout_logger/widgets/exerise_log_card.dart';
 
 class LoggingPage extends StatefulWidget {
@@ -11,7 +12,7 @@ class LoggingPage extends StatefulWidget {
     required this.currentWorkout,
   });
   final Routine? currentRoutine;
-  final Workout? currentWorkout;
+  final Workout currentWorkout;
 
   @override
   State<LoggingPage> createState() => _LoggingPageState();
@@ -68,10 +69,13 @@ class _LoggingPageState extends State<LoggingPage> {
           padding: const EdgeInsets.all(20.0),
           child: TextButton(
             onPressed: () async {
-              await context.read<WorkoutProvider>().finishWorkout(
-                widget.currentWorkout!,
+              print(widget.currentWorkout.id);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      FinishWorkoutPage(workout: widget.currentWorkout!),
+                ),
               );
-              Navigator.of(context).pop();
             },
             child: const Text('Finish'),
           ),

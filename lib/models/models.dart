@@ -231,22 +231,32 @@ class RoutineExercise {
 class Workout {
   int? id;
   String? title;
+  String? note;
   int? routineId;
   DateTime? startedAt;
   DateTime? endedAt;
 
-  Workout({this.id, this.title, this.routineId, this.startedAt, this.endedAt});
+  Workout({
+    this.id,
+    this.title,
+    this.note,
+    this.routineId,
+    this.startedAt,
+    this.endedAt,
+  });
 
   // Getters
   int? get getId => id;
   String? get getTitle => title;
   int? get getRoutineId => routineId;
+  String? get getNote => note;
   DateTime? get getStartedAt => startedAt;
   DateTime? get getEndedAt => endedAt;
 
   // Setters
   set setId(int? id) => this.id = id;
   set setTitle(String? title) => this.title = title;
+  set setNote(String? note) => this.note = note;
   set setRoutineId(int? routineId) => this.routineId = routineId;
   set setStartedAt(DateTime? startedAt) => this.startedAt = startedAt;
   set setEndedAt(DateTime? endedAt) => this.endedAt = endedAt;
@@ -256,6 +266,7 @@ class Workout {
     return <String, dynamic>{
       'id': id,
       'title': title,
+      'note': note,
       'routine_id': routineId,
       'started_at': startedAt?.toIso8601String(),
       'ended_at': endedAt?.toIso8601String(),
@@ -267,6 +278,7 @@ class Workout {
     return Workout(
       id: map['id'],
       title: map['title'],
+      note: map['note'],
       routineId: map['routine_id'],
       startedAt: map['started_at'] != null
           ? DateTime.parse(map['started_at'])
@@ -281,6 +293,7 @@ class Workout {
       CREATE TABLE workouts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
+        note TEXT,
         routine_id INTEGER,
         started_at TIMESTAMP,
         ended_at TIMESTAMP,

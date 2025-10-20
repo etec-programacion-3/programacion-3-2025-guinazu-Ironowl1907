@@ -45,10 +45,9 @@ class WorkoutProvider extends ChangeNotifier {
     return workoutRepo.update(workout);
   }
 
-  Future<Workout?> initializeWorkout(Routine? routine) async {
+  Future<Workout> initializeWorkout(Routine? routine) async {
     if (routine == null) {
       print('TODO freeform workout');
-      return null;
     }
     print('initialize workout');
     _currentRoutine = routine;

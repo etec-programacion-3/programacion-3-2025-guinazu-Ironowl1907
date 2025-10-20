@@ -41,7 +41,7 @@ class _WorkoutRoutineCardState extends State<WorkoutRoutineCard> {
                     child: FloatingActionButton(
                       heroTag: widget.routine.id,
                       onPressed: () async {
-                        final Workout? workout = await context
+                        final Workout workout = await context
                             .read<WorkoutProvider>()
                             .initializeWorkout(widget.routine);
                         Navigator.of(context).push(

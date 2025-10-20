@@ -47,13 +47,6 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
       } else {}
     }
 
-    int totalSets = 0;
-    int completedSets = 0;
-    for (List<WorkoutSet> sets in _exerciseSets.values) {
-      totalSets += sets.length;
-      completedSets += sets.where((WorkoutSet s) => s.completed == 1).length;
-    }
-
     setState(() {
       _isLoading = false;
     });
@@ -97,9 +90,45 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Workout Detail')),
+      appBar: AppBar(
+        title: const Text('Workout Detail'),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              if (value == 'edit') {
+                // Handle edit action
+                _handleEdit();
+              } else if (value == 'delete') {
+                // Handle delete action
+                _handleDelete();
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'edit',
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.edit),
+                    SizedBox(width: 8),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'delete',
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.delete),
+                    SizedBox(width: 8),
+                    Text('Delete'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -263,7 +292,7 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.circle,
                   ),
                   child: Text(
                     '${exercise.workoutExercise.orderIndex}',
@@ -313,7 +342,7 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
         0: FlexColumnWidth(1),
         1: FlexColumnWidth(1.5),
         2: FlexColumnWidth(1.5),
-        3: FlexColumnWidth(1.5),
+        3: FlexColumnWidth(1),
       },
       children: <TableRow>[
         TableRow(
@@ -349,6 +378,7 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: Text(
+        textAlign: TextAlign.center,
         text,
         style: theme.textTheme.labelMedium?.copyWith(
           fontWeight: FontWeight.bold,
@@ -362,6 +392,7 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: Text(
+        textAlign: TextAlign.center,
         text,
         style: theme.textTheme.bodyMedium?.copyWith(color: color),
       ),
@@ -392,5 +423,37 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
     final String period = time.hour >= 12 ? 'PM' : 'AM';
     final String minute = time.minute.toString().padLeft(2, '0');
     return '$hour:$minute $period';
+  }
+
+  void _handleEdit() {
+    // Navigate to edit screen or show edit dialog
+    print('Edit selected');
+  }
+
+  void _handleDelete() {
+    // Show confirmation dialog before deleting
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Workout'),
+          content: const Text('Are you sure you want to delete this workout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Perform delete operation
+                Navigator.pop(context);
+                // Add your delete logic here
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

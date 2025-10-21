@@ -1,72 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/providers/workout_exercise_provider.dart';
+import 'package:workout_logger/providers/workout_set_provider.dart';
 
-class WorkoutInfoCard extends StatelessWidget {
-  const WorkoutInfoCard({
-    super.key,
-    required this.workout,
-    required this.totalSets,
-    required this.totalVolume,
-    required this.duration,
-  });
+class WorkoutInfoCard extends StatefulWidget {
+  const WorkoutInfoCard({super.key, required this.workout});
 
   final Workout workout;
-  final int totalSets;
-  final double totalVolume;
-  final String duration;
 
   @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
+  State<WorkoutInfoCard> createState() => _WorkoutInfoCardState();
+}
 
-    return Card(
-      color: theme.colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              workout.title ?? 'Unnamed',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (workout.startedAt != null)
-              Text(
-                _formatDate(workout.startedAt!),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                spacing: 12,
-                children: <Widget>[
-                  _InfoChip(
-                    title: 'Duration',
-                    info: duration,
-                    icon: Icons.timer_outlined,
-                  ),
-                  _InfoChip(
-                    title: 'Sets',
-                    info: '$totalSets',
-                    icon: Icons.fitness_center,
-                  ),
-                  _InfoChip(
-                    title: 'Volume',
-                    info: '${totalVolume.toStringAsFixed(0)} kg',
-                    icon: Icons.trending_up,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+class _WorkoutInfoCardState extends State<WorkoutInfoCard> {
+  int _totalSets = 0;
+  double _totalVolume = 0.0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWorkoutStats();
+  }
+
+  Future<void> _loadWorkoutStats() async {
+    final List<DetailedWorkoutExercise> exercises = await context
+        .read<WorkoutExerciseProvider>()
+        .getDetailedWorkoutExercisesByWorkout(widget.workout.id!);
+
+    int setsCount = 0;
+    double volume = 0.0;
+
+    for (final DetailedWorkoutExercise exercise in exercises) {
+      final int workoutExerciseId = exercise.workoutExercise.id!;
+      final List<WorkoutSet> sets = await context
+          .read<WorkoutSetProvider>()
+          .getByExercise(workoutExerciseId);
+
+      final List<WorkoutSet> completedSets = sets
+          .where((WorkoutSet set) => set.completed == 1)
+          .toList();
+
+      setsCount += completedSets.length;
+
+      for (final WorkoutSet set in completedSets) {
+        volume += (set.weightKg ?? 0) * (set.reps ?? 0);
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _totalSets = setsCount;
+        _totalVolume = volume;
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _formatDuration() {
+    if (widget.workout.startedAt == null || widget.workout.endedAt == null) {
+      return 'N/A';
+    }
+
+    final Duration duration = widget.workout.endedAt!.difference(
+      widget.workout.startedAt!,
     );
+    final int hours = duration.inHours;
+    final int minutes = duration.inMinutes.remainder(60);
+
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    }
+    return '${minutes}m';
   }
 
   String _formatDate(DateTime date) {
@@ -95,6 +101,67 @@ class WorkoutInfoCard extends StatelessWidget {
     final String period = time.hour >= 12 ? 'PM' : 'AM';
     final String minute = time.minute.toString().padLeft(2, '0');
     return '$hour:$minute $period';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Card(
+      color: theme.colorScheme.surfaceContainerLow,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              widget.workout.title ?? 'Unnamed',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (widget.workout.startedAt != null)
+              Text(
+                _formatDate(widget.workout.startedAt!),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[600],
+                ),
+              ),
+            const SizedBox(height: 8),
+            _isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      spacing: 12,
+                      children: <Widget>[
+                        _InfoChip(
+                          title: 'Duration',
+                          info: _formatDuration(),
+                          icon: Icons.timer_outlined,
+                        ),
+                        _InfoChip(
+                          title: 'Sets',
+                          info: '$_totalSets',
+                          icon: Icons.fitness_center,
+                        ),
+                        _InfoChip(
+                          title: 'Volume',
+                          info: '${_totalVolume.toStringAsFixed(0)} kg',
+                          icon: Icons.trending_up,
+                        ),
+                      ],
+                    ),
+                  ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

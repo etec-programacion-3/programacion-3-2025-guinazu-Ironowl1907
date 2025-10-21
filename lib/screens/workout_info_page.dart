@@ -46,41 +46,6 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
     });
   }
 
-  String _formatDuration() {
-    if (widget.workout.startedAt == null || widget.workout.endedAt == null) {
-      return 'N/A';
-    }
-
-    final Duration duration = widget.workout.endedAt!.difference(
-      widget.workout.startedAt!,
-    );
-    final int hours = duration.inHours;
-    final int minutes = duration.inMinutes.remainder(60);
-
-    if (hours > 0) {
-      return '${hours}h ${minutes}m';
-    }
-    return '${minutes}m';
-  }
-
-  int _calculateTotalSets() {
-    int total = 0;
-    for (List<WorkoutSet> sets in _exerciseSets.values) {
-      total += sets.where((WorkoutSet set) => set.completed == 1).length;
-    }
-    return total;
-  }
-
-  double _calculateTotalVolume() {
-    double volume = 0.0;
-    for (List<WorkoutSet> sets in _exerciseSets.values) {
-      for (WorkoutSet set in sets.where((WorkoutSet s) => s.completed == 1)) {
-        volume += (set.weightKg ?? 0) * (set.reps ?? 0);
-      }
-    }
-    return volume;
-  }
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -127,13 +92,8 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
               padding: const EdgeInsets.all(12.0),
               child: ListView(
                 children: <Widget>[
-                  // Use the new reusable widget
-                  WorkoutInfoCard(
-                    workout: widget.workout,
-                    totalSets: _calculateTotalSets(),
-                    totalVolume: _calculateTotalVolume(),
-                    duration: _formatDuration(),
-                  ),
+                  // Simplified: only pass the workout
+                  WorkoutInfoCard(workout: widget.workout),
                   _buildExercisesSection(theme),
                 ],
               ),

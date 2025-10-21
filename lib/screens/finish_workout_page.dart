@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_logger/widgets/workout_status_bar.dart';
 
 class FinishWorkoutPage extends StatefulWidget {
   const FinishWorkoutPage({super.key, required this.workout});
@@ -57,7 +58,7 @@ class FinishWorkoutWidget extends StatelessWidget {
               controller: workoutNote,
               decoration: const InputDecoration(
                 labelText: 'Note (optional)',
-                hintText: "How did the workout go?",
+                hintText: 'How did the workout go?',
               ),
             ),
             const SizedBox(height: 8),

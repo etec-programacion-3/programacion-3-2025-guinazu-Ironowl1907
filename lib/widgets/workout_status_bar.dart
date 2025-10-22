@@ -107,6 +107,24 @@ class _WorkoutInfoCardState extends State<WorkoutInfoCard> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
+    final Widget noteSection = widget.workout.note != null
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                textAlign: TextAlign.justify,
+                'Note',
+                style: theme.textTheme.titleMedium,
+              ),
+              Text(
+                textAlign: TextAlign.justify,
+                widget.workout.note ?? '',
+                style: theme.textTheme.bodyMedium!.copyWith(color: Colors.grey),
+              ),
+            ],
+          )
+        : const SizedBox();
+
     return Card(
       color: theme.colorScheme.surfaceContainerLow,
       child: Padding(
@@ -158,6 +176,8 @@ class _WorkoutInfoCardState extends State<WorkoutInfoCard> {
                       ],
                     ),
                   ),
+            const SizedBox(height: 8),
+            noteSection,
           ],
         ),
       ),

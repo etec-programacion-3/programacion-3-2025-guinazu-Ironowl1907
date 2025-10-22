@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_logger/widgets/workout_status_bar.dart';
 
 class FinishWorkoutPage extends StatefulWidget {
   const FinishWorkoutPage({super.key, required this.workout});
@@ -76,6 +75,8 @@ class FinishWorkoutWidget extends StatelessWidget {
                     );
                     return;
                   }
+                  workout.title = workoutName.text;
+                  workout.note = workoutNote.text;
                   await context.read<WorkoutProvider>().finishWorkout(workout);
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();

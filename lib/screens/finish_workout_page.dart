@@ -30,7 +30,11 @@ class _FinishWorkoutPageState extends State<FinishWorkoutPage> {
 }
 
 class FinishWorkoutWidget extends StatelessWidget {
-  FinishWorkoutWidget({super.key, required this.workout}) {
+  FinishWorkoutWidget({
+    super.key,
+    required this.workout,
+    this.isEditing = false,
+  }) {
     workoutName = TextEditingController(text: workout.title ?? '');
     workoutNote = TextEditingController(text: workout.note ?? '');
   }
@@ -38,6 +42,7 @@ class FinishWorkoutWidget extends StatelessWidget {
   final Workout workout;
   late TextEditingController workoutName;
   late TextEditingController workoutNote;
+  final bool isEditing;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +69,7 @@ class FinishWorkoutWidget extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FloatingActionButton(
-                child: const Text('Save'),
+                child: Text(isEditing ? 'Save' : 'Finish'),
                 onPressed: () async {
                   if (workoutName.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -77,7 +82,13 @@ class FinishWorkoutWidget extends StatelessWidget {
                   }
                   workout.title = workoutName.text;
                   workout.note = workoutNote.text;
-                  await context.read<WorkoutProvider>().finishWorkout(workout);
+                  if (isEditing) {
+                    await context.read<WorkoutProvider>().update(workout);
+                  } else {
+                    await context.read<WorkoutProvider>().finishWorkout(
+                      workout,
+                    );
+                  }
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 },

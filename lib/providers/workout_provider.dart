@@ -42,7 +42,9 @@ class WorkoutProvider extends ChangeNotifier {
   }
 
   Future<int> update(Workout workout) async {
-    return workoutRepo.update(workout);
+    final Future<int> result = workoutRepo.update(workout);
+    notifyListeners();
+    return result;
   }
 
   Future<Workout> initializeWorkout(Routine? routine) async {

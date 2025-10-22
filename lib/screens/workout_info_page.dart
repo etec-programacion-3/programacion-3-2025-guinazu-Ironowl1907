@@ -4,6 +4,7 @@ import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_exercise_provider.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:workout_logger/providers/workout_set_provider.dart';
+import 'package:workout_logger/screens/logging_page.dart';
 import 'package:workout_logger/widgets/workout_status_bar.dart';
 
 class WorkoutInfoPage extends StatefulWidget {
@@ -264,7 +265,12 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
   }
 
   void _handleEdit() {
-    print('Edit selected');
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) =>
+            LoggingPage(currentWorkout: widget.workout, isEditing: true),
+      ),
+    );
   }
 
   void _handleDelete() {

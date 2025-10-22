@@ -10,9 +10,11 @@ class LoggingPage extends StatefulWidget {
     super.key,
     this.currentRoutine,
     required this.currentWorkout,
+    this.isEditing = false,
   });
   final Routine? currentRoutine;
   final Workout currentWorkout;
+  final bool isEditing;
 
   @override
   State<LoggingPage> createState() => _LoggingPageState();
@@ -39,17 +41,27 @@ class _LoggingPageState extends State<LoggingPage> {
                 ),
               );
 
-          return ListView.builder(
-            itemCount: exercises.length,
-            itemBuilder: (BuildContext context, int index) {
-              final MapEntry<int, DetailedWorkoutExercise> entry =
-                  exercises[index];
-              return ExerciseLogCard(
-                workoutExerciseId: entry.value.workoutExercise.id!,
-                exercise: entry.value,
-                provider: provider,
-              );
-            },
+          return Column(
+            children: <Widget>[
+              FinishWorkoutWidget(
+                workout: widget.currentWorkout,
+                isEditing: widget.isEditing,
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: exercises.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final MapEntry<int, DetailedWorkoutExercise> entry =
+                        exercises[index];
+                    return ExerciseLogCard(
+                      workoutExerciseId: entry.value.workoutExercise.id!,
+                      exercise: entry.value,
+                      provider: provider,
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -57,14 +69,13 @@ class _LoggingPageState extends State<LoggingPage> {
   }
 
   AppBar _appBar(BuildContext context) {
-    return AppBar(
-      leading: IconButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        icon: const Icon(Icons.arrow_downward),
-      ),
-      actions: <Widget>[
+    late String title;
+    if (widget.currentRoutine == null) title = 'Logging Workout';
+    if (widget.isEditing) title = 'Editing Workout';
+    if (widget.currentRoutine != null) title = widget.currentRoutine!.name;
+    late final List<Widget> actions = <Widget>[];
+    if (!widget.isEditing) {
+      actions.add(
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: TextButton(
@@ -73,19 +84,24 @@ class _LoggingPageState extends State<LoggingPage> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      FinishWorkoutPage(workout: widget.currentWorkout!),
+                      FinishWorkoutPage(workout: widget.currentWorkout),
                 ),
               );
             },
             child: const Text('Finish'),
           ),
         ),
-      ],
-      title: Text(
-        widget.currentRoutine != null
-            ? widget.currentRoutine!.name
-            : 'Logging workout',
+      );
+    }
+    return AppBar(
+      leading: IconButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: const Icon(Icons.arrow_downward),
       ),
+      actions: actions,
+      title: Text(title),
     );
   }
 }

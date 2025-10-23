@@ -40,13 +40,16 @@ class _LoggingPageState extends State<LoggingPage> {
                   b.value.workoutExercise.orderIndex,
                 ),
               );
+          final Widget finishWorkoutWid = widget.isEditing
+              ? FinishWorkoutWidget(
+                  workout: widget.currentWorkout,
+                  isEditing: widget.isEditing,
+                )
+              : const SizedBox();
 
           return Column(
             children: <Widget>[
-              FinishWorkoutWidget(
-                workout: widget.currentWorkout,
-                isEditing: widget.isEditing,
-              ),
+              finishWorkoutWid,
               exerciseSection(exercises, provider),
             ],
           );

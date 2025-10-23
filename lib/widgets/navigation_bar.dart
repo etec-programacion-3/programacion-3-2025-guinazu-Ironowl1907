@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:workout_logger/screens/home.dart';
 import 'package:workout_logger/screens/profile.dart';
 import 'package:workout_logger/screens/workout.dart';
+import 'package:workout_logger/widgets/resume_card.dart';
 
 class NavigationProvider extends ChangeNotifier {
   int _currentIndex = 0;
@@ -82,8 +85,29 @@ class AppNavigation extends StatelessWidget {
                   ),
                 ],
               ),
-              // You'll need to add body content here
-              body: _bodyWidgets[navigationProvider.currentIndex],
+              body: Stack(
+                children: <Widget>[
+                  _bodyWidgets[navigationProvider.currentIndex],
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: FutureBuilder<Workout?>(
+                      future: context
+                          .read<WorkoutProvider>()
+                          .getUnfinishedWorkout(),
+                      builder:
+                          (
+                            BuildContext context,
+                            AsyncSnapshot<Workout?> asyncSnapshot,
+                          ) {
+                            if (asyncSnapshot.hasData) {
+                              return ResumeCard(workout: asyncSnapshot.data!);
+                            }
+                            return const SizedBox();
+                          },
+                    ),
+                  ),
+                ],
+              ),
             );
           },
     );

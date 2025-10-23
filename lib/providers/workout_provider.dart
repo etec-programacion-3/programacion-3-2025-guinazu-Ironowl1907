@@ -42,13 +42,14 @@ class WorkoutProvider extends ChangeNotifier {
   }
 
   Future<int> update(Workout workout) async {
-    return workoutRepo.update(workout);
+    final Future<int> result = workoutRepo.update(workout);
+    notifyListeners();
+    return result;
   }
 
-  Future<Workout?> initializeWorkout(Routine? routine) async {
+  Future<Workout> initializeWorkout(Routine? routine) async {
     if (routine == null) {
       print('TODO freeform workout');
-      return null;
     }
     print('initialize workout');
     _currentRoutine = routine;
@@ -134,6 +135,40 @@ class WorkoutProvider extends ChangeNotifier {
 
     notifyListeners();
     return newWorkout;
+  }
+
+  Future<void> loadWorkoutToEdit(Workout workout) async {
+    print('Load workout to edit');
+
+    _currentWorkout = workout;
+
+    if (workout.routineId != null) {
+      _currentRoutine = await routineRepo.get(workout.routineId!);
+    } else {
+      _currentRoutine = null;
+    }
+
+    _currentWorkoutExercises.clear();
+    _workoutSets.clear();
+
+    final List<DetailedWorkoutExercise> existingExercises =
+        await workoutExerciseRepo.getDetailedWorkoutExercisesByWorkout(
+          workout.id!,
+        );
+
+    for (final DetailedWorkoutExercise exercise in existingExercises) {
+      final int workoutExerciseId = exercise.workoutExercise.id!;
+
+      _currentWorkoutExercises[workoutExerciseId] = exercise;
+
+      final List<WorkoutSet> sets = await workoutSetRepo.getByExercise(
+        workoutExerciseId,
+      );
+
+      _workoutSets[workoutExerciseId] = sets;
+    }
+
+    notifyListeners();
   }
 
   Future<void> finishWorkout(Workout workout) async {

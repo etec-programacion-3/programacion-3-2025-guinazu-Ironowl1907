@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
+import 'package:workout_logger/screens/finish_workout_page.dart';
 import 'package:workout_logger/widgets/exerise_log_card.dart';
 
 class LoggingPage extends StatefulWidget {
@@ -9,9 +10,11 @@ class LoggingPage extends StatefulWidget {
     super.key,
     this.currentRoutine,
     required this.currentWorkout,
+    this.isEditing = false,
   });
   final Routine? currentRoutine;
-  final Workout? currentWorkout;
+  final Workout currentWorkout;
+  final bool isEditing;
 
   @override
   State<LoggingPage> createState() => _LoggingPageState();
@@ -37,18 +40,42 @@ class _LoggingPageState extends State<LoggingPage> {
                   b.value.workoutExercise.orderIndex,
                 ),
               );
+          final Widget finishWorkoutWid = widget.isEditing
+              ? FinishWorkoutWidget(
+                  workout: widget.currentWorkout,
+                  isEditing: widget.isEditing,
+                )
+              : const SizedBox();
 
-          return ListView.builder(
-            itemCount: exercises.length,
-            itemBuilder: (BuildContext context, int index) {
-              final MapEntry<int, DetailedWorkoutExercise> entry =
-                  exercises[index];
-              return ExerciseLogCard(
-                workoutExerciseId: entry.value.workoutExercise.id!,
-                exercise: entry.value,
-                provider: provider,
-              );
-            },
+          return Column(
+            children: <Widget>[
+              finishWorkoutWid,
+              exerciseSection(exercises, provider),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget exerciseSection(
+    List<MapEntry<int, DetailedWorkoutExercise>> exercises,
+    WorkoutProvider provider,
+  ) {
+    if (exercises.isEmpty) {
+      return const Column(
+        children: <Widget>[Center(child: Text('No exercises'))],
+      );
+    }
+    return Expanded(
+      child: ListView.builder(
+        itemCount: exercises.length,
+        itemBuilder: (BuildContext context, int index) {
+          final MapEntry<int, DetailedWorkoutExercise> entry = exercises[index];
+          return ExerciseLogCard(
+            workoutExerciseId: entry.value.workoutExercise.id!,
+            exercise: entry.value,
+            provider: provider,
           );
         },
       ),
@@ -56,6 +83,30 @@ class _LoggingPageState extends State<LoggingPage> {
   }
 
   AppBar _appBar(BuildContext context) {
+    late String title;
+    if (widget.currentRoutine == null) title = 'Logging Workout';
+    if (widget.isEditing) title = 'Editing Workout';
+    if (widget.currentRoutine != null) title = widget.currentRoutine!.name;
+    late final List<Widget> actions = <Widget>[];
+    if (!widget.isEditing) {
+      actions.add(
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: TextButton(
+            onPressed: () async {
+              print(widget.currentWorkout.id);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      FinishWorkoutPage(workout: widget.currentWorkout),
+                ),
+              );
+            },
+            child: const Text('Finish'),
+          ),
+        ),
+      );
+    }
     return AppBar(
       leading: IconButton(
         onPressed: () {
@@ -63,25 +114,8 @@ class _LoggingPageState extends State<LoggingPage> {
         },
         icon: const Icon(Icons.arrow_downward),
       ),
-      actions: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: TextButton(
-            onPressed: () async {
-              await context.read<WorkoutProvider>().finishWorkout(
-                widget.currentWorkout!,
-              );
-              Navigator.of(context).pop();
-            },
-            child: const Text('Finish'),
-          ),
-        ),
-      ],
-      title: Text(
-        widget.currentRoutine != null
-            ? widget.currentRoutine!.name
-            : 'Logging workout',
-      ),
+      actions: actions,
+      title: Text(title),
     );
   }
 }

@@ -47,21 +47,32 @@ class _LoggingPageState extends State<LoggingPage> {
                 workout: widget.currentWorkout,
                 isEditing: widget.isEditing,
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: exercises.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final MapEntry<int, DetailedWorkoutExercise> entry =
-                        exercises[index];
-                    return ExerciseLogCard(
-                      workoutExerciseId: entry.value.workoutExercise.id!,
-                      exercise: entry.value,
-                      provider: provider,
-                    );
-                  },
-                ),
-              ),
+              exerciseSection(exercises, provider),
             ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget exerciseSection(
+    List<MapEntry<int, DetailedWorkoutExercise>> exercises,
+    WorkoutProvider provider,
+  ) {
+    if (exercises.isEmpty) {
+      return const Column(
+        children: <Widget>[Center(child: Text('No exercises'))],
+      );
+    }
+    return Expanded(
+      child: ListView.builder(
+        itemCount: exercises.length,
+        itemBuilder: (BuildContext context, int index) {
+          final MapEntry<int, DetailedWorkoutExercise> entry = exercises[index];
+          return ExerciseLogCard(
+            workoutExerciseId: entry.value.workoutExercise.id!,
+            exercise: entry.value,
+            provider: provider,
           );
         },
       ),

@@ -137,6 +137,40 @@ class WorkoutProvider extends ChangeNotifier {
     return newWorkout;
   }
 
+  Future<void> loadWorkoutToEdit(Workout workout) async {
+    print('Load workout to edit');
+
+    _currentWorkout = workout;
+
+    if (workout.routineId != null) {
+      _currentRoutine = await routineRepo.get(workout.routineId!);
+    } else {
+      _currentRoutine = null;
+    }
+
+    _currentWorkoutExercises.clear();
+    _workoutSets.clear();
+
+    final List<DetailedWorkoutExercise> existingExercises =
+        await workoutExerciseRepo.getDetailedWorkoutExercisesByWorkout(
+          workout.id!,
+        );
+
+    for (final DetailedWorkoutExercise exercise in existingExercises) {
+      final int workoutExerciseId = exercise.workoutExercise.id!;
+
+      _currentWorkoutExercises[workoutExerciseId] = exercise;
+
+      final List<WorkoutSet> sets = await workoutSetRepo.getByExercise(
+        workoutExerciseId,
+      );
+
+      _workoutSets[workoutExerciseId] = sets;
+    }
+
+    notifyListeners();
+  }
+
   Future<void> finishWorkout(Workout workout) async {
     if (_currentWorkout == null) {
       print('Error workout null');

@@ -7,6 +7,7 @@ import 'package:workout_logger/screens/home.dart';
 import 'package:workout_logger/screens/profile.dart';
 import 'package:workout_logger/screens/workout.dart';
 import 'package:workout_logger/widgets/resume_card.dart';
+import 'package:provider/provider.dart';
 
 class NavigationProvider extends ChangeNotifier {
   int _currentIndex = 0;
@@ -90,20 +91,26 @@ class AppNavigation extends StatelessWidget {
                   _bodyWidgets[navigationProvider.currentIndex],
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: FutureBuilder<Workout?>(
-                      future: context
-                          .read<WorkoutProvider>()
-                          .getUnfinishedWorkout(),
-                      builder:
-                          (
-                            BuildContext context,
-                            AsyncSnapshot<Workout?> asyncSnapshot,
-                          ) {
-                            if (asyncSnapshot.hasData) {
-                              return ResumeCard(workout: asyncSnapshot.data!);
-                            }
-                            return const SizedBox();
-                          },
+                    child: Consumer<WorkoutProvider>(
+                      builder: (_, _, _) {
+                        return FutureBuilder<Workout?>(
+                          future: context
+                              .read<WorkoutProvider>()
+                              .getUnfinishedWorkout(),
+                          builder:
+                              (
+                                BuildContext context,
+                                AsyncSnapshot<Workout?> asyncSnapshot,
+                              ) {
+                                if (asyncSnapshot.hasData) {
+                                  return ResumeCard(
+                                    workout: asyncSnapshot.data!,
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                        );
+                      },
                     ),
                   ),
                 ],

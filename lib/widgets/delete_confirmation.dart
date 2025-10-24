@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-void showDeleteConfirmation({
+Future<bool?> showDeleteConfirmation({
   required BuildContext context,
   required VoidCallback onDelete,
   final String title = 'Are you sure that you want to delete?',
   final String body = '',
   final String deleteLabel = 'Delete',
 }) {
-  showDialog(
+  return showDialog<bool>(
     context: context,
     builder: (BuildContext dialogContext) {
       return AlertDialog(
@@ -16,13 +16,13 @@ void showDeleteConfirmation({
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(dialogContext).pop();
+              Navigator.of(dialogContext).pop(false);
             },
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(dialogContext).pop();
+              Navigator.of(dialogContext).pop(true);
               onDelete();
             },
             style: ElevatedButton.styleFrom(

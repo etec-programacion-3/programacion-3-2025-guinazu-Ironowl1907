@@ -55,7 +55,6 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
 
               title: 'Delete Muscle Group',
               onDelete: () {
-                Navigator.of(context).pop();
                 context.read<MuscleGroupProvider>().delete(muscleGroup);
               },
             );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
 import 'package:workout_logger/screens/routine_create_page.dart';
+import 'delete_confirmation.dart';
 
 Widget routineCard(Routine routine, ColorScheme colorScheme) {
   return Consumer<RoutineProvider>(
@@ -240,40 +241,27 @@ void _showRoutineMenu(Routine routine, BuildContext context) {
             ),
             onTap: () {
               Navigator.pop(context);
-              showDeleteConfirmation(routine, context);
+              final RoutineProvider routineProvider = context
+                  .read<RoutineProvider>();
+
+              showDeleteConfirmation(
+                context: context,
+                title: 'Delete Routine',
+                body: 'Do you want to delete ${routine.name}?',
+                onDelete: () {
+                  routineProvider.delete(routine);
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${routine.name} deleted')),
+                    );
+                  }
+                },
+              );
             },
           ),
         ],
       ),
-    ),
-  );
-}
-
-void showDeleteConfirmation(Routine routine, BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: const Text('Delete Routine'),
-      content: Text(
-        'Are you sure you want to delete "${routine.name}"? This action cannot be undone.',
-      ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            context.read<RoutineProvider>().delete(routine);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('${routine.name} deleted')));
-          },
-          style: TextButton.styleFrom(foregroundColor: Colors.red),
-          child: const Text('Delete'),
-        ),
-      ],
     ),
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_logger/widgets/routine_card.dart';
 
 class ResumeCard extends StatelessWidget {
   const ResumeCard({super.key, required this.workout});
@@ -34,6 +35,7 @@ class ResumeCard extends StatelessWidget {
               children: <Widget>[
                 TextButton(
                   onPressed: () {
+                    // showDeleteConfirmation(routine, context)
                     context.read<WorkoutProvider>().delete(workout.id!);
                   },
                   child: const Text('Discard'),

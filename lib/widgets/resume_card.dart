@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_logger/screens/logging_page.dart';
 import 'package:workout_logger/widgets/delete_confirmation.dart';
 
 class ResumeCard extends StatelessWidget {
@@ -47,7 +48,20 @@ class ResumeCard extends StatelessWidget {
                   child: const Text('Discard'),
                 ),
                 const SizedBox(width: 8),
-                FilledButton(onPressed: () {}, child: const Text('Resume')),
+                FilledButton(
+                  onPressed: () async {
+                    final Workout? resumedWorkout = await context
+                        .read<WorkoutProvider>()
+                        .resumeWorkout(workout);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoggingPage(currentWorkout: resumedWorkout!),
+                      ),
+                    );
+                  },
+                  child: const Text('Resume'),
+                ),
               ],
             ),
           ],

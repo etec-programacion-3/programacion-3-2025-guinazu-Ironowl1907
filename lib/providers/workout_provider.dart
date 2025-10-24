@@ -171,6 +171,13 @@ class WorkoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<Workout?> resumeWorkout(Workout workout) async {
+    if (workout.endedAt != null) return null;
+    loadWorkoutToEdit(workout);
+    // TODO: Resume a timer
+    return _currentWorkout;
+  }
+
   Future<void> finishWorkout(Workout workout) async {
     if (_currentWorkout == null) {
       print('Error workout null');

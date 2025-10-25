@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => WorkoutInfoPage(workout: workout),
+                builder: (BuildContext context) => WorkoutInfoPage(workout: workout),
               ),
             );
           },

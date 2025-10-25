@@ -268,7 +268,7 @@ class _WorkoutInfoPageState extends State<WorkoutInfoPage> {
     context.read<WorkoutProvider>().loadWorkoutToEdit(widget.workout);
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (context) {
+        builder: (BuildContext context) {
           return LoggingPage(currentWorkout: widget.workout, isEditing: true);
         },
       ),

@@ -87,14 +87,13 @@ class _LoggingPageState extends State<LoggingPage> {
     if (widget.currentRoutine == null) title = 'Logging Workout';
     if (widget.isEditing) title = 'Editing Workout';
     if (widget.currentRoutine != null) title = widget.currentRoutine!.name;
-    late final List<Widget> actions = <Widget>[];
+    final List<Widget> actions = <Widget>[];
     if (!widget.isEditing) {
       actions.add(
         Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: TextButton(
+          padding: const EdgeInsets.all(8.0),
+          child: FilledButton(
             onPressed: () async {
-              print(widget.currentWorkout.id);
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (BuildContext context) =>

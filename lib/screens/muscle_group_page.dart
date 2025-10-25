@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
+import 'package:workout_logger/widgets/delete_confirmation.dart';
 
 class MuscleGroupPage extends StatefulWidget {
   const MuscleGroupPage({super.key});
@@ -48,7 +49,15 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
           if (value == 'edit') {
             _addOrEditMuscleGroup(context, muscleGroup: muscleGroup);
           } else if (value == 'delete') {
-            _deleteMuscleGroup(context, muscleGroup);
+            showDeleteConfirmation(
+              context: context,
+              body: 'Do you want to delete ${muscleGroup.name}?',
+
+              title: 'Delete Muscle Group',
+              onDelete: () {
+                context.read<MuscleGroupProvider>().delete(muscleGroup);
+              },
+            );
           }
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -121,39 +130,6 @@ class _MuscleGroupPageState extends State<MuscleGroupPage> {
                 }
               },
               child: Text(muscleGroup == null ? 'Create' : 'Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _deleteMuscleGroup(BuildContext context, MuscleGroup muscleGroup) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Muscle Group'),
-          content: Text(
-            'Are you sure you want to delete "${muscleGroup.name}"?',
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.read<MuscleGroupProvider>().delete(muscleGroup);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Delete'),
             ),
           ],
         );

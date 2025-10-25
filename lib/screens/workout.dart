@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/providers/routine_provider.dart';
+import 'package:workout_logger/providers/workout_provider.dart';
 import 'package:workout_logger/widgets/workout_routine_card.dart';
 
 class WorkoutPage extends StatefulWidget {
@@ -21,18 +22,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoutineProvider>(
-      builder: (BuildContext context, RoutineProvider provider, _) {
-        return ListView.builder(
-          itemCount: provider.routines.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: WorkoutRoutineCard(routine: provider.routines[index]),
+    return Consumer2<RoutineProvider, WorkoutProvider>(
+      builder:
+          (
+            BuildContext context,
+            RoutineProvider routineProvider,
+            WorkoutProvider workoutProvier,
+            _,
+          ) {
+            return ListView.builder(
+              itemCount: routineProvider.routines.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: WorkoutRoutineCard(
+                    routine: routineProvider.routines[index],
+                  ),
+                );
+              },
             );
           },
-        );
-      },
     );
   }
 }

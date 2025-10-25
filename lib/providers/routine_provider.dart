@@ -160,12 +160,10 @@ class RoutineProvider extends ChangeNotifier {
 
   Future<int> saveCreation() async {
     if (newRoutineId == null) {
-      print('Creating routine');
       newRoutineId = await routineRepo.create(
         Routine(name: routineName, description: routineDescription),
       );
     } else {
-      print('Updating routine');
       await routineRepo.update(
         Routine(
           id: newRoutineId,
@@ -181,12 +179,10 @@ class RoutineProvider extends ChangeNotifier {
       exercise.routineId = newRoutineId!;
 
       if (exercise.id == null) {
-        print('Creating routine exercise ${exercise.toMap()}');
         final int newId = await exerciseRepo.create(exercise);
         exercise.id = newId;
         currentExerciseIds.add(newId);
       } else {
-        print('Updating routine exercise ${exercise.toMap()}');
         await exerciseRepo.update(exercise);
         currentExerciseIds.add(exercise.id!);
       }
@@ -194,7 +190,6 @@ class RoutineProvider extends ChangeNotifier {
 
     for (int originalId in _originalExerciseIds) {
       if (!currentExerciseIds.contains(originalId)) {
-        print('Deleting routine exercise with id $originalId');
         await exerciseRepo.delete(originalId);
       }
     }

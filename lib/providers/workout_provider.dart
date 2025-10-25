@@ -51,7 +51,6 @@ class WorkoutProvider extends ChangeNotifier {
     if (routine == null) {
       print('TODO freeform workout');
     }
-    print('initialize workout');
     _currentRoutine = routine;
 
     final Workout newWorkout = Workout(
@@ -102,44 +101,21 @@ class WorkoutProvider extends ChangeNotifier {
       _workoutSets[we.id!] = sets;
     }
 
-    // Debug printing
-    print('\n=== Workout Initialized ===');
-    print('Workout ID: ${newWorkout.id}');
-    print('Total Exercises: ${_currentWorkoutExercises.length}');
-    print('\nWorkout Exercises and Sets:');
-
     _currentWorkoutExercises.forEach((
       int exerciseId,
       DetailedWorkoutExercise workoutExercise,
     ) {
-      print('\n--- Exercise ID: $exerciseId ---');
-      print('  Exercise DB ID: ${workoutExercise.workoutExercise.exerciseId}');
-      print('  Order: ${workoutExercise.workoutExercise.orderIndex}');
-      print('  Target Sets: ${workoutExercise.workoutExercise.sets}');
-      print('  Target Reps: ${workoutExercise.workoutExercise.reps}');
-
       final List<WorkoutSet>? sets = _workoutSets[exerciseId];
       if (sets != null) {
-        print('  Sets (${sets.length}):');
-        for (final WorkoutSet set in sets) {
-          print(
-            '    Set ${set.setNumber}: ${set.reps} reps @ ${set.weightKg}kg (ID: ${set.id})',
-          );
-        }
-      } else {
-        print('  No sets found');
-      }
+        for (final WorkoutSet set in sets) {}
+      } else {}
     });
-
-    print('\n=========================\n');
 
     notifyListeners();
     return newWorkout;
   }
 
   Future<void> loadWorkoutToEdit(Workout workout) async {
-    print('Load workout to edit');
-
     _currentWorkout = workout;
 
     if (workout.routineId != null) {

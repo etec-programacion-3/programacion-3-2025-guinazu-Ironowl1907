@@ -241,10 +241,6 @@ class _SetRowState extends State<SetRow> {
                 await widget.provider.workoutSetRepo.update(widget.set);
 
                 setState(() {});
-
-                print(
-                  'Set ${widget.set.setNumber} completed: ${widget.set.completed}',
-                );
               },
             ),
           ),

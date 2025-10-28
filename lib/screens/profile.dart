@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_logger/screens/analytics.dart';
 import 'package:workout_logger/screens/exercise_page.dart';
 import 'package:workout_logger/screens/muscle_group_page.dart';
 import 'package:workout_logger/screens/routines_page.dart';
@@ -14,6 +15,10 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+            child: SimpleBarChart(),
+          ),
           Text('Dashboard', style: themeData.textTheme.titleMedium),
           const SizedBox(height: 12),
           Expanded(

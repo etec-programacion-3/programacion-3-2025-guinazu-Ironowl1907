@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:workout_logger/screens/analytics.dart';
 import 'package:workout_logger/screens/exercise_page.dart';
 import 'package:workout_logger/screens/muscle_group_page.dart';
 import 'package:workout_logger/screens/routines_page.dart';
+import 'package:workout_logger/widgets/common/app_bar_chart.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -15,9 +15,9 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
-            child: SimpleBarChart(),
+          const Padding(
+            padding: EdgeInsets.only(top: 8, bottom: 8, right: 8),
+            child: AppBarChart(),
           ),
           Text('Dashboard', style: themeData.textTheme.titleMedium),
           const SizedBox(height: 12),

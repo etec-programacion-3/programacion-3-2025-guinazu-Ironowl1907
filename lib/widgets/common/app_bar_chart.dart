@@ -110,6 +110,9 @@ class _AppBarChartState extends State<AppBarChart> {
 
   FlTitlesData? buildFlTitleData() {
     return const FlTitlesData(
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(showTitles: true, reservedSize: 25),
+      ),
       rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
       topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
     );

@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
+import 'package:workout_logger/screens/exercise_details.dart';
 import 'package:workout_logger/screens/muscle_selector.dart';
+import 'package:workout_logger/widgets/muscle_group_chip.dart';
 
 class ExercisePage extends StatefulWidget {
   const ExercisePage({super.key});
@@ -198,8 +200,16 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget _exerciseCard(Exercise exercise, BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onLongPress: () {
         _addOrEditExercise(context, exercise);
+      },
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                ExerciseDetailsPage(exercise: exercise),
+          ),
+        );
       },
       child: Card(
         child: Padding(
@@ -214,36 +224,13 @@ class _ExercisePageState extends State<ExercisePage> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox.square(dimension: 8),
-                  Row(children: <Widget>[_muscleGroupChip(context, exercise)]),
+                  Row(children: <Widget>[muscleGroupChip(context, exercise)]),
                 ],
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _muscleGroupChip(BuildContext context, Exercise exercise) {
-    final MuscleGroupProvider muscleGroupProvider = context
-        .watch<MuscleGroupProvider>();
-    return FutureBuilder<MuscleGroup?>(
-      future: muscleGroupProvider.get(exercise.muscleGroupId ?? 0),
-      builder:
-          (BuildContext context, AsyncSnapshot<MuscleGroup?> asyncSnapshot) {
-            String label;
-            if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-              label = 'Loading...';
-            } else if (asyncSnapshot.hasError) {
-              label = 'Error';
-            } else if (asyncSnapshot.hasData && asyncSnapshot.data != null) {
-              label = asyncSnapshot.data!.name;
-            } else {
-              label = 'None';
-            }
-
-            return Chip(label: Text(label));
-          },
     );
   }
 }

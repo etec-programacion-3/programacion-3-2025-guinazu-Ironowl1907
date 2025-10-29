@@ -17,15 +17,21 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(children: <Widget>[titleCard(context), charts(context)]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[titleCard(context), charts(context)],
+        ),
       ),
       appBar: AppBar(title: Text(widget.exercise.name)),
     );
   }
 
   Card charts(BuildContext context) {
-    return const Card(
-      child: Padding(padding: EdgeInsets.all(20.0), child: AppLineChart()),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(children: <Widget>[const AppLineChart()]),
+      ),
     );
   }
 

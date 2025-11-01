@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:workout_logger/models/models.dart';
 import 'package:workout_logger/services/database_service.dart';
 import 'package:workout_logger/services/workout_exercise_repository.dart';
+import 'package:workout_logger/services/workout_repository.dart';
+import 'package:workout_logger/services/workout_set_repository.dart';
 
 enum TypeFilter { heaviestWeight, bestSetVolume, totalVolume, totalReps }
 
@@ -9,6 +13,8 @@ enum TimeFilter { week, month, months3, year, all }
 
 class ExerciseDetailsProvider extends ChangeNotifier {
   late WorkoutExerciseRepository exerciseRepo;
+  late WorkoutRepository workoutRepo;
+  late WorkoutSetRepository workoutSetRepo;
   late DatabaseService dbService;
 
   late TypeFilter _typeFilter;
@@ -20,6 +26,8 @@ class ExerciseDetailsProvider extends ChangeNotifier {
 
   ExerciseDetailsProvider({required this.dbService}) {
     exerciseRepo = WorkoutExerciseRepository(dbService);
+    workoutRepo = WorkoutRepository(dbService);
+    workoutSetRepo = WorkoutSetRepository(dbService);
     _typeFilter = TypeFilter.heaviestWeight;
     _timeFilter = TimeFilter.week;
   }
@@ -55,7 +63,6 @@ class ExerciseDetailsProvider extends ChangeNotifier {
         break;
     }
 
-    // Reset start time to beginning of day
     start = start.copyWith(
       hour: 0,
       minute: 0,
@@ -70,7 +77,44 @@ class ExerciseDetailsProvider extends ChangeNotifier {
     );
 
     _dataPoints = <DateTime, double>{};
-    // TODO: Process list based on _typeFilter to populate _dataPoints
+    for (DetailedWorkoutExercise workoutExercise in list) {
+      final Workout? workout = await workoutRepo.get(
+        workoutExercise.workoutExercise.workoutId,
+      );
+      final DateTime workoutDate = workout!.endedAt!;
+      final List<WorkoutSet> exerciseSets = await workoutSetRepo.getByExercise(
+        workoutExercise.workoutExercise.id!,
+      );
+
+      switch (_typeFilter) {
+        case TypeFilter.totalReps:
+          _dataPoints![workoutDate] = exerciseSets.fold<double>(
+            0,
+            (double prev, WorkoutSet value) => prev + value.reps!,
+          );
+          break;
+        case TypeFilter.heaviestWeight:
+          _dataPoints![workoutDate] = exerciseSets.fold<double>(
+            0,
+            (double prev, WorkoutSet value) => max(prev, value.weightKg!),
+          );
+          break;
+        case TypeFilter.bestSetVolume:
+          _dataPoints![workoutDate] = exerciseSets.fold<double>(
+            0,
+            (double prev, WorkoutSet value) =>
+                max(prev, value.weightKg! * value.reps!),
+          );
+          break;
+        case TypeFilter.totalVolume:
+          _dataPoints![workoutDate] = exerciseSets.fold<double>(
+            0,
+            (double prev, WorkoutSet value) =>
+                prev + value.weightKg! * value.reps!,
+          );
+          break;
+      }
+    }
 
     notifyListeners();
   }

@@ -2,20 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class AppLineChart extends StatefulWidget {
-  const AppLineChart({super.key});
+  const AppLineChart({super.key, required this.data});
+
+  final Map<DateTime, double> data;
 
   @override
   State<AppLineChart> createState() => _AppLineChartState();
 }
 
 class _AppLineChartState extends State<AppLineChart> {
+  int? selectedIndex;
+
   @override
   Widget build(BuildContext context) {
+    // Sort data by date
+    final List<MapEntry<DateTime, double>> sortedEntries =
+        widget.data.entries.toList()..sort(
+          (MapEntry<DateTime, double> a, MapEntry<DateTime, double> b) =>
+              a.key.compareTo(b.key),
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Text(
-          '$selectedIndex',
+          selectedIndex != null
+              ? sortedEntries[selectedIndex!].value.toStringAsFixed(1)
+              : 'Tap a point',
           style: Theme.of(
             context,
           ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w800),
@@ -25,7 +38,7 @@ class _AppLineChartState extends State<AppLineChart> {
           height: 150,
           child: LineChart(
             LineChartData(
-              titlesData: buildFlTitleData()!,
+              titlesData: buildFlTitleData(sortedEntries),
               borderData: FlBorderData(
                 show: true,
                 border: const Border(
@@ -39,36 +52,39 @@ class _AppLineChartState extends State<AppLineChart> {
                 drawHorizontalLine: true,
                 drawVerticalLine: false,
               ),
-              lineBarsData: [
+              lineBarsData: <LineChartBarData>[
                 LineChartBarData(
-                  spots: dateIntSets.entries.toList().asMap().entries.map((
-                    MapEntry<int, MapEntry<DateTime, int>> entry,
+                  spots: sortedEntries.asMap().entries.map((
+                    MapEntry<int, MapEntry<DateTime, double>> entry,
                   ) {
                     final int index = entry.key;
-                    final MapEntry<DateTime, int> data = entry.value;
-                    return FlSpot(
-                      data.key.day.toDouble(),
-                      data.value.toDouble(),
-                    );
+                    final MapEntry<DateTime, double> data = entry.value;
+                    return FlSpot(index.toDouble(), data.value);
                   }).toList(),
-                  isCurved: true,
+                  isCurved: false,
                   color: Theme.of(context).colorScheme.primary,
                   barWidth: 3,
                   isStrokeCapRound: true,
                   dotData: FlDotData(
                     show: true,
-                    getDotPainter: (spot, percent, barData, index) {
-                      return FlDotCirclePainter(
-                        radius: selectedIndex == index ? 6 : 4,
-                        color: selectedIndex == index
-                            ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.primary,
-                        strokeWidth: selectedIndex == index ? 2 : 0,
-                        strokeColor: selectedIndex == index
-                            ? Theme.of(context).colorScheme.surface
-                            : Colors.transparent,
-                      );
-                    },
+                    getDotPainter:
+                        (
+                          FlSpot spot,
+                          double percent,
+                          LineChartBarData barData,
+                          int index,
+                        ) {
+                          return FlDotCirclePainter(
+                            radius: selectedIndex == index ? 6 : 4,
+                            color: selectedIndex == index
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context).colorScheme.primary,
+                            strokeWidth: selectedIndex == index ? 2 : 0,
+                            strokeColor: selectedIndex == index
+                                ? Theme.of(context).colorScheme.surface
+                                : Colors.transparent,
+                          );
+                        },
                   ),
                   belowBarData: BarAreaData(
                     show: true,
@@ -81,7 +97,9 @@ class _AppLineChartState extends State<AppLineChart> {
               lineTouchData: LineTouchData(
                 touchTooltipData: LineTouchTooltipData(
                   getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                    return touchedSpots.map((spot) => null).toList();
+                    return touchedSpots
+                        .map((LineBarSpot spot) => null)
+                        .toList();
                   },
                   getTooltipColor: (_) =>
                       Theme.of(context).colorScheme.primaryContainer,
@@ -107,31 +125,35 @@ class _AppLineChartState extends State<AppLineChart> {
     );
   }
 
-  int? selectedIndex;
-
-  final Map<DateTime, int> dateIntSets = <DateTime, int>{
-    DateTime(2025, 10, 27): 0,
-    DateTime(2025, 10, 28): 1,
-    DateTime(2025, 10, 29): 2,
-    DateTime(2025, 10, 30): 3,
-    DateTime(2025, 10, 31): 1,
-    // DateTime(2025, 11, 1): 5,
-    // DateTime(2025, 11, 2): 6,
-    // DateTime(2025, 11, 3): 7,
-    // DateTime(2025, 11, 4): 8,
-    // DateTime(2025, 11, 5): 9,
-    // DateTime(2025, 11, 6): 10,
-    // DateTime(2025, 11, 7): 11,
-    // DateTime(2025, 11, 8): 12,
-  };
-
-  FlTitlesData? buildFlTitleData() {
-    return const FlTitlesData(
-      leftTitles: AxisTitles(
+  FlTitlesData buildFlTitleData(
+    List<MapEntry<DateTime, double>> sortedEntries,
+  ) {
+    return FlTitlesData(
+      leftTitles: const AxisTitles(
         sideTitles: SideTitles(showTitles: true, reservedSize: 25),
       ),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 30,
+          getTitlesWidget: (double value, TitleMeta meta) {
+            final int index = value.toInt();
+            if (index < 0 || index >= sortedEntries.length) {
+              return const Text('');
+            }
+            final DateTime date = sortedEntries[index].key;
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                '${date.day}/${date.month}',
+                style: const TextStyle(fontSize: 10),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

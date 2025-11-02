@@ -12,6 +12,17 @@ class ExerciseDetailsPage extends StatefulWidget {
 }
 
 class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
+  final Map<DateTime, double> dateIntSets = <DateTime, double>{
+    DateTime(2025, 10, 23): 0,
+    DateTime(2025, 10, 24): 0,
+    DateTime(2025, 10, 25): 0,
+    DateTime(2025, 10, 26): 0,
+    DateTime(2025, 10, 27): 0,
+    DateTime(2025, 10, 28): 1,
+    DateTime(2025, 10, 29): 2,
+    DateTime(2025, 10, 30): 3,
+    DateTime(2025, 10, 31): 1,
+  };
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +41,7 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(children: <Widget>[const AppLineChart()]),
+        child: Column(children: <Widget>[AppLineChart(data: dateIntSets)]),
       ),
     );
   }

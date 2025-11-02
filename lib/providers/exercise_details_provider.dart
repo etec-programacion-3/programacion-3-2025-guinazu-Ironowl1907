@@ -20,6 +20,16 @@ class ExerciseDetailsProvider extends ChangeNotifier {
   late TypeFilter _typeFilter;
   late TimeFilter _timeFilter;
 
+  set timeFilter(TimeFilter other) {
+    _timeFilter = other;
+    load();
+  }
+
+  set typeFilter(TypeFilter other) {
+    _typeFilter = other;
+    load();
+  }
+
   Map<DateTime, double>? _dataPoints;
 
   Map<DateTime, double>? get dataPoints => _dataPoints;
@@ -117,5 +127,8 @@ class ExerciseDetailsProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+    print(_typeFilter);
+    print(_timeFilter);
+    print(_dataPoints);
   }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:workout_logger/providers/exercise_details_provider.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
 import 'package:workout_logger/providers/routine_exercise_provider.dart';
@@ -66,6 +67,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (BuildContext context) => NavigationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) =>
+              ExerciseDetailsProvider(dbService: dbService),
         ),
       ],
       child: MaterialApp(

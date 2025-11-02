@@ -130,7 +130,7 @@ class _AppLineChartState extends State<AppLineChart> {
   ) {
     return FlTitlesData(
       leftTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: true, reservedSize: 25),
+        sideTitles: SideTitles(showTitles: true, reservedSize: 50),
       ),
       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),

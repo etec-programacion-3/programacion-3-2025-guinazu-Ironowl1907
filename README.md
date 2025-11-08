@@ -61,7 +61,7 @@ Before running the app, make sure you have:
    ```bash
    flutter doctor
    ```
-
+> This should confirm the detection of the android SDK
 ---
 
 ## Running the App

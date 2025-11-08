@@ -101,30 +101,38 @@ class ExerciseDetailsProvider extends ChangeNotifier {
 
       switch (_typeFilter) {
         case TypeFilter.totalReps:
-          _dataPoints![workoutDate] = exerciseSets.fold<double>(
-            0,
-            (double prev, WorkoutSet value) => prev + value.reps!,
-          );
+          _dataPoints![workoutDate] = exerciseSets
+              .where((WorkoutSet set) => set.completed == 1)
+              .fold<double>(
+                0,
+                (double prev, WorkoutSet value) => prev + value.reps!,
+              );
           break;
         case TypeFilter.heaviestWeight:
-          _dataPoints![workoutDate] = exerciseSets.fold<double>(
-            0,
-            (double prev, WorkoutSet value) => max(prev, value.weightKg!),
-          );
+          _dataPoints![workoutDate] = exerciseSets
+              .where((WorkoutSet set) => set.completed == 1)
+              .fold<double>(
+                0,
+                (double prev, WorkoutSet value) => max(prev, value.weightKg!),
+              );
           break;
         case TypeFilter.bestSetVolume:
-          _dataPoints![workoutDate] = exerciseSets.fold<double>(
-            0,
-            (double prev, WorkoutSet value) =>
-                max(prev, value.weightKg! * value.reps!),
-          );
+          _dataPoints![workoutDate] = exerciseSets
+              .where((WorkoutSet set) => set.completed == 1)
+              .fold<double>(
+                0,
+                (double prev, WorkoutSet value) =>
+                    max(prev, value.weightKg! * value.reps!),
+              );
           break;
         case TypeFilter.totalVolume:
-          _dataPoints![workoutDate] = exerciseSets.fold<double>(
-            0,
-            (double prev, WorkoutSet value) =>
-                prev + value.weightKg! * value.reps!,
-          );
+          _dataPoints![workoutDate] = exerciseSets
+              .where((WorkoutSet set) => set.completed == 1)
+              .fold<double>(
+                0,
+                (double prev, WorkoutSet value) =>
+                    prev + value.weightKg! * value.reps!,
+              );
           break;
       }
     }

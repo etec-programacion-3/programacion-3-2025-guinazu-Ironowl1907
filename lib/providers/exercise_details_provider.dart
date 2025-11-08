@@ -148,9 +148,6 @@ class ExerciseDetailsProvider extends ChangeNotifier {
 
     selectedIndex = dataPoints!.length - 1;
     notifyListeners();
-    print(_typeFilter);
-    print(_timeFilter);
-    print(_dataPoints);
   }
 
   void setExercise(int exerciseId) {

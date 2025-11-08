@@ -15,10 +15,6 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.only(top: 8, bottom: 8, right: 8),
-            child: AppBarChart(),
-          ),
           Text('Dashboard', style: themeData.textTheme.titleMedium),
           const SizedBox(height: 12),
           Expanded(

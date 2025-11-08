@@ -47,7 +47,6 @@ class _AppLineChartState extends State<AppLineChart> {
                 ),
               ),
               gridData: const FlGridData(
-                horizontalInterval: 1,
                 show: true,
                 drawHorizontalLine: true,
                 drawVerticalLine: false,

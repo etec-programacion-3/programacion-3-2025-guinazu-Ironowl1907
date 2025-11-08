@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:workout_logger/providers/exercise_details_provider.dart';
 
 class AppLineChart extends StatefulWidget {
-  const AppLineChart({super.key, required this.data});
-
   final Map<DateTime, double> data;
+
+  const AppLineChart({super.key, required this.data});
 
   @override
   State<AppLineChart> createState() => _AppLineChartState();
 }
 
 class _AppLineChartState extends State<AppLineChart> {
-  int? selectedIndex;
-
   @override
   Widget build(BuildContext context) {
     // Sort data by date
@@ -21,14 +21,15 @@ class _AppLineChartState extends State<AppLineChart> {
           (MapEntry<DateTime, double> a, MapEntry<DateTime, double> b) =>
               a.key.compareTo(b.key),
         );
+    final int selectedIndex = context
+        .read<ExerciseDetailsProvider>()
+        .selectedIndex;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Text(
-          selectedIndex != null
-              ? sortedEntries[selectedIndex!].value.toStringAsFixed(1)
-              : 'Tap a point',
+          sortedEntries[selectedIndex].value.toStringAsFixed(1),
           style: Theme.of(
             context,
           ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w800),
@@ -110,7 +111,9 @@ class _AppLineChartState extends State<AppLineChart> {
                           response.lineBarSpots != null &&
                           response.lineBarSpots!.isNotEmpty) {
                         setState(() {
-                          selectedIndex =
+                          context
+                                  .read<ExerciseDetailsProvider>()
+                                  .selectedIndex =
                               response.lineBarSpots!.first.spotIndex;
                         });
                       }

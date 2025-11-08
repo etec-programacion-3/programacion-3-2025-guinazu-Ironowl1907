@@ -19,6 +19,12 @@ class ExerciseDetailsProvider extends ChangeNotifier {
 
   TypeFilter _typeFilter = TypeFilter.heaviestWeight;
   TimeFilter _timeFilter = TimeFilter.week;
+  int _selectedIndex = 0;
+
+  int get selectedIndex => _selectedIndex;
+  set selectedIndex(int other) {
+    _selectedIndex = other;
+  }
 
   TypeFilter get typeFilter => _typeFilter;
   TimeFilter get timeFilter => _timeFilter;
@@ -137,6 +143,7 @@ class ExerciseDetailsProvider extends ChangeNotifier {
       }
     }
 
+    selectedIndex = dataPoints!.length - 1;
     notifyListeners();
     print(_typeFilter);
     print(_timeFilter);

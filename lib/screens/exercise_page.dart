@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_logger/models/models.dart';
+import 'package:workout_logger/providers/exercise_details_provider.dart';
 import 'package:workout_logger/providers/exercise_provider.dart';
 import 'package:workout_logger/providers/muscle_group_provider.dart';
 import 'package:workout_logger/screens/exercise_details.dart';
@@ -204,6 +205,8 @@ class _ExercisePageState extends State<ExercisePage> {
         _addOrEditExercise(context, exercise);
       },
       onTap: () {
+        context.read<ExerciseDetailsProvider>().setExercise(exercise.id!);
+        context.read<ExerciseDetailsProvider>().load();
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (BuildContext context) =>

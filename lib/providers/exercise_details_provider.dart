@@ -20,6 +20,7 @@ class ExerciseDetailsProvider extends ChangeNotifier {
   TypeFilter _typeFilter = TypeFilter.heaviestWeight;
   TimeFilter _timeFilter = TimeFilter.week;
   int selectedIndex = 0;
+  int? selectedExerciseId;
 
   TypeFilter get typeFilter => _typeFilter;
   TimeFilter get timeFilter => _timeFilter;
@@ -85,10 +86,17 @@ class ExerciseDetailsProvider extends ChangeNotifier {
       microsecond: 0,
     );
 
-    final List<DetailedWorkoutExercise> list = await exerciseRepo.getByDate(
+    List<DetailedWorkoutExercise> list = await exerciseRepo.getByDate(
       start,
       now,
     );
+    assert(selectedExerciseId != null);
+    list = list
+        .where(
+          (DetailedWorkoutExercise exercise) =>
+              exercise.exercise.id == selectedExerciseId,
+        )
+        .toList();
 
     _dataPoints = <DateTime, double>{};
     for (DetailedWorkoutExercise workoutExercise in list) {
@@ -143,5 +151,10 @@ class ExerciseDetailsProvider extends ChangeNotifier {
     print(_typeFilter);
     print(_timeFilter);
     print(_dataPoints);
+  }
+
+  void setExercise(int exerciseId) {
+    selectedExerciseId = exerciseId;
+    if (dataPoints != null) dataPoints!.clear();
   }
 }

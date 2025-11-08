@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:workout_logger/providers/exercise_details_provider.dart';
 import 'package:workout_logger/screens/exercise_page.dart';
 import 'package:workout_logger/screens/muscle_group_page.dart';
 import 'package:workout_logger/screens/routines_page.dart';
@@ -37,6 +39,7 @@ class ProfilePage extends StatelessWidget {
                 _DashboardButton(
                   label: 'Exercises',
                   onPressed: () {
+                    context.read<ExerciseDetailsProvider>().load();
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (BuildContext context) => const ExercisePage(),

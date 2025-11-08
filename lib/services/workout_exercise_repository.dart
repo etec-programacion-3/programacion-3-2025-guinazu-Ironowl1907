@@ -44,6 +44,53 @@ class WorkoutExerciseRepository {
         .toList();
   }
 
+  Future<List<DetailedWorkoutExercise>> getByDate(
+    DateTime start,
+    DateTime end,
+  ) async {
+    final Database db = dbService.db!;
+
+    final List<Map<String, Object?>> result = await db.rawQuery(
+      '''
+    SELECT 
+      e.*,
+      we.id as we_id,
+      we.workout_id,
+      we.exercise_id,
+      we.order_index,
+      we.sets,
+      we.reps
+    FROM workout_exercises we
+    INNER JOIN exercises e ON we.exercise_id = e.id
+    INNER JOIN workouts w ON we.workout_id = w.id
+    WHERE w.started_at >= ? AND w.started_at <= ?
+    ORDER BY w.started_at, we.order_index
+  ''',
+      <Object?>[start.toIso8601String(), end.toIso8601String()],
+    );
+
+    return result.map((Map<String, Object?> map) {
+      final Exercise exercise = Exercise.fromMap(<String, dynamic>{
+        'id': map['id'],
+        'name': map['name'],
+        'description': map['description'],
+        'muscle_group_id': map['muscle_group_id'],
+      });
+
+      final WorkoutExercise workoutExercise =
+          WorkoutExercise.fromMap(<String, dynamic>{
+            'id': map['we_id'],
+            'workout_id': map['workout_id'],
+            'exercise_id': map['exercise_id'],
+            'order_index': map['order_index'],
+            'sets': map['sets'],
+            'reps': map['reps'],
+          });
+
+      return DetailedWorkoutExercise(exercise, workoutExercise);
+    }).toList();
+  }
+
   Future<int> update(WorkoutExercise workoutExercise) async {
     final Database db = dbService.db!;
     return await db.update(

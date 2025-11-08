@@ -163,6 +163,7 @@ class WorkoutProvider extends ChangeNotifier {
     _currentRoutine = null;
     _currentWorkout = null;
     _currentWorkoutExercises.clear();
+    load();
   }
 
   Future<Workout?> getUnfinishedWorkout() async {

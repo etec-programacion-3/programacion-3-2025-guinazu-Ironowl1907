@@ -1,116 +1,114 @@
 # Workout Tracker
 
-A Flutter-based mobile application designed for serious lifters who want complete control over their workout tracking. Built entirely offline with local SQLite storage, this app gives you the freedom to create custom workouts, exercises, and muscle groups tailored to your training style.
+A **Flutter-based mobile app** built **for serious lifters** who want total control over their training data — **no internet, no fluff, just pure lifting and tracking**.
 
-## Features
+Everything runs **completely offline** using **SQLite**, letting you build your own workouts, exercises, and routines exactly how *you* train.
 
-- **Custom Workouts**: Create and manage personalized workout sessions
-- **Custom Muscle Groups**: Define your own muscle group categorizations
-- **Custom Exercises**: Build an exercise library that fits your training methodology
-- **Routine Management**: Design and save workout routines for easy reuse
-- **Advanced Analytics**: Track your progress with comprehensive analytics and insights
-- **Completely Offline**: All data stored locally with SQLite - no internet connection required
-- **Material Design**: Clean, intuitive interface following Google's Material Design guidelines
+---
 
-This app is built for lifters who know what they're doing and want full control over their training data without unnecessary hand-holding.
+## ⚙️ Features at a Glance
 
-## Tech Stack
+* **Custom Workouts** – Create, edit, and track personalized training sessions
+* **Custom Muscle Groups** – Organize your lifts however you like
+* **Custom Exercises** – Build your own exercise library
+* **Routine Management** – Save and reuse your training templates
+* **Progress Analytics** – Visualize gains with detailed stats and charts
+* **100% Offline** – Data stored locally with SQLite, no sign-ins or servers
+* **Material Design** – Clean, intuitive UI that feels native and smooth
 
-- **Framework**: Flutter 3.38
-- **Language**: Dart
-- **Database**: SQLite with sqflite ORM
-- **Design**: Material Design
+> 🧩 Built for lifters who *know what they’re doing* — full control, zero hand-holding.
 
-## Prerequisites
+---
 
-Before you begin, ensure you have the following installed:
+## 🧰 Tech Stack
 
-- [Flutter SDK 3.38](https://docs.flutter.dev/get-started/install)
-- [Android SDK](https://developer.android.com/studio) (for Android builds)
-- Dart (included with Flutter)
+* **Framework:** Flutter 3.38
+* **Language:** Dart
+* **Database:** SQLite + sqflite ORM
+* **Design:** Google’s Material Design
 
-### Platform-Specific Requirements
+---
 
-**For Android:**
-- Android SDK
-- Android Studio (recommended) or Android command-line tools
+## 🚀 Getting Started
 
-**For Linux Testing:**
-- Linux development libraries (run `flutter doctor` for specific requirements)
+### 🧑‍💻 Prerequisites
 
-## Installation
+Before running the app, make sure you have:
 
-1. **Clone the repository**
-```bash
-git clone https://github.com/etec-programacion-3/programacion-3-2025-guinazu-Ironowl1907.git
-cd programacion-3-2025-guinazu-Ironowl1907
-```
+* [Flutter SDK 3.38](https://docs.flutter.dev/get-started/install)
+* [Android SDK](https://developer.android.com/studio)
+* Dart (included with Flutter)
+
+---
+
+### 🧩 Installation Steps
+
+1. **Clone the repo**
+
+   ```bash
+   git clone https://github.com/etec-programacion-3/programacion-3-2025-guinazu-Ironowl1907.git
+   cd programacion-3-2025-guinazu-Ironowl1907
+   ```
 
 2. **Install dependencies**
-```bash
-flutter pub get
-```
 
-3. **Verify your setup**
-```bash
-flutter doctor
-```
+   ```bash
+   flutter pub get
+   ```
+
+3. **Check your setup**
+
+   ```bash
+   flutter doctor
+   ```
+
+---
 
 ## Running the App
 
-### Development Mode (Linux)
+### 🖥️ On Linux
+
 ```bash
 flutter run -d linux
 ```
 
-### Development Mode (Android)
-Connect your Android device or start an emulator, then:
+### 🤖 On Android
+
+Connect your Android device or emulator:
+
 ```bash
-flutter run
+flutter run -d <your connected device>
 ```
 
-### Build for Production
+---
 
-**Android APK (Release)**
+## 📦 Building for Production
+
+**Generate a release APK:**
+
 ```bash
 flutter build apk --release
 ```
 
-The APK will be generated at: `build/app/outputs/flutter-apk/app-release.apk`
-
-## Project Status
-
-🚀 **Current Status**: MVP (Minimum Viable Product)
-
-The app is functional and includes all core features. Contributions and feedback are welcome!
-
-## Contributing
-
-We welcome contributions of all types! Whether you're fixing bugs, adding features, improving documentation, or suggesting enhancements, your help is appreciated.
-
-### How to Contribute
-
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add some amazing feature'`)
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
-
-### Important Notes
-
-- The `main` branch is commit-blocked, so **all changes must go through Pull Requests**
-- Please ensure your code follows the existing code style
-- Test your changes thoroughly before submitting a PR
-- Provide a clear description of what your PR does and why
-
-## Database
-
-The app uses SQLite for local data storage via the sqflite package. The database initializes empty on first launch - you populate it with your own workouts, exercises, and routines as you use the app.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Your APK will be at:
+`build/app/outputs/flutter-apk/app-release.apk`
 
 ---
 
-*For lifters, by lifters. Track your gains your way.*
+## 📊 Database Overview
+
+Workout Tracker uses **SQLite** (via `sqflite`) for local data storage.
+The app starts with an **empty database** — you build your own structure over time with:
+
+* Custom muscle groups
+* Your exercise library
+* Personalized workout routines
+
+> 💾 Everything stays on your device — your data, your control.
+
+---
+
+### 🏋️‍♂️ Built for lifters, by lifters.
+
+**Own your training. Track your progress. Stay offline.**
+

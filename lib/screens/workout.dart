@@ -30,17 +30,35 @@ class _WorkoutPageState extends State<WorkoutPage> {
             WorkoutProvider workoutProvier,
             _,
           ) {
-            return ListView.builder(
-              itemCount: routineProvider.routines.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: WorkoutRoutineCard(
-                    routine: routineProvider.routines[index],
-                  ),
-                );
-              },
-            );
+            return workoutProvier.workouts!.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.fitness_center,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'No exercises added yet.',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: routineProvider.routines.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: WorkoutRoutineCard(
+                          routine: routineProvider.routines[index],
+                        ),
+                      );
+                    },
+                  );
           },
     );
   }

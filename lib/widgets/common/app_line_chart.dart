@@ -29,7 +29,9 @@ class _AppLineChartState extends State<AppLineChart> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Text(
-          sortedEntries[selectedIndex].value.toStringAsFixed(1),
+          sortedEntries.isEmpty
+              ? 'NULL'
+              : sortedEntries[selectedIndex].value.toStringAsFixed(1),
           style: Theme.of(
             context,
           ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w800),

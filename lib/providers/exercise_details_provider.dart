@@ -19,12 +19,7 @@ class ExerciseDetailsProvider extends ChangeNotifier {
 
   TypeFilter _typeFilter = TypeFilter.heaviestWeight;
   TimeFilter _timeFilter = TimeFilter.week;
-  int _selectedIndex = 0;
-
-  int get selectedIndex => _selectedIndex;
-  set selectedIndex(int other) {
-    _selectedIndex = other;
-  }
+  int selectedIndex = 0;
 
   TypeFilter get typeFilter => _typeFilter;
   TimeFilter get timeFilter => _timeFilter;

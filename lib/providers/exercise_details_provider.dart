@@ -17,8 +17,11 @@ class ExerciseDetailsProvider extends ChangeNotifier {
   late WorkoutSetRepository workoutSetRepo;
   late DatabaseService dbService;
 
-  late TypeFilter _typeFilter;
-  late TimeFilter _timeFilter;
+  TypeFilter _typeFilter = TypeFilter.heaviestWeight;
+  TimeFilter _timeFilter = TimeFilter.week;
+
+  TypeFilter get typeFilter => _typeFilter;
+  TimeFilter get timeFilter => _timeFilter;
 
   set timeFilter(TimeFilter other) {
     _timeFilter = other;

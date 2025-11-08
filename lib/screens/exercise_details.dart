@@ -14,22 +14,6 @@ class ExerciseDetailsPage extends StatefulWidget {
 }
 
 class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
-  final Map<DateTime, double> dateIntSets = <DateTime, double>{
-    DateTime(2025, 10, 18): 10,
-    DateTime(2025, 10, 19): 0,
-    DateTime(2025, 10, 20): 0,
-    DateTime(2025, 10, 21): 0,
-    DateTime(2025, 10, 22): 0,
-    DateTime(2025, 10, 23): 0,
-    DateTime(2025, 10, 24): 0,
-    DateTime(2025, 10, 25): 0,
-    DateTime(2025, 10, 26): 0,
-    DateTime(2025, 10, 27): 0,
-    DateTime(2025, 10, 28): 1,
-    DateTime(2025, 10, 29): 2,
-    DateTime(2025, 10, 30): 3,
-    DateTime(2025, 10, 31): 1,
-  };
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +29,6 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
   }
 
   Widget charts(BuildContext context) {
-    final TypeFilter selectedFilter = TypeFilter.heaviestWeight;
     return Column(
       children: <Widget>[
         Card(
@@ -78,6 +61,10 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
   }
 
   Card typeSelector(BuildContext context) {
+    final TypeFilter currentFilter = context
+        .watch<ExerciseDetailsProvider>()
+        .typeFilter;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -90,6 +77,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().typeFilter =
                       TypeFilter.heaviestWeight;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TypeFilter.heaviestWeight
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TypeFilter.heaviestWeight
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Heaviest Weight'),
               ),
               const SizedBox(width: 8),
@@ -98,6 +93,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().typeFilter =
                       TypeFilter.totalReps;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TypeFilter.totalReps
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TypeFilter.totalReps
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Total Reps'),
               ),
               const SizedBox(width: 8),
@@ -106,6 +109,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().typeFilter =
                       TypeFilter.totalVolume;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TypeFilter.totalVolume
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TypeFilter.totalVolume
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Total Volume'),
               ),
               const SizedBox(width: 8),
@@ -114,6 +125,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().typeFilter =
                       TypeFilter.bestSetVolume;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TypeFilter.bestSetVolume
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TypeFilter.bestSetVolume
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Best Set Volume'),
               ),
             ],
@@ -124,6 +143,10 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
   }
 
   Card timeSelector(BuildContext context) {
+    final TimeFilter currentFilter = context
+        .watch<ExerciseDetailsProvider>()
+        .timeFilter;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -136,6 +159,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().timeFilter =
                       TimeFilter.week;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TimeFilter.week
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TimeFilter.week
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Week'),
               ),
               const SizedBox(width: 8),
@@ -144,6 +175,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().timeFilter =
                       TimeFilter.month;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TimeFilter.month
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TimeFilter.month
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Month'),
               ),
               const SizedBox(width: 8),
@@ -152,6 +191,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().timeFilter =
                       TimeFilter.months3;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TimeFilter.months3
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TimeFilter.months3
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Last 3 Months'),
               ),
               const SizedBox(width: 8),
@@ -160,6 +207,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().timeFilter =
                       TimeFilter.year;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TimeFilter.year
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TimeFilter.year
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('Year'),
               ),
               const SizedBox(width: 8),
@@ -168,6 +223,14 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
                   context.read<ExerciseDetailsProvider>().timeFilter =
                       TimeFilter.all;
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentFilter == TimeFilter.all
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  foregroundColor: currentFilter == TimeFilter.all
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : null,
+                ),
                 child: const Text('All'),
               ),
             ],

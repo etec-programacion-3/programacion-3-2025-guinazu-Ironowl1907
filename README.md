@@ -111,4 +111,11 @@ The app starts with an **empty database** — you build your own structure over 
 ### 🏋️‍♂️ Built for lifters, by lifters.
 
 **Own your training. Track your progress. Stay offline.**
+<img width="270" height="585" alt="flutter_05" src="https://github.com/user-attachments/assets/d1581986-5094-427d-ac89-83314e4e890a" />
+<img width="270" height="585" alt="flutter_04" src="https://github.com/user-attachments/assets/2a026433-a654-4f25-b0c8-1ca78dde75eb" />
+<img width="270" height="585" alt="flutter_03" src="https://github.com/user-attachments/assets/b57c6809-d621-488e-a99d-b5c75822e512" />
+<img width="270" height="585" alt="flutter_02" src="https://github.com/user-attachments/assets/edeae3d5-a156-4045-87c2-5645dacadb8c" />
+<img width="270" height="585" alt="flutter_01" src="https://github.com/user-attachments/assets/624d97be-de1b-4988-bc6f-9dc15e657715" />
+
+
 
